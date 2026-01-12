@@ -9,11 +9,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 import hdbscan
-from preprocessing.config import ConfigLoader
+from loading.config import ConfigLoader
 from preprocessing.processflat import x_features_return
 from analysis.clustering_evaluation import evaluate_kmeans, evaluate_gmm, evaluate_hdbscan, evaluate_consensus
 from analysis.plotting import plot_umap_embedding, plot_clusters_vs_groups
-from analysis.utils import log_to_file, reset_stdout, run_umap, build_output_path
+from utils.ml_utils import log_to_file, reset_stdout, run_umap, build_output_path
 
 # Suppress warnings for cleaner output
 warnings.filterwarnings("ignore")

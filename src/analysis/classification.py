@@ -13,8 +13,8 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import permutation_test_score
 import matplotlib.pyplot as plt
-from preprocessing.config import ConfigLoader
-from analysis.utils import run_umap, log_to_file, reset_stdout, resolve_split_csv_path, build_output_path
+from loading.config import ConfigLoader
+from utils.ml_utils import run_umap, log_to_file, reset_stdout, resolve_split_csv_path, build_output_path
 from analysis.plotting import plot_confusion_matrix
 
 warnings.filterwarnings("ignore", category=FutureWarning)

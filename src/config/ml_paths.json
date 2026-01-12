@@ -7,14 +7,14 @@
     "dir_dataframe": "data/dataframes",
     "dir_fdc_df": "data/dataframes/fdc",
     "dir_yeo_df": "data/dataframes/networks",
-    "dir_split": "resources/split"
+    "dir_split": "assets/split"
   },
   "masks": {
-    "gm_mask_path": "utils/masks/GM_mask.nii",
-    "harvard_oxford_mask_path": "utils/masks/mask_GM.nii"
+    "gm_mask_path": "assets/masks/GM_mask.nii",
+    "harvard_oxford_mask_path": "assets/masks/mask_GM.nii"
   },
   "meta_csv": {
-    "cognitive_dataset": "utils/metadata/cognitive_dataset.xlsx"
+    "cognitive_dataset": "assets/metadata/cognitive_dataset.xlsx"
   },
   "networks": {
     "yeo_noThr": "data/dataframes/networks/networks_noTHR.csv",
@@ -22,7 +22,7 @@
     "yeo_01thr": "data/dataframes/networks/networks_thr01.csv"
   },
   "dataframes": {
-    "df_meta": "resources/metadata/df_meta.csv",
+    "df_meta": "assets/metadata/df_meta.csv",
     "raw_df": "data/dataframes/fdc/raw_df.pkl",
     "df_masked": "data/dataframes/fdc/df_gm.pkl",
     "df_masked_02": "data/dataframes/fdc/df_thr02_gm.pkl",

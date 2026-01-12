@@ -4,7 +4,7 @@ import glob
 import warnings
 import pandas as pd
 import nibabel as nib
-from preprocessing.config import ConfigLoader
+from loading.config import ConfigLoader
 warnings.filterwarnings("ignore")
 
 def load_fdc_maps(params):

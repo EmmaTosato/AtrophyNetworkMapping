@@ -67,7 +67,7 @@ ANM_Verona/
 │   ├── FCmaps/             # Original W-score maps
 │   ├── FCmaps_processed/   # Preprocessed .npy files for training
 │   └── dataframes/         # Tabular data (features, networks)
-├── resources/              # Metadata and configuration resources
+├── assets/                 # Metadata and configuration resources
 │   ├── split/              # ML train/test split CSVs
 │   ├── split_cnn/          # CNN train/test split CSVs
 │   ├── metadata/           # Patient metadata (labels, demographics)

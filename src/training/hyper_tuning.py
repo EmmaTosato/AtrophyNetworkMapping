@@ -6,7 +6,7 @@ import pandas as pd
 from itertools import product
 from copy import deepcopy
 from src.training.run import main_worker
-from resources import create_tuning_summary
+from src.utils.cnn_utils import create_tuning_summary
 
 def is_valid_combo(params):
     """

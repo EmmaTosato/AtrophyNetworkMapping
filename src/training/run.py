@@ -19,7 +19,7 @@ from cnn.models import ResNet3D, DenseNet3D, VGG16_3D
 from train import train, validate, plot_losses
 from testing.test import evaluate, compute_metrics, plot_confusion_matrix
 
-from utils import (
+from utils.cnn_utils import (
     create_training_summary,
     create_testing_summary,
     resolve_split_csv_path

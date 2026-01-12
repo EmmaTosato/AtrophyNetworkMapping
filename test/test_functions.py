@@ -2,9 +2,9 @@ import os
 import pandas as pd
 import pytest
 import json
-from preprocessing.loading import load_metadata
+from loading.loading import load_metadata
 
-from preprocessing.loading import load_fdc_maps, load_metadata, gmm_label_cdr
+from loading.loading import load_fdc_maps, load_metadata, gmm_label_cdr
 
 # Load config
 with open("src/config/ml_paths.json", "r") as f:
@@ -51,8 +51,8 @@ def test_load_metadata():
 
 
 def test_split_consistency():
-    split_dir = "resources/split"
-    meta_path = "resources/metadata/df_meta.csv"
+    split_dir = "assets/split"
+    meta_path = "assets/metadata/df_meta.csv"
     df_meta = pd.read_csv(meta_path)
 
     count = 1
