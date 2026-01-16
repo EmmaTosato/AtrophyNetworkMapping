@@ -1,0 +1,366 @@
+﻿Atrophy network mapping reveals convergent network architecture and clinical relevance, but limited diagnostic specificity in tauopathies
+Silvia Saglia1,†, Emma Maria Sole Tosato2,†, Lorenzo Pini2,3, Giorgio Dolci1,4, Lorenza Brusini1, Chiara Tuzzato5, Maurizio Corbetta2,3,6, Ilaria Boscolo Galazzo1,§, Gloria Menegaz1,§; Alzheimer’s Disease Neuroimaging Initiative and 4-R-Tauopathy Neuroimaging Initiative Consortium*
+1: Department of Engineering for Innovation Medicine, University of Verona, Verona, Italy;
+2: Padova Neuroscience Center, University of di Padova, Padova, Italy;
+3: Department of Neuroscience, University of Padova, Padova, Italy;
+4: Department of Computer Science, University of Verona, Verona, Italy;
+5: Department of General Psychology, University of Padova, Padova Italy;
+6: Veneto Institute of Molecular Medicine, VIMM, Padova, Italy;
+†: The authors contributed equally to this work.
+§: The authors jointly supervised this work.
+
+*Data used in preparation of this article were obtained from the Alzheimer’s Disease Neuroimaging Initiative (ADNI) database (adni.loni.usc.edu). As such, the investigators within the ADNI contributed to the design and implementation of ADNI and/or provided data but did not participate in analysis or writing of this report. A complete listing of ADNI investigators can be found at: http://adni.loni.usc.edu/wp-content/uploads/how_to_apply/ADNI_Acknowledgement_List.pdf
+Data used in preparation of this article were obtained from the 4-Repeat Tauopathy Neuroimaging Initiative (4RTNI) database (http://4rtni-ftldni.ini.usc.edu). The investigators at 4RTNI contributed to the design and implementation of 4RTNI and/or provided data, but did not participate in analysis or writing of this report (unless otherwise listed).
+
+Corresponding author: XX
+
+ABSTRACT 
+    1. INTRODUCTION
+Neurodegenerative tauopathies, such as Alzheimer’s disease (AD), corticobasal syndrome (CBS), and progressive supranuclear palsy (PSP), represent a major challenge for both diagnosis and treatment. Each disorder is characterized by abnormal aggregation of tau protein, yet they differ substantially in clinical presentation, regional vulnerability, and rate of progression. AD is typically defined within the amyloid–tau–neurodegeneration (AT[N]) framework, in which amyloid-β (Aβ) deposition precedes and triggers tau aggregation and subsequent neurodegeneration (Jack et al., 2018). Cortical tau pathology in AD typically begins in the entorhinal cortex and medial temporal lobes, before spreading to associative neocortical regions (ref). By contrast, CBS and PSP are primary tauopathies driven by 4-repeat tau isoforms, which primarily affect subcortical structures and involve fronto-parietal regions at more advanced disease stages (Kovacs et al., 2020; Chung et al., 2024). Clinically, AD most commonly presents with progressive episodic memory deficits, but atypical variants such as logopenic aphasia, posterior cortical atrophy, or behavioral/dysexecutive phenotypes can mimic CBS or frontotemporal dementia (FTD) (Zhang et al., 2022). CBS is classically defined by asymmetric motor features—rigidity, dystonia, tremor, myoclonus—together with signs of higher-order cortical dysfunction, including apraxia, alien limb phenomena, and cortical sensory deficits (Ballarini et al., 2019; Constantinides et al., 2024). However, pathological studies show that CBS can arise from diverse substrates, including corticobasal degeneration, PSP, or even AD pathology (Garcia-Cordero et al., 2024; Constantinides et al., 2024). PSP most often manifests as Richardson’s syndrome, characterized by early postural instability, vertical gaze palsy, axial rigidity, and executive dysfunction, but numerous phenotypic variants exist (PSP-parkinsonism, PSP-CBS, PSP-speech/language, PSP-frontotemporal), which overlap with CBS, Parkinson’s disease, and FTD (Zhang et al., 2022; Chung et al., 2021). Adding to the complexity, up to one-third of CBS cases are explained by underlying Alzheimer’s disease pathology, and 70–80% of PSP patients show AD co-pathology at autopsy (Garcia-Cordero et al., 2024). Such overlap contributes to heterogeneous anatomical and symptom profiles, complicating the interpretation of imaging and fluid biomarkers, delaying differential diagnosis, and limiting accurate patient stratification (Phan et al., 2024; Whiteside et al., 2023). As a result, early or atypical presentations remain particularly difficult to classify reliably, highlighting the urgent need for transdiagnostic biomarkers. 
+A unifying perspective is that tau does not accumulate randomly but rather follows the brain’s intrinsic network architecture. Experimental models and in vivo imaging demonstrate that misfolded tau spreads in a prion-like fashion across connected neurons, using connectivity as a scaffold for trans-synaptic propagation (Mudher et al., 2017; Dujardin & Hyman, 2020). In AD, tau distribution aligns with macroscale functional connectivity gradients, following the principal axis from unimodal sensory to higher-order transmodal cortices (Ottoy et al., 2024). Longitudinal evidence further demonstrates that functional connectivity from individual tau epicenters (i.e., regions showing the highest initial tau burden) predicts the subsequent spatial spread of pathology across both typical and atypical AD variants (de Bruin et al., 2025). In CBS and PSP, tau pathology similarly follows large-scale network organization, with subcortical regions and their functionally connected motor and parietal cortices exhibiting comparable levels of tau accumulation (Franzmeier et al., 2022). More recent work has provided mechanistic evidence that tau oligomers enter and propagate via synaptic connections, with synaptic tau burden predicting local synapse loss (McGeachan et al., 2025), and that Aβ-related hyperconnectivity accelerates downstream neocortical tau accumulation (Roemer-Cassiano et al., 2025; Nabizadeh et al., 2024). Collectively, these findings support a network-based model of neurodegeneration, where connectivity not only constrains the spatial distribution of tau across AD, CBS, and PSP, but also underlies the emergence of clinical symptoms. 
+Atrophy network (AN) mapping offers a practical method for operationalizing this concept. The method takes regions of atrophy identified in patients and examines how these regions are functionally connected in a healthy brain, allowing the interpretation of structural damage within the context of normative network organization (Fox et al., 2014). Previous work has shown that AN mapping successfully identifies syndrome- and symptom-specific networks, including memory and neuropsychiatric symptoms in AD (Tetreault et al., 2020a), alien-limb phenomena in CBS (Tetreault et al., 2020b), and apathy, disinhibition, language deficits, and social cognition across the broader FTLD spectrum (Chu et al., 2024; Phan et al., 2024). These applications have established AN mapping as a valuable approach to relate atrophy patterns to functional networks underlying symptom expression. Yet, most prior studies have concentrated on syndrome-level associations, typically validated against targeted neuropsychological measures. Critically, it remains unclear whether network-based representations of atrophy provide disease-specific signatures across tauopathies or instead capture shared patterns of network vulnerability. Clarifying this distinction is essential, as it determines whether AN mapping should be interpreted primarily as a diagnostic biomarker or as a framework for understanding common mechanisms of neurodegeneration.
+In the present study, we extend AN mapping from a descriptive to a predictive framework by integrating it with machine learning (ML) and deep learning (DL) approaches. We applied this framework to cohorts of AD, CBS, and PSP to assess whether disease-specific network patterns can be identified from AN-derived features. We evaluated AN representations across multiple spatial scales, ranging from low-dimensional embeddings to atlas-based summaries and voxelwise maps, to test whether the granularity of network information influences both clinical relevance and diagnostic discrimination. Our results show that AN mapping identifies a consistent network of neurodegeneration shared across tauopathies, despite substantial heterogeneity in regional atrophy patterns. These common functional patterns are significantly associated with clinical severity, indicating that large-scale network vulnerability contributes to symptom burden across disorders, although it accounts for only a modest proportion of overall clinical variance. Consistently, AN-derived features showed limited disease specificity and did not enable reliable diagnostic discrimination across tauopathies, even when combined with predictive modeling approaches. Together, these findings suggest that AN mapping offers biologically and clinically informative insights at the network level, while highlighting the need for multimodal and individualized approaches to achieve diagnostic and prognostic precision.
+Figure 1. Workflow of the analysis. 
+    2. MATERIALS AND METHODS
+Participants included in the present study were drawn from two large, publicly available neuroimaging cohorts. Part of the data used in the preparation of this article were obtained from the ADNI database (http://adni.loni.usc.edu). The ADNI was launched in 2003 as a public–private partnership, led by Principal Investigator Michael W. Weiner, MD. The primary goal of ADNI has been to test whether serial MRI, PET, other biological markers, and clinical and neuropsychological assessment can be combined to measure the progression of MCI and early AD. The current goals include validating biomarkers for clinical trials, improving the generalizability of ADNI data by increasing diversity in the participant cohort, and to provide data concerning the diagnosis and progression of Alzheimer’s disease to the scientific community. For up-to-date information, see http://adni.loni.usc.edu. Data were also obtained from 4RTNI database (http://4rtni-ftldni.ini.usc.edu/). 4RTNI was launched in early 2011 and is funded through the National Institute of Aging and The Tau Research Consortium. The primary goal of 4RTNI is to identify neuroimaging and biomarker indicators for disease progression in the 4-repeat tauopathy neurodegenerative diseases, progressive supranuclear palsy (PSP) and corticobasal degeneration (CBD). The Principal Investigator is Dr. Adam Boxer, MD, PhD, at the University of California, San Francisco. The data is the result of collaborative efforts at four sites in North America. For more information on 4RTNI, please visit: http://memory.ucsf.edu/research/studies/4rtni.
+2.1 Subjects
+ADNI participants were included if they had (i) T1-weighted (T1w) MRI acquired on 3T, (ii) clinical assessment, (iii) cerebrospinal fluid (CSF) assessment for Aβ and tau biomarkers, and (iv) both Aβ- and tau-PET imaging. The time interval between MRI, PET, and CSF acquisitions was required to be less than 24 months. Aβ and tau status were classified as positive or negative based on established cut-offs from PET and CSF biomarkers, and followed the criteria recommended by the ADNI guidelines. Aβ positivity (Aβ+) was defined as Florbetapir-PET or FBB-PET global SUVRs > 1.11 or > 1.08, respectively (Landau et al., 2012; Royse et al., 2021), together with a CSF Aβ42/40 ratio < 0.056 (ref). Tau positivity (T+) was defined as flortaucipir-PET SUVR > 1.34 in a composite of regions including bilateral entorhinal, amygdala, fusiform, inferior, and middle temporal cortices (Ossenkoppele et al., 2018) as well as CSF pTau181 > 24 pg/mL (Blennow et al., 2019). Clinical diagnoses within the ADNI cohort were assigned according to previously described criteria (Petersen et al., 2010). The control group included cognitively normal (CN) participants with negative Aβ (A-) and tau (T-) biomarkers, based on concordant CSF and PET results. The AD pathology group included participants clinically diagnosed with either mild cognitive impairment (MCI) or AD, who were positive for both Aβ (A+) and tau (T+) pathology, as confirmed by concordant CSF and PET status. 
+Participants with CBS and PSP were obtained from the 4RTNI database. Inclusion criteria required the availability of (i) a T1w MRI on 3T, and (ii) a clinical assessment. Patients’ diagnoses were determined by site behavioral neurologists with expertise, using standardized diagnostic criteria according to study-specific protocols (Armstrong et al., 2013; Höglinger et al., 2017). 
+The normative reference group used for all analyses was selected from CN participants in the ADNI cohort. To minimize the potential confounding effects of demographic differences, propensity score matching was used to match CN participants with the three clinical groups based on age, sex, and years of education. Matching was conducted using R software version 4.2.2 (https://www.r-project.org/) and the RStudio graphical interface (http://www.rstudio.com/). Demographic and clinical features were compared using one-way ANOVA, Kruskal-Wallis, or Pearson chi-square tests, as appropriate based on variable type and distribution. The final study sample included 234 participants: 58 CN, 38 MCI, 34 AD, 60 PSP, and 44 CBS.
+2.2 MRI acquisition and processing
+All structural T1w images were acquired on a 3T scanner using 3D MPRAGE sequences with the following parameters: TR = 2300 ms, TE = 3000 ms, TI = 900 ms, FOV = 240 mm × 256 mm, voxel size = 1 × 1 × 1 mm3. Each MRI volume was visually inspected for gross structural alterations and artifacts. Voxel-based morphometry (VBM) analyses were performed using a standard preprocessing pipeline implemented in SPM12 (Statistical Parametric Mapping, Institute of Neurology, London, UK; https://www.fil.ion.ucl.ac.uk/spm/), following established procedures (Ashburner & Friston, 2011). The pipeline included tissue segmentation, study-specific template creation using the SHOOT algorithm, spatial normalization to MNI space (with default isotropic voxel size of 1.5 mm³), Jacobian modulation, and spatial smoothing using a 5 mm full-width at half-maximum (FWHM) Gaussian kernel (see Supplementary Methods for detailed preprocessing steps). 
+Initially, T1w images were segmented into gray matter (GM), white matter (WM), and CSF using SPM’s unified segmentation algorithm, which simultaneously performs bias field correction, tissue classification, and rigid alignment of tissue maps across individuals. A study-specific template was generated using the Geodesic SHOOT algorithm, a diffeomorphic warping technique builds on the earlier DARTEL pipeline (Ashburner & Friston, 2011). SHOOT iteratively computes nonlinear deformation and Jacobian determinant fields to align tissue class images across all subjects in a common space. The final population-specific template was used in combination with the individual nonlinear deformation fields to normalize the segmentation maps to MNI space. This step applies the subject-to-template deformation and the affine transform from the template to MNI space, resulting in spatially normalized, modulated tissue. Normalization preserved tissue volume via Jacobian modulation, allowing for valid voxelwise comparisons of segmented tissue density (Ashburner & Friston, 2000). Normalized images were resampled to isotropic 1.5 mm voxel size (default SHOOT resolution) and smoothed with a 5 mm full-width at half-maximum (FWHM) Gaussian kernel to accommodate inter-subject anatomical variability and improve signal-to-noise ratio.
+2.2.1 Single-subject atrophy maps 
+Patient atrophy was quantified in SPM by generating W-score (W) maps, which estimate voxelwise deviations in grey matter (GM) volume relative to a normative group, adjusted for demographic variables (Jack et al., 1997; La Joie et al., 2012; Ossenkoppele et al., 2015). Specificallt, GM maps from CN subjects were used to fit a linear model to estimate the expected GM volume for a given demographic profile, together with the residual standard deviation (SD) at each voxel. For each patient (AD, CBS, PSP), W-scores were then computed as the difference between the observed and expected GM values, normalized by the residual SD (Figure 2A):
+
+To improve clinical interpretability, W-maps were sign-inverted so that higher (positive) values indicate greater atrophy. The resulting maps were thresholded at W > 2, corresponding to GM values more than two standard deviations above the normative mean, in line with prior studies (Tetrault et al., 2020; Chu et al., 2024).  For visualization purposes, the AN maps of each patient were binarized and overlaid across groups to identify regions most consistently connected to the atrophy pattern (Figure 3A).
+2.2.2 Atrophy network mapping
+We used a normative resting-state functional connectome derived from 173 healthy young adults from the Human Connectome Project (HCP), scanned at 7 Tesla, to generate atrophy network (AN) maps. These maps represent brain regions that are functionally connected to each patient’s atrophy pattern, as inferred through the normative connectome.
+In detail, rs-fMRI data from the HCP subjects were pre-processed using the minimal HCP preprocessing pipeline (see Pini et al., 2024 for details). Then, for each patient, the thresholded W-map was resampled to a 2 mm voxel size and used as a seed region for functional connectivity analysis (Figure 2B). In each of the 173 HCP subjects, the mean BOLD timeseries from the patient-derived atrophy seed was correlated with the timeseries of every other voxel in the brain. The resulting Pearson correlation maps were Fisher r-to-z transformed and averaged across the HCP individuals, yielding a single AN map for that patient. For visualization purposes, we computed a group-level AN map by averaging the AN map across patients (Figure 3B).
+2.3 Multiscale atrophy network representation
+To examine how the representation of AN maps relates to symptom severity and clinical diagnosis, we analysed the data at three levels of anatomical and spatial detail: (i) low-dimensional embeddings based on Uniform Manifold Approximation and Projection (UMAP), (ii) atlas-based summary metrics, and (iii) full-resolution voxelwise maps (Figure 4). We first applied UMAP (McInnes et al., 2020) to reduce the dimensionality of AN maps while preserving their structural relationships and enabling subject-level visualization. Next, we computed atlas-based summary metrics by averaging values within eight anatomically defined regions of interest (ROI). Seven ROIs corresponded to functional networks combining cortical and cerebellar parcels from the Schaefer and Buckner atlases (Yeo et al., 2011; Buckner et al., 2011), while subcortical structures were grouped using the Tian et al. (2020) parcellation. Lastly, we analysed full-resolution voxel-wise maps, which retain the entire spatial pattern of the AN map. 
+Figure 2. Atrophy network mapping: (A) GM maps from cognitively normal (CN) participants were used to fit a voxelwise linear model estimating normative effects of demographic variables (e.g., age, sex, education), yielding regression coefficients (β) and residual variability (ε). For each patient (AD, CBS, PSP), the observed GM value at each voxel () was compared with the expected GM value predicted by the normative model, computed as the weighted combination of the model coefficients and the patient’s demographic profile . The difference between observed and expected GM was then normalized by the voxelwise residual standard deviation (), yielding a W-score. W-score maps were sign-inverted so that higher values indicate greater atrophy and thresholded to highlight regions showing significant gray matter loss. (B) Atrophy maps were used as seeds for atrophy network mapping. Seed-based functional connectivity was computed using resting-state fMRI data from 176 HCP healthy subjects, and connectivity maps were averaged to obtain a subject-specific atrophy network map reflecting the normative functional networks associated with the individual atrophy pattern.
+        2.4 Clinical correlates
+To evaluate the clinical relevance of AN connectivity, we tested the association between each data representation and Clinical Dementia Rating Sum of Box (CDR) and Mini-Mental State Examination (MMSE) scores, including age, sex, and years of education as covariates. Analyses were conducted on the full sample and separately within diagnostic groups to examine both overall and diagnosis-specific associations. For UMAP dimensions and atlas-based summary metrics, we applied ordinary least squares (OLS) regression. Model significance was assessed using a permutation-based shuffling test (1000 permutations) on the observed R². For voxelwise maps, we employed a non-parametric permutation-based approach using the randomise tool in the FMRIB Software Library (FSL, https://fsl.fmrib.ox.ac.uk/fsl/). Statistical inference was based on 5000 permutations, controlling for age, sex, years of education, and the voxelsize of the atrophy seed. Results were corrected for multiple comparisons using threshold-free cluster enhancement (TFCE) with family-wise error (FWE) correction (p < 0.001).
+2.5 Diagnostic classification
+To assess the diagnostic utility of AN representations, we applied analysis strategies tailored to the dimensionality and statistical structure of each representation, combining unsupervised and supervised approaches. First, we performed unsupervised clustering on UMAP projections to investigate whether patients naturally group according to similarity in AN representations, without relying on diagnostic labels. Second, we conducted a classification analysis to differentiate between diagnostic groups using two distinct approaches: (i) supervised ML models, including Random Forest (RF), k-nearest neighbors (KNN), and Gradient Boosting (GB), which were trained on UMAP-derived features and atlas-based summary metrics, and (ii) convolutional neural networks (CNNs) applied to high-resolution voxel-wise AN maps. Each approach is detailed below.
+Data augmentation was applied exclusively to voxel-wise AN maps and used only within CNN learning models. UMAP-derived embeddings and atlas-based summaries are subject-level representations designed to capture inter-individual variability. Deriving multiple representations per subject from augmented maps would introduce pseudo-replication, violate independence assumptions, and inflate the effective sample size without adding new subject-level information, thereby biasing clustering and classification analyses (Snoek et al., 2019; Scheinost et al., 2019). In contrast, voxel-wise DL models can leverage controlled within-subject variability as a regularization mechanism without altering the unit of inference. Accordingly, augmentation was confined to voxel-wise models, while UMAP-based and atlas-level analyses were performed using a single representation per subject.
+2.5.1 Unsupervised clustering on UMAP embeddings
+K-means clustering algorithm was employed to explore the structure of the data based on spatial proximity between subjects on the two-dimensional UMAP features, without providing diagnostic information. The number of clusters was fixed to three, corresponding to the diagnostic groups included in the study (AD, CBS, PSP), with the aim of evaluating the degree of alignment between data-driven clustering and clinical diagnoses rather than discovering an optimal latent structure. Cluster assignments were compared with ground-truth diagnostic labels using contingency tables and a χ² test of independence (Agresti et al., 2002). The overall agreement between clustering results and diagnostic labels was further quantified using the Adjusted Rand Index (ARI), which measures the similarity between two partitions by evaluating pairwise consistency while correcting for chance.
+2.5.2 Supervised learning approaches
+Supervised binary classification analysis was conducted for all pairwise diagnostic comparisons (AD vs CBS, AD vs PSP, and CBS vs PSP) using both ML and DL methods. For all models, data were split at the subject level into training (80%) and held-out test (20%) sets, with stratification to preserve class balance. The test set was kept completely independent and was not used during model training, hyperparameter tuning, or data augmentation. For ML analyses, RF, KNN, and GB classifiers were trained using UMAP-derived features and atlas-based summary metrics. Hyperparameters were optimized via grid-search within the training set. For voxel-wise AN maps, we implemented a 3D CNN framework. Prior to training, images were normalized using voxelwise Min–Max scaling. To increase the effective size of the training dataset while avoiding data leakage, data augmentation was applied exclusively within the training set by exploiting variability in the normative functional connectome. Specifically, instead of averaging connectivity maps across all 173 HCP subjects, the HCP cohort was divided into 10 fixed subgroups, and one average AN map was computed per subgroup. This procedure yielded 10 augmented AN maps per patient, all derived from the same atrophy seed but reflecting slightly different normative connectivity profiles. Subgroup definitions were kept identical across patients. Augmented maps were used only during training, whereas validation and test sets included exclusively the non-augmented maps. Multiple CNN architectures were evaluated, including 3D ResNet, 3D DenseNet, and 3D VGG16. Hyperparameters for all models were tuned using an inner grid-search cross-validation procedure. The hyperparameter search space included network architecture (3D ResNet, 3D DenseNet, 3D VGG16), batch size (4, 8, 16), learning rate (1e−3, 1e−4), L2 weight decay (1e−4), optimizer (Adam), and number of training epochs (50). Each model configuration was optimized independently, and the best-performing setting identified during cross-validation was selected for evaluation on the held-out test set. In all pairwise comparisons, the optimal configuration consistently corresponded to a DenseNet architecture trained for 50 epochs with a batch size of 8, using the Adam optimizer with learning rate of 1e-3 and L2 weight decay of 1e-4 to mitigate overfitting. Model robustness was further assessed by repeating the entire training and evaluation pipeline across five different random seeds. Within each repetition, a 5-fold cross-validation was performed on the training data. Classification performance was evaluated on the hold-out test set using accuracy, precision, recall, F1 score, and area under the receiver operating characteristic curve (AUC–ROC). Final performance metrics are reported as mean ± standard deviation across repetitions, and confusion matrices were generated for each model. 
+    3. RESULTS
+3.1 Demographic data
+Demographic and clinical characteristics of the sample are reported in Table 1. The final dataset included 234 participants: 58 CN, 72 AD, 44 CBS, and 60 PSP. Significant age differences were observed across groups (p < 0.001), driven by younger age in CBS compared with AD. No significant differences were detected in sex distribution. Years of education differed marginally across groups, with CN participants showing higher education levels than PSP patients, although post-hoc comparisons did not survive. CN participants showed lower levels of global cognitive impairment on the CDR and higher performance on MMSE, compared to all patient groups (p < 0.001). No differences in CDR and MMSE were observed between the patients’ groups.
+Dataset
+ADNI
+
+4RTNI
+
+
+
+Clinical Group
+CN
+AD
+
+CBS
+PSP
+
+p value
+Significant comparisons
+N
+58
+72
+
+44
+60
+
+    • 
+    • 
+Age, years
+71±8
+74±9
+
+67±7
+71±8
+
+<0.001a
+AD > CBS
+Sex, male (%)
+19 (33)
+35 (49)
+
+21 (48)
+25 (42)
+
+0.278b
+
+Years of Education
+17±2
+16±2
+
+16±4
+16±4
+
+0.037c
+
+CDR
+0.1±0.3
+3.6±3.0
+
+4.4±3.6h
+4.5±3.6i
+
+<0.001c
+CN<AD, CN<CBS, CN<PSP
+MMSE
+29.1±1.1
+23.9±4.4
+
+22.9±6.9i
+25.4±3.9l
+
+<0.001c
+CN>AD, CN>CBS, CN>PSP
+Data are reported as mean ± standard deviations. CDR SB = Clinical Dementia Rating - Sum of Boxes, MMSE = Mini-Mental State Examination; CN = Cognitively Normal; AD = Alzheimer’s Disease; CBS = Corticobasal Syndrome; PSP = Progressive Supranuclear Palsy.
+aComparison performed using one-way ANOVA, followed by Tukey’s HSD post-hoc test (multiple comparisons corrected).
+bComparison performed using chi-square test.
+cComparison performed using Kruskal–Wallis test, followed by Dunn’s post-hoc test (Bonferroni-corrected).
+Table 1. Demographic and clinical characteristics of participants.
+3.2 Single-subject atrophy patterns and atrophy network mapping
+At the single-subject level, voxelwise atrophy maps revealed marked heterogeneity both within and across diagnostic groups (Figure 3A). Spatial convergence of atrophy was limited even within the same diagnosis. Among the three groups, AD patients exhibited the highest degree of anatomical consistency, although fewer than half of individuals showed overlapping atrophy in canonical medial temporal regions, including the hippocampus, amygdala, and parahippocampal gyrus. In CBS, atrophy was spatially heterogeneous and involved frontal regions (including precentral and middle frontal gyri and anterior cingulate cortex), subcortical nuclei (putamen and thalamus), and parietal cortices, often with asymmetric distributions. PSP patients displayed the most diffuse and variable atrophy patterns, encompassing frontal cortices, basal ganglia, thalamus, and temporo-occipital regions. When individual atrophy maps were projected onto a normative functional connectome using AN mapping, a markedly different pattern emerged (Figure 3B). Despite the heterogeneity of anatomical atrophy, AN maps showed substantial convergence across diagnostic groups. Across AD, CBS, and PSP, atrophied regions were consistently functionally connected to temporo-occipital and frontoparietal networks, with qualitatively similar large-scale connectivity patterns observed at the group level. This convergence indicates that distinct and heterogeneous atrophy patterns are map onto partially overlapping normative functional networks, resulting in reduced inter-individual and inter-group variability at the network level.
+Figure 3. Frequency of atrophy patterns and mean atrophy network maps across clinical groups: (A) overlap of patients’ atrophy maps rendered on cortical surfaces, showing for each voxel the percentage of subjects with atrophy (W ≥ 2), stratified by diagnostic group. (B) Group-level maps showing the average Fisher z-transformed functional connectivity to atrophied regions.
+3.3 Multiscale atrophy network representations and clinical correlates
+In the full sample, OLS revealed that UMAP-derived features were positively associated with CDR (R² = 0.094; p = 0.006) and negatively associated with MMSE (R² = 0.119; p < 0.001) (Figure 5A), although explained only a modest proportion of variance. Stratified analyses revealed substantial heterogeneity across diagnostic groups. In the AD group, AN were significantly associated with both CDR (R² = 0.309, p < 0.001) and MMSE (R² = 0.199, p = 0.010). In CBS, a significant association was observed for CDR (R² = 0.307, p = 0.017), whereas associations with MMSE did not reach significance. In PSP, no significant associations were detected for either outcome.
+We then assessed the association between atlas-based connectivity metrics and clinical severity. In the full sample, the models explained a moderate proportion of variance in both CDR (R² = 0.270; p < 0.001) and MMSE (R² = 0.281; p < 0.001) (Figure 5B). In subgroup analyses, AD group showed associations with both CDR (R² = 0.438; p < 0.001) and MMSE (R² = 0.355; p = 0.003). In the CBS group, models reached statistical significance for both outcomes (CDR: R² = 0.461, p = 0.032; MMSE: R² = 0.549, p = 0.006). In PSP, atlas-based models did not show significant associations with either clinical outcome. 
+Finally, we performed voxelwise analysis to localize regions associated with clinical severity across the brain. Higher AN connectivity was associated with higher CDR scores and lower MMSE scores, reflecting increased clinical and cognitive impairment (Figure 5C). Regression analysis with CDR scores revealed significant clusters (blue) in the bilateral ventromedial and dorsomedial prefrontal cortex (frontal pole, anterior cingulate, paracingulate, medial frontal cortex), as well as in the right dorsolateral prefrontal cortex (superior and middle frontal gyri). Subcortical involvement included bilateral caudate nucleus, nucleus accumbens, and thalamus. Additional clusters were detected in bilateral cerebellar regions. For MMSE scores, significant clusters were primarily localized to bilateral ventromedial prefrontal cortex (anterior cingulate, paracingulate, subcallosal regions, and frontal pole). All voxelwise results survived threshold-free cluster enhancement with family-wise error correction at p < 0.001.
+Figure 4. Multiscale representation of subject-level atrophy network maps: (A) low-dimensional UMAP-based representation of individual AN map. Each dot represents a patient, colored by diagnostic group. (B) Mean functional connectivity to atrophied regions, summarized across merged cortical-cerebellar functional networks and a single subcortical mask encompassing all subcortical nuclei. Each dot represents a patient, colored by diagnostic group. AD = Alzheimer’s Disease; CBS = Corticobasal Syndrome; PSP = Progressive Supranuclear Palsy; DAN = Dorsal Attention Network; DMN = Default Mode Network; FPN = Frontoparietal Network; LMB = Limbic Network; SMN = Sensorimotor Network; SUB = Subcortical; VAN = Ventral Attention Network; VIS = Visual Network.
+3.4 Diagnostic classification based on atrophy network representations
+3.4.1 Unsupervised clustering 
+Unsupervised k-means clustering applied to the two-dimensional UMAP representation of atrophy network maps (k = 3) revealed limited correspondence between data-driven clusters and clinical diagnoses (Figure 6A). Contingency table analyses showed substantial overlap across diagnostic groups. Subjects from AD, CBS, and PSP were distributed across all three clusters (Table SX), and no cluster contained a predominant proportion of any single diagnosis (Table SX). Consistent with these descriptive findings, a chi-square test of independence revealed a statistically significant but weak association between cluster assignment and diagnosis (χ² = 13.91, p = 0.007). However, the magnitude of this association was negligible, as reflected by a very low Adjusted Rand Index (ARI = 0.011), indicating minimal agreement between unsupervised clustering results and clinical diagnostic labels.
+
+Figure 5. Clinical prediction results: (A–B) Ordinary Least Squares (OLS) results predicting clinical and cognitive severity scores (top: Clinical Dementia Score - CDR; bottom: Mini-Mental State Examination - MMSE) across all subjects using two types of AN representations: UMAP-based (A) and atlas-based (B). Each dot represents a patient, color-coded by diagnostic group. (C) Results of voxelwise analysis showing significant associations between AN maps and clinical and cognitive scores. Blue-light clusters indicate voxels positively associated with CDR, while red-yellow clusters correspond to regions negatively associated with MMSE scores. Statistical maps are thresholded at p < 0.001 and display as t-scores.
+3.4.2 Supervised machine learning classification
+Supervised machine learning models were evaluated using a 5-fold cross-validation strategy repeated across five different random seeds. To assess statistical robustness beyond cross-validation performance, permutation testing was performed for each model–seed configuration. Performance metrics averaged across five random seeds are summarized in Table 2, and confusion matrices are shown in Figure 6B. Across all pairwise diagnostic comparisons, mean classification accuracy generally ranged between 50% and 70%, with higher values observed only in specific model–feature combinations. Overall performance varied substantially across diagnostic contrasts, algorithms, and random seeds, indicating limited robustness. In the AD vs PSP comparison, the highest mean accuracy was achieved using UMAP-based KNN (70%, AUC–ROC = 0.706). However, this performance reached statistical significance only in two out of five random seeds. For the AD vs CBS contrast, UMAP-based GB yielded a higher mean accuracy (67%, AUC–ROC = 0.585). In the PSP vs CBS contrast, the highest classification accuracy was also achieved using UMAP-based features, with GB reaching 75% accuracy and an AUC–ROC of 0.678. Atlas-based RF models showed a slightly lower mean accuracy (70%, AUC–ROC = 0.668). However, atlas-based representations showed greater statistical consistency, with multiple algorithms yielding significant results across random seeds, whereas UMAP-based models did not demonstrate consistent significance. 
+Taken together, these results indicate that UMAP-based representations tend to achieve higher mean classification accuracy across diagnostic contrasts. However, when statistical robustness is considered, reliable performance is limited, with consistent and statistically significant discrimination observed primarily for the PSP versus CBS contrast, particularly when using atlas-based representations.
+Comparison
+Model
+Accuracy
+Precision
+Recall
+F1
+AUC-ROC
+UMAP-based
+AD vs PSP
+GB
+0.667 ± 0.026
+0.665 ± 0.029
+0.665 ± 0.030
+0.663 ± 0.028
+0.729 ± 0.012
+
+KNN
+0.704 ± 0.000
+0.706 ± 0.000
+0.708 ± 0.000
+0.703 ± 0.000
+0.706 ± 0.000
+
+RF
+0.637 ± 0.041
+0.632 ± 0.042
+0.632 ± 0.042
+0.632 ± 0.042
+0.706 ± 0.007
+AD vs CBS
+GB
+0.667 ± 0.000
+0.642 ± 0.000
+0.600 ± 0.000
+
+0.597 ± 0.000
+0.585 ± 0.000
+
+KNN
+0.583 ± 0.000
+0.556 ± 0.000
+0.556 ± 0.000
+0.556 ± 0.000
+0.526 ± 0.000
+
+RF
+0.650 ± 0.023
+0.619 ± 0.028
+0.604 ± 0.025
+0.606 ± 0.028
+0.578 ± 0.015
+PSP vs CBS
+GB
+0.752 ± 0.021
+0.775 ± 0.017
+0.725 ± 0.025
+0.729 ± 0.028
+0.678 ± 0.016
+
+KNN
+0.619 ± 0.000
+0.613 ± 0.000
+0.583 ± 0.000
+0.571 ± 0.000
+0.546 ± 0.000
+
+RF
+0.705 ± 0.021
+0.705 ± 0.021
+0.683 ± 0.025
+0.685 ± 0.027
+0.668 ± 0.015
+Atlas-based
+AD vs PSP
+GB
+0.600 ± 0.031
+0.593 ± 0.036
+0.582 ± 0.028
+0.578 ± 0.026
+0.648 ± 0.019
+
+KNN
+0.519 ± 0.000
+0.525 ± 0.000
+0.525 ± 0.000
+0.519 ± 0.000
+0.586 ± 0.000
+
+RF
+0.615 ± 0.020
+0.611 ± 0.018
+0.610 ± 0.017
+0.609 ± 0.018
+0.655 ± 0.020
+AD vs CBS
+GB
+0.583 ± 0.000
+0.516 ± 0.000
+0.511 ± 0.000
+0.496 ± 0.000
+0.548 ± 0.000
+
+KNN
+0.583 ± 0.000
+0.476 ± 0.000
+0.489 ± 0.000
+0.444 ± 0.000
+0.530 ± 0.000
+
+RF
+0.625 ± 0.059
+0.588 ± 0.090
+0.558 ± 0.056
+0.550 ± 0.060
+0.538 ± 0.023
+PSP vs CBS
+GB
+0.552 ± 0.026
+0.540 ± 0.024
+0.539 ± 0.023
+0.539 ± 0.022
+0.567 ± 0.010
+
+KNN
+0.571 ± 0.000
+0.558 ± 0.000
+0.556 ± 0.000
+0.555 ± 0.000
+0.477 ± 0.000
+
+RF
+0.600 ± 0.031
+0.593 ± 0.036
+0.582 ± 0.028
+0.578 ± 0.026
+0.648 ± 0.019
+Table 2. Supervised machine learning classification performance for pairwise diagnostic contrasts using UMAP-based and atlas-based atrophy network representations. Three classifiers were evaluated: Gradient Boosting (GB), k-Nearest Neighbors (KNN), and Random Forest (RF). Values are reported as mean ± standard deviation across five random seeds. The algorithm achieving the highest mean accuracy is indicated in bold.
+3.4.3 Supervised deep learning classification
+Classification performance was further evaluated using a 3D CNN trained on voxelwise AN maps. Performance metrics averaged across five random seeds are reported in Table 3, and confusion matrices are shown in Figure 6C. Overall, CNN models showed lower classification accuracy and greater variability compared with ML approaches. Across diagnostic contrasts, mean accuracy ranged from 47% to 60%, with substantial variability across random seeds. For the AD vs PSP contrast, CNN accuracy was weakest (47%, AUC-ROC = XX). The PSP vs CBS contrast showed comparatively better classification accuracy (57%, AUC-ROC = XX), although variability across seeds persisted. In the AD vs CBS contrast, a moderate mean accuracy (60%, AUC-ROC = XX) was achieved, but performance was unstable across random seeds. 
+These findings suggest that CNN models applied to voxelwise AN maps do not provide robust or generalizable improvements in diagnostic classification performance relative to ML approaches.
+Comparison
+Accuracy
+Precision
+Recall
+F1
+AUC-ROC
+AD vs PSP
+0.474 ± 0.113
+0.392 ± 0.174
+0.350 ± 0.208
+0.359 ± 0.167
+
+AD vs CBS
+0.600 ± 0.091
+0.560 ± 0.253
+0.489 ± 0.202
+0.465 ± 0.090
+
+PSP vs CBS
+0.562 ± 0.052
+0.589 ± 0.037
+0.784 ± 0.126
+0.669 ± 0.052
+
+Table 3. Supervised deep learning classification performance for pairwise diagnostic contrasts obtained using a 3D CNN trained on voxelwise AN maps. Results are reported as mean ± standard deviation across five random seeds.
+
+Figure 6. Diagnostic classification results: (A) Unsupervised clustering based on UMAP representation of AN maps. Top: points labeled according to K-means clustering results (k=3). Bottom: points labeled based on diagnostic group. (B) Confusion matrices from ML classification models on UMAP-based (left) and atlas-based (right) AN maps representation. Each matrix corresponds to a pairwise diagnostic comparison. Performance is shown in terms of raw classification counts; higher values along the diagonal indicate better diagnostic separation. For the UMAP-based analysis, the K-Nearest Neighbors (KNN) classifier was selected, with one representative seed shown per pairwise comparison; for the atlas-based analysis, Random Forest yielded the best performance. (C) Confusion matrices from the convolutional neural network (CNN) model trained on voxel-based AN maps with data augmentation. Results from a single representative seed are shown for each comparison. 
+
+    4. DISCUSSION
+AN mapping is a network-based approach that infers the functional circuits associated with regions of structural damage by projecting atrophy maps onto a normative connectome. This study aimed to test whether AN mapping can identify disease-specific network signatures across AD, CBS, and PSP. Building on the framework that links tau propagation to the organization of large-scale brain networks, we hypothesized that if tau pathology spreads through these interconnected systems, driving downstream neurodegeneration, the resulting AN maps would highlight the network preferentially affected in each disorder and could therefore provide diagnostic information. By combining single-subject atrophy mapping, multiscale AN representations, clinical correlates, and predictive modeling, our results consistently indicate that AN mapping primarily emphasizes convergent functional network involvement across tautopathies despite substantial heterogeneity in regional atrophy patterns.
+At the level of structural damage, individual atrophy maps showed marked inter-individual and inter-group variability, consistent with the well-documented anatomical and clinical heterogeneity of these disorders (Armstrong et al., 2013; Kovacs et al., 2020). However, when heterogeneous atrophy patterns were projected onto a normative functional connectome, AN maps converged across diagnostic groups onto partially overlapping large-scale networks, prominently involving frontoparietal, temporo-occipital, and medial prefrontal regions. This convergence indicates that anatomically distinct patterns of neurodegeneration are embedded within a limited set of functional networks. Rather than preserving disease-specific topographies, AN mapping appears to compress spatial heterogeneity into shared network vulnerability, highlighting circuits that are central to cognition and behavior and therefore particularly susceptible to the clinical impact of neurodegeneration (ref). 
+At the same time, the observed convergence is likely reinforced by methodological properties of AN mapping itself. Because atrophy seeds are projected onto a healthy normative connectome, the resulting AN maps reflect how damaged regions are embedded within an intact functional architecture, rather than capturing disease-specific alterations in connectivity that may arise from functional reorganization, compensatory mechanisms, or maladaptive network changes (Cividini et al., 2021). Recent connectomic frameworks emphasize that, even within the same neurodegenerative syndrome, disease epicenters may vary substantially across individuals due to genetic, epigenetic, and neurodevelopmental factors, limiting the accuracy of subject-level predictions based on connectivity alone. Notably, individual predictions grounded exclusively in connectivity patterns have shown reduced performance in specific subgroups, suggesting that trans-neuronal spreading models do not fully capture inter-individual heterogeneity and that multiple, interacting mechanisms contribute to network degeneration (Filippi et al., 2023). In this context, projecting individual atrophy patterns onto a normative functional connectome, while advantageous for highlighting shared large-scale architecture, is expected to further attenuate sensitivity to disease- and subject-specific functional reorganization.
+Despite this limited disease specificity, AN-derived measures showed meaningful associations with clinical severity. Across the full cohort, and particularly within AD and CBS, stronger expression of AN connectivity was associated with higher CDR scores and lower MMSE performance. Voxelwise analyses further localized these associations to medial and dorsolateral prefrontal cortices, subcortical nuclei, and cerebellar regions, consistent with circuits supporting executive control, cognitive integration, and goal-directed behavior (ref). These findings suggest that AN mapping captures network-level vulnerability that is clinically relevant and correlates with global disease burden, thereby extending prior work that has largely focused on symptom-specific or domain-specific outcomes (ref). Importantly, however, the magnitude of these associations was modest, with AN-derived measures explaining only a limited proportion of the variance in global clinical scores. This is consistent with the level of clinical information captured by AN maps, which index large-scale network vulnerability associated with structural degeneration. In contrast, global clinical scales such as the MMSE and CDR reflect an integrated expression of disease severity arising from multiple interacting processes (ref). These processes include network-level disconnection, as well as molecular pathology, compensatory mechanisms, and individual cognitive reserve (Ewers et al., 2021). From this perspective, the observed associations indicate that AN vulnerability contributes meaningfully, yet only partially, to global clinical impairment. In PSP, the absence of robust associations between AN measures and global clinical scores warrants a cautious interpretation. In PSP, disability is largely driven by motor, oculomotor, and axial symptoms, which depend on cortico-subcortical and brainstem circuits and may therefore show only a partial correspondence with cortical network vulnerability captured by AN mapping (Cope et al., 2018; Whiteside et al., 2023). Accordingly, limited clinical associations in PSP should not be interpreted as evidence against network involvement, but rather as reflecting a mismatch between macroscale network vulnerability and summary clinical measures dominated by non-cognitive symptom contributions.
+To further assess whether AN maps contained latent information useful for diagnostic discrimination, we evaluated their performance in unsupervised and supervised classification frameworks. Unsupervised clustering of low-dimensional AN representations showed minimal alignment with clinical diagnoses, indicating that the intrinsic structure of AN features does not naturally segregate AD, CBS, and PSP. Supervised machine learning yielded moderate classification accuracy in selected model–feature combinations; however, performance varied substantially across diagnostic contrasts, algorithms, and random seeds, and permutation testing indicated limited robustness beyond cross-validation. UMAP-based representations generally achieved higher mean accuracy but showed marked instability across random seeds, with statistically significant results observed only inconsistently. This instability likely reflects the sensitivity of low-dimensional embeddings to sampling variability in relatively small and heterogeneous cohorts, limiting their reliability despite higher average performance (McInnes et al., 2020; Snoek et al., 2019). By contrast, atlas-based representations yielded slightly lower accuracy but greater statistical consistency, particularly for the PSP versus CBS contrast, where multiple algorithms showed significant performance across repetitions. DL models trained on voxelwise AN maps did not improve diagnostic discrimination. CNNs showed lower accuracy and greater variability across random seeds compared with ML approaches, with no consistent advantage across contrasts. This likely reflects the intrinsically smooth and highly convergent nature of AN maps, which may not contain sufficiently rich spatial information to support DL-based separation of diagnostic groups. In this context, ML and DL models act as probes of the informational content of AN maps, showing that these representations capture reproducible, transdiagnostic network vulnerability but lack sufficient disease-specific signal for reliable diagnostic separation.
+The present findings have direct implications for the translational use of AN mapping. Although AN maps provide a meaningful description of convergent network-level vulnerability across tauopathies, their limited disease specificity and strong convergence across individuals substantially constrain their utility at the single-patient level. Because AN mapping projects individual atrophy patterns onto a normative functional architecture, the resulting representations emphasize shared large-scale networks while attenuating inter-individual and disease-specific functional differences. Therefore, AN maps lack the spatial and subject-specific resolution required for precision-medicine applications, including individualized prognostic stratification or the identification of personalized targets for non-invasive or invasive neuromodulation. In this context, AN mapping should not be interpreted as a tool for patient-level intervention planning, but rather as a framework for understanding transdiagnostic mechanisms of network vulnerability underlying clinical impairment. Future studies integrating AN mapping with molecular biomarkers, patient-specific functional connectivity, and longitudinal designs will be crucial for better characterizing the mechanisms underlying network-level vulnerability and for disentangling shared from disease-specific processes in neurodegenerative disorders.
+ACKNOWLEDGMENTS
+Data collection and sharing for the Alzheimer's Disease Neuroimaging Initiative (ADNI) is funded by the National Institute on Aging (National Institutes of Health Grant U19AG024904). The grantee organization is the Northern California Institute for Research and Education. In the past, ADNI has also received funding from the National Institute of Biomedical Imaging and Bioengineering, the Canadian Institutes of Health Research, and private sector contributions through the Foundation for the National Institutes of Health (FNIH) including generous contributions from the following: AbbVie, Alzheimer’s Association; Alzheimer’s Drug Discovery Foundation; Araclon Biotech; BioClinica, Inc.; Biogen; BristolMyers Squibb Company; CereSpir, Inc.; Cogstate; Eisai Inc.; Elan Pharmaceuticals, Inc.; Eli Lilly and Company; EuroImmun; F. Hoffmann-La Roche Ltd and its affiliated company Genentech, Inc.; Fujirebio; GE Healthcare; IXICO Ltd.; Janssen Alzheimer Immunotherapy Research & Development, LLC.; Johnson & Johnson Pharmaceutical Research & Development LLC.; Lumosity; Lundbeck; Merck & Co., Inc.; Meso Scale Diagnostics, LLC.; NeuroRx Research; Neurotrack Technologies; Novartis Pharmaceuticals Corporation; Pfizer Inc.; Piramal Imaging; Servier; Takeda Pharmaceutical Company; and Transition Therapeutics.
+Data collection and sharing for this project was funded by the 4-Repeat Tauopathy Neuroimaging Initiative (4RTNI) (National Institutes of Health Grant R01 AG038791) and through generous contributions from the Tau Research Consortium. The study is coordinated through the University of California, San Francisco, Memory and Aging Center. 4RTNI data are disseminated by the Laboratory for Neuro Imaging at the University of Southern California.
+
+
+
+
+TABLE supplementary?
+The table shows the data split for each pairwise comparison, indicating which subjects were assigned to the training and testing sets.
+Groups
+Training
+Testing
+AD vs PSP
+105
+27
+AD vs CBS
+PSP vs CBS
+92
+83
+24
+21
+TABLES supplementary?
+Panel (A) shows the percentage distribution of subjects within each diagnostic group across the three clusters, indicating how subjects from AD, CBS, and PSP were assigned to clusters 0, 1, and 2. anel (B) shows the percentage distribution of diagnostic groups within each cluster, indicating the proportion of AD, CBS, and PSP subjects in each cluster.
+(A) % rispetto al gruppo diagnostic                             
+Cluster
+AD
+CBS
+PSP
+0
+34.72
+38.64
+40.00
+1
+34.72
+47.73
+53.33
+2
+30.56
+13.64
+6.67
+ (B)  % rispetto al cluster
+
+
+REFERENCES
+
+
