@@ -143,6 +143,76 @@ def evaluate_metrics(y_true, y_pred, y_proba=None):
             metrics["auc_roc"] = None
     return metrics
 
+def compute_bootstrap_ci(y_true, y_pred, y_proba=None, n_bootstrap=1000, confidence=0.95, seed=42):
+    """
+    Compute bootstrap confidence intervals for classification metrics.
+    
+    Args:
+        y_true: True labels
+        y_pred: Predicted labels
+        y_proba: Predicted probabilities (optional, for AUC)
+        n_bootstrap: Number of bootstrap iterations
+        confidence: Confidence level (default 0.95 for 95% CI)
+        seed: Random seed for reproducibility
+    
+    Returns:
+        Dictionary with metrics and their confidence intervals
+    """
+    from sklearn.utils import resample
+    
+    np.random.seed(seed)
+    n_samples = len(y_true)
+    
+    bootstrap_metrics = {
+        'accuracy': [],
+        'precision': [],
+        'recall': [],
+        'f1': []
+    }
+    
+    if y_proba is not None:
+        bootstrap_metrics['auc_roc'] = []
+    
+    for i in range(n_bootstrap):
+        # Resample with replacement
+        indices = resample(range(n_samples), replace=True, random_state=seed+i)
+        y_true_boot = y_true[indices]
+        y_pred_boot = y_pred[indices]
+        
+        # Compute metrics
+        bootstrap_metrics['accuracy'].append(accuracy_score(y_true_boot, y_pred_boot))
+        bootstrap_metrics['precision'].append(precision_score(y_true_boot, y_pred_boot, average="macro", zero_division=0))
+        bootstrap_metrics['recall'].append(recall_score(y_true_boot, y_pred_boot, average="macro", zero_division=0))
+        bootstrap_metrics['f1'].append(f1_score(y_true_boot, y_pred_boot, average="macro", zero_division=0))
+        
+        if y_proba is not None:
+            y_proba_boot = y_proba[indices]
+            try:
+                auc = roc_auc_score(y_true_boot, y_proba_boot[:, 1])
+                bootstrap_metrics['auc_roc'].append(auc)
+            except:
+                bootstrap_metrics['auc_roc'].append(np.nan)
+    
+    # Compute confidence intervals
+    alpha = (1 - confidence) / 2
+    lower_percentile = alpha * 100
+    upper_percentile = (1 - alpha) * 100
+    
+    ci_results = {}
+    for metric, values in bootstrap_metrics.items():
+        values = np.array(values)
+        values = values[~np.isnan(values)]  # Remove NaN values
+        
+        if len(values) > 0:
+            ci_results[metric] = {
+                'mean': np.mean(values),
+                'ci_lower': np.percentile(values, lower_percentile),
+                'ci_upper': np.percentile(values, upper_percentile)
+            }
+        else:
+            ci_results[metric] = {'mean': None, 'ci_lower': None, 'ci_upper': None}
+    
+    return ci_results
 def train_and_evaluate_model(base_model, model_name, param_dict, data: DataSplit, params: dict):
     """Train model with or without hyperparameter tuning and evaluate on test data."""
     seed = params["seed"]
@@ -185,7 +255,21 @@ def train_and_evaluate_model(base_model, model_name, param_dict, data: DataSplit
             save_path=os.path.join(params["path_umap_class_seed"], f"conf_matrix_test_{model_name}.png")
         )
 
-        return best_model, best_params, evaluate_metrics(data.y_test, y_pred, y_proba), y_pred
+        # Compute metrics with bootstrap CI
+        metrics = evaluate_metrics(data.y_test, y_pred, y_proba)
+        
+        # Add bootstrap confidence intervals if enabled
+        if params.get("bootstrap_ci", False):
+            ci_results = compute_bootstrap_ci(
+                y_true=data.y_test,
+                y_pred=y_pred,
+                y_proba=y_proba,
+                n_bootstrap=params.get("n_bootstrap", 1000),
+                seed=seed
+            )
+            metrics['bootstrap_ci'] = ci_results
+
+        return best_model, best_params, metrics, y_pred
 
     else:
         base_model.set_params(**param_dict)
@@ -204,6 +288,20 @@ def train_and_evaluate_model(base_model, model_name, param_dict, data: DataSplit
             title=f"{model_name} | Seed {seed} | Test Confusion",
             save_path=os.path.join(params["path_umap_class_seed"], f"conf_matrix_test_{model_name}.png")
         )
+
+        # Compute metrics with bootstrap CI
+        metrics = evaluate_metrics(data.y_test, y_pred, y_proba)
+        
+        # Add bootstrap confidence intervals if enabled
+        if params.get("bootstrap_ci", False):
+            ci_results = compute_bootstrap_ci(
+                y_true=data.y_test,
+                y_pred=y_pred,
+                y_proba=y_proba,
+                n_bootstrap=params.get("n_bootstrap", 1000),
+                seed=seed
+            )
+            metrics['bootstrap_ci'] = ci_results
 
         # Run permutation test if specified
         if params.get("permutation_test", False):
@@ -225,12 +323,12 @@ def train_and_evaluate_model(base_model, model_name, param_dict, data: DataSplit
         # Save predictions with subject IDs
         df_preds = pd.DataFrame({
             "ID": test_ids,
-            "Seed": params["seed"],
-            "Model": model_name,
-            "TrueLabel": data.le.inverse_transform(data.y_test),
-            "PredLabel": data.le.inverse_transform(y_pred)
+            "y_true": data.le.inverse_transform(data.y_test),
+            "y_pred": data.le.inverse_transform(y_pred)
         })
-        return best_model, best_params, evaluate_metrics(data.y_test, y_pred, y_proba), y_pred
+        df_preds.to_csv(os.path.join(params["path_umap_class_seed"], f"test_predictions_{model_name}.csv"), index=False)
+
+        return best_model, best_params, metrics, y_pred
 
 
 def classification_pipeline(data: DataSplit, params: dict):
