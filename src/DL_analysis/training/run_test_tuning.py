@@ -5,10 +5,10 @@ import subprocess
 
 # === CONFIGURATION ===
 csv_path = "/src/cnn/tuning/adni_psp.csv"
-base_config_path = "/data/users/etosato/ANM_Verona/src/config/cnn_config.json"
+base_config_path = "/data/users/etosato/ANM_Verona/src/DL_analysis/config/cnn_config.json"
 tuning_results_dir = "/src/cnn/tuning_results"
-config_save_path = "/data/users/etosato/ANM_Verona/src/config/cnn_config.json"
-run_script_path = "/src/cnn/training/run.py"
+config_save_path = "/data/users/etosato/ANM_Verona/src/DL_analysis/config/cnn_config.json"
+run_script_path = "/data/users/etosato/ANM_Verona/src/DL_analysis/training/run.py"
 completed_runs = []
 
 # === LOAD CSV ===

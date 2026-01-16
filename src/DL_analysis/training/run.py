@@ -14,12 +14,12 @@ src_path = os.path.join(project_root)  # qui ci arrivi a .../ANM_Verona/src
 if src_path not in sys.path:
     sys.path.insert(0, src_path)
 
-from cnn.datasets import FCDataset, AugmentedFCDataset
-from cnn.models import ResNet3D, DenseNet3D, VGG16_3D
-from train import train, validate, plot_losses
-from testing.test import evaluate, compute_metrics, plot_confusion_matrix
+from DL_analysis.cnn.datasets import FCDataset, AugmentedFCDataset
+from DL_analysis.cnn.models import ResNet3D, DenseNet3D, VGG16_3D
+from DL_analysis.training.train import train, validate, plot_losses
+from DL_analysis.testing.test import evaluate, compute_metrics, plot_confusion_matrix
 
-from utils.cnn_utils import (
+from DL_analysis.utils.cnn_utils import (
     create_training_summary,
     create_testing_summary,
     resolve_split_csv_path
@@ -381,7 +381,7 @@ def main_worker(params, config_id = None ):
 
 if __name__ == '__main__':
     # Load json file
-    config_path = "/data/users/etosato/ANM_Verona/src/config/cnn_config.json"
+    config_path = "/data/users/etosato/ANM_Verona/src/DL_analysis/config/cnn_config.json"
 
     with open(config_path, "r") as f:
         config = json.load(f)

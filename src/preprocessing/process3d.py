@@ -4,7 +4,7 @@ import glob
 import numpy as np
 import nibabel as nib
 from tqdm import tqdm
-from loading.config import ConfigLoader
+from ML_analysis.loading.config import ConfigLoader
 
 
 def list_data(input_dir, augmented=False):

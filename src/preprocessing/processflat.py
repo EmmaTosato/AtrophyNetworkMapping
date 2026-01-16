@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import nibabel as nib
 from sklearn.mixture import GaussianMixture
-from loading.config import ConfigLoader
+from ML_analysis.loading.config import ConfigLoader
 
 # Suppress all warnings to keep output clean
 warnings.filterwarnings("ignore")

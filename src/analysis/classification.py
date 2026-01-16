@@ -172,8 +172,20 @@ def train_and_evaluate_model(base_model, model_name, param_dict, data: DataSplit
         os.makedirs(tuning_dir, exist_ok=True)
         df_grid[keep_cols].round(3).to_csv(os.path.join(tuning_dir, f"cv_grid_{model_name}.csv"), index=False)
 
-        # Skips test evaluation
-        return None, best_params, None, None
+        # Evaluate on test set
+        y_pred = best_model.predict(data.x_test)
+        try:
+            y_proba = best_model.predict_proba(data.x_test)
+        except:
+            y_proba = None
+
+        plot_confusion_matrix(
+            data.y_test, y_pred, class_names=data.le.classes_,
+            title=f"{model_name} | Seed {seed} | Test Confusion (after tuning)",
+            save_path=os.path.join(params["path_umap_class_seed"], f"conf_matrix_test_{model_name}.png")
+        )
+
+        return best_model, best_params, evaluate_metrics(data.y_test, y_pred, y_proba), y_pred
 
     else:
         base_model.set_params(**param_dict)
@@ -198,8 +210,8 @@ def train_and_evaluate_model(base_model, model_name, param_dict, data: DataSplit
             run_permutation_test(
                 model_class=type(base_model),
                 param_dict=param_dict,
-                X=data.x_test,
-                y=data.y_test,
+                X=data.x_train,  # Use training set for permutation test
+                y=data.y_train,
                 model_name=model_name,
                 seed=seed,
                 save_dir=params["path_umap_class_seed"],
@@ -245,25 +257,24 @@ def classification_pipeline(data: DataSplit, params: dict):
             base_model, model_name, param_grids[model_name], data, params
         )
 
-        # Skip saving test metrics if tuning
-        if not params["tuning"]:
-            result = {"model": model_name, "seed": seed, "best_params": str(best_params)}
-            result.update({f"test_{k}": round(v, 3) if isinstance(v, float) else v for k, v in metrics.items()})
-            results.append(result)
+        # Save test metrics and predictions
+        result = {"model": model_name, "seed": seed, "best_params": str(best_params)}
+        result.update({f"test_{k}": round(v, 3) if isinstance(v, float) else v for k, v in metrics.items()})
+        results.append(result)
 
-            # Get test IDs and labels
-            test_ids = data.df[data.splits == "test"]["ID"].values
-            true_labels = data.le.inverse_transform(data.y_test)
-            pred_labels = data.le.inverse_transform(y_pred)
+        # Get test IDs and labels
+        test_ids = data.df[data.splits == "test"]["ID"].values
+        true_labels = data.le.inverse_transform(data.y_test)
+        pred_labels = data.le.inverse_transform(y_pred)
 
-            df_preds = pd.DataFrame({
-                "ID": test_ids,
-                "Seed": seed,
-                "Model": model_name,
-                "TrueLabel": true_labels,
-                "PredLabel": pred_labels
-            })
-            all_predictions.append(df_preds)
+        df_preds = pd.DataFrame({
+            "ID": test_ids,
+            "Seed": seed,
+            "Model": model_name,
+            "TrueLabel": true_labels,
+            "PredLabel": pred_labels
+        })
+        all_predictions.append(df_preds)
 
     df_results = pd.DataFrame(results) if results else None
     df_preds_all = pd.concat(all_predictions, ignore_index=True) if all_predictions else None
@@ -272,7 +283,7 @@ def classification_pipeline(data: DataSplit, params: dict):
 def main_classification(params, df_input):
     group_dir = f"{params['group1'].lower()}_{params['group2'].lower()}"
     output_dir = os.path.join(
-        build_output_path(params['output_dir'], params['task_type'], params['dataset_type'], params['umap'], params.get('umap_all', False)),
+        build_output_path(params['output_dir'], params['task_type'], params['dataset_type'], params['umap'], False),
         group_dir)
     os.makedirs(output_dir, exist_ok=True)
     params["path_umap_classification"] = output_dir
@@ -288,17 +299,9 @@ def main_classification(params, df_input):
     first_write = True  # flag to control header inclusion
 
     split_path = resolve_split_csv_path(params["dir_split"], params["group1"], params["group2"])
-    data = DataSplit(df_input, split_path, use_full_input=params.get("umap_all", False))
+    data = DataSplit(df_input, split_path, use_full_input=False)
 
-    if params.get("umap_all", False):
-        print("UMAP applied to entire dataset before split.\n")
-        x_all = data.df_full.drop(columns=["ID"]).to_numpy()
-        x_all_umap = run_umap(x_all)
-        data.insert_umap(x_all_umap)
-        data.prepare_features()
-        data.apply_split()
-
-    elif params.get("umap", False):
+    if params.get("umap", False):
         data.prepare_features()
         data.apply_split()
         print("UMAP applied only on training set and transformed test.\n")

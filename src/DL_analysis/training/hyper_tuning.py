@@ -5,8 +5,8 @@ import os
 import pandas as pd
 from itertools import product
 from copy import deepcopy
-from src.training.run import main_worker
-from src.utils.cnn_utils import create_tuning_summary
+from src.DL_analysis.training.run import main_worker
+from src.DL_analysis.utils.cnn_utils import create_tuning_summary
 
 def is_valid_combo(params):
     """
@@ -94,6 +94,6 @@ def tuning(base_args_path, grid_path):
     results_df.to_csv(os.path.join(run_dir, "grid_results.csv"), index=False)
 
 if __name__ == '__main__':
-    base_args_path = "/data/users/etosato/ANM_Verona/src/config/cnn_config.json"
-    grid_path = "/data/users/etosato/ANM_Verona/src/config/cnn_grid.json"
+    base_args_path = "/data/users/etosato/ANM_Verona/src/DL_analysis/config/cnn_config.json"
+    grid_path = "/data/users/etosato/ANM_Verona/src/DL_analysis/config/cnn_grid.json"
     tuning(base_args_path, grid_path)

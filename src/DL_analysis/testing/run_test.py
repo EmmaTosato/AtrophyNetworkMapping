@@ -12,9 +12,9 @@ env["MKL_THREADING_LAYER"] = "GNU"
 
 # === CONFIGURAZIONE ===
 csv_path = "/data/users/etosato/ANM_Verona/results/runs/all_training_results.csv"
-base_config_path = "/data/users/etosato/ANM_Verona/src/config/cnn_config.json"
+base_config_path = "/data/users/etosato/ANM_Verona/src/DL_analysis/config/cnn_config.json"
 config_save_path = base_config_path
-run_script_path = "/data/users/etosato/ANM_Verona/src/training/run.py"
+run_script_path = "/data/users/etosato/ANM_Verona/src/DL_analysis/training/run.py"
 runs_dir = "/data/users/etosato/ANM_Verona/results/runs"
 results_path = os.path.join(runs_dir, "all_testing_results.csv")
 
