@@ -26,7 +26,7 @@ try:
 except ImportError:
     AlexNet3D = None  # To be implemented
 
-from DL_analysis.training.train import train, validate
+from DL_analysis.training.train import train, validate, plot_training_curves
 from DL_analysis.testing.test import evaluate
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, roc_auc_score
 
@@ -113,9 +113,21 @@ def train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
     
     epochs = config['epochs']
     
+    # History Tracking
+    history = {
+        'train_loss': [], 'val_loss': [], 
+        'train_acc': [], 'val_acc': []
+    }
+    
     for epoch in range(epochs):
         train_loss, train_acc = train(model, train_loader, criterion, optimizer, device)
         val_loss, val_acc = validate(model, val_loader, criterion, device)
+        
+        # Track History
+        history['train_loss'].append(train_loss)
+        history['val_loss'].append(val_loss)
+        history['train_acc'].append(train_acc)
+        history['val_acc'].append(val_acc)
         
         # Step Scheduler
         if scheduler:
@@ -139,6 +151,9 @@ def train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
             if verbose: print(f"  Early stopping at epoch {epoch+1}")
             break
             
+    # Capture Last State (Checkpointing)
+    last_model_state = deepcopy(model.state_dict())
+
     if best_model_state is not None:
         model.load_state_dict(best_model_state)
     
@@ -147,7 +162,7 @@ def train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
     if 'best_train_acc' not in locals():
         best_train_acc = locals().get('train_acc', 0.0)
 
-    return model, best_acc, best_train_acc
+    return model, best_acc, best_train_acc, history, last_model_state
 
 def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, device, args):
     """
@@ -206,7 +221,7 @@ def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, dev
             val_dataset = FCDataset(data_dirs['original'], inner_val_df, 'Group', task='classification')
             
             # Train on inner fold
-            _, val_acc, train_acc = train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
+            _, val_acc, train_acc, _, _ = train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
             fold_scores.append(val_acc)
             
         mean_score = np.mean(fold_scores)
@@ -242,7 +257,22 @@ def nested_cv_classification(args):
     os.makedirs(args.output_dir, exist_ok=True)
     
     # Redirect stdout to log file
-    log_file = os.path.join(args.output_dir, "run.log")
+    logs_dir = os.path.join(args.output_dir, "logs")
+    os.makedirs(logs_dir, exist_ok=True)
+    log_file = os.path.join(logs_dir, "run.log")
+    
+    # Save Full Config for Reproducibility
+    with open(os.path.join(logs_dir, "config_snapshot.json"), "w") as f:
+        # Load grid used
+        with open(args.config_path, 'r') as cf:
+            original_config = json.load(cf)
+        
+        snapshot = {
+            'args': vars(args),
+            'original_config': original_config,
+            'device': str(device)
+        }
+        json.dump(snapshot, f, indent=4)
     print(f"Logging to {log_file}")
     sys.stdout = open(log_file, "w")
     sys.stderr = sys.stdout
@@ -304,7 +334,7 @@ def nested_cv_classification(args):
         train_dataset = AugmentedFCDataset(data_dirs['augmented'], retrain_train_df, 'Group', task='classification')
         val_dataset = FCDataset(data_dirs['original'], retrain_val_df, 'Group', task='classification')
         
-        final_model, final_val_acc, final_train_acc = train_single_fold(train_dataset, val_dataset, best_params, device, verbose=True)
+        final_model, final_val_acc, final_train_acc, history, last_model_state = train_single_fold(train_dataset, val_dataset, best_params, device, verbose=True)
         print(f"  [Retrain] Completed. Best Val Acc: {final_val_acc:.4f} | Train Acc at that point: {final_train_acc:.4f}")
         
         # 3. Test
@@ -324,12 +354,27 @@ def nested_cv_classification(args):
         }
         results.append(fold_result)
         
-        # Save Model
+        # --- SAVING ARTIFACTS ---
         fold_dir = os.path.join(args.output_dir, f"fold_{outer_fold+1}")
-        os.makedirs(fold_dir, exist_ok=True)
-        torch.save(final_model.state_dict(), os.path.join(fold_dir, "best_model.pt"))
+        plots_dir = os.path.join(fold_dir, "plots")
+        models_dir = os.path.join(fold_dir, "models")
+        os.makedirs(plots_dir, exist_ok=True)
+        os.makedirs(models_dir, exist_ok=True)
+
+        # 1. Plots
+        plot_training_curves(history, plots_dir)
+        
+        # 2. Models (Best & Last)
+        torch.save(final_model.state_dict(), os.path.join(models_dir, "best_model.pt"))
+        torch.save(last_model_state, os.path.join(models_dir, "last_model.pt"))
+        
+        # 3. Validated Metrics
         with open(os.path.join(fold_dir, "metrics.json"), "w") as f:
             json.dump(fold_result, f, indent=4)
+        
+        # 4. History (Optional but good for debug)
+        with open(os.path.join(fold_dir, "history.json"), "w") as f:
+            json.dump(history, f, indent=4)
             
         print(f"  [Test] Fold {outer_fold+1} Completed. Accuracy: {metrics['accuracy']:.4f}")
 

@@ -83,22 +83,37 @@ def validate(model, val_loader, criterion, device):
 
     return val_loss, val_accuracy
 
-def plot_losses(train_losses, val_losses, val_accuracies=None, save_path=None, title = None):
+def plot_training_curves(history, save_dir):
     """
-        Plot training/validation loss and optionally validation accuracy across epochs.
+    Plot and save training curves for Loss and Accuracy.
+    history: dict containing 'train_loss', 'val_loss', 'train_acc', 'val_acc' lists.
+    save_dir: directory where to save the plots.
     """
-    plt.figure(figsize=(8, 5))
-    # Plot training and validation loss
-    plt.plot(train_losses, label='Train Loss', marker='o', color='blue')
-    plt.plot(val_losses, label='Val Loss', marker='s', color='orange')
-
-    # Plot validation accuracy if provided
-    if val_accuracies is not None:
-        plt.plot(val_accuracies, label='Val Accuracy', marker='^', color = 'green')
-    plt.xlabel('Epoch')
-    plt.ylabel('Value')
-    plt.title(title)
+    import os
+    epochs = range(1, len(history['train_loss']) + 1)
+    
+    # 1. Prediction: Loss Curve
+    plt.figure(figsize=(10, 6))
+    plt.plot(epochs, history['train_loss'], label='Train Loss', marker='o', color='tab:blue')
+    plt.plot(epochs, history['val_loss'], label='Val Loss', marker='s', color='tab:orange')
+    plt.title('Training and Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
     plt.legend()
-    plt.grid(True)
-    plt.savefig(save_path)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_dir, 'loss_curve.png'), dpi=300)
+    plt.close()
+
+    # 2. Prediction: Accuracy Curve
+    plt.figure(figsize=(10, 6))
+    plt.plot(epochs, history['train_acc'], label='Train Acc', marker='o', color='tab:green')
+    plt.plot(epochs, history['val_acc'], label='Val Acc', marker='s', color='tab:red')
+    plt.title('Training and Validation Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_dir, 'accuracy_curve.png'), dpi=300)
     plt.close()
