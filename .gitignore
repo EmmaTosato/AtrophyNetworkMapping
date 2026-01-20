@@ -65,6 +65,5 @@ Thumbs.db
 data/
 
 # Ignore heavy training/tuning outputs
-results/runs/
-results/tuning/
+results/old_DL/
 
