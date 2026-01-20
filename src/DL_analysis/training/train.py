@@ -17,6 +17,7 @@ def train(model, train_loader, criterion, optimizer, device):
     model.train()
     # Track cumulative loss
     running_loss = 0.0
+    correct_train = 0
 
     for batch in train_loader:
         x_train, y_train = batch['X'].to(device), batch['y'].to(device)
@@ -35,10 +36,15 @@ def train(model, train_loader, criterion, optimizer, device):
 
         # Accumulate the loss weighted by batch size
         running_loss += loss.item() * x_train.size(0)
+        
+        # Calculate accuracy for this batch (optional but good for tracking)
+        _, predicted = torch.max(outputs, 1)
+        correct_train += (predicted == y_train).sum().item()
 
     # Compute average loss for the epoch
     train_loss = running_loss / len(train_loader.dataset)
-    return train_loss
+    train_acc = correct_train / len(train_loader.dataset)
+    return train_loss, train_acc
 
 def validate(model, val_loader, criterion, device):
     """

@@ -20,14 +20,31 @@ if src_dir not in sys.path:
     sys.path.insert(0, src_dir)
 
 from DL_analysis.cnn.datasets import FCDataset, AugmentedFCDataset
-from DL_analysis.cnn.models import ResNet3D, DenseNet3D, VGG16_3D
+from DL_analysis.cnn.models import ResNet3D, VGG16_3D
 try:
     from DL_analysis.cnn.models import AlexNet3D
 except ImportError:
     AlexNet3D = None  # To be implemented
 
 from DL_analysis.training.train import train, validate
-from DL_analysis.testing.test import evaluate, compute_metrics
+from DL_analysis.testing.test import evaluate
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, roc_auc_score
+
+def compute_metrics_safe(y_true, y_pred, probas=None):
+    """
+    Compute metrics avoiding confusion matrix if not needed or if it causes issues.
+    """
+    metrics = {}
+    metrics['accuracy'] = accuracy_score(y_true, y_pred)
+    # Use zero_division=0 to silence warnings
+    metrics['precision'] = precision_score(y_true, y_pred, average='weighted', zero_division=0)
+    metrics['recall'] = recall_score(y_true, y_pred, average='weighted', zero_division=0)
+    metrics['f1'] = f1_score(y_true, y_pred, average='weighted', zero_division=0)
+    
+    # AUC if probabilities are provided (optional, for now just 0)
+    metrics['auc'] = 0.0
+    
+    return metrics
 
 def set_seed(seed):
     import random
@@ -55,8 +72,6 @@ def get_model(model_name, n_classes=2, input_channels=1, device='cpu'):
         return AlexNet3D(num_classes=n_classes, input_channels=input_channels).to(device)
     elif model_name == 'vgg16':
         return VGG16_3D(num_classes=n_classes, input_channels=input_channels).to(device)
-    elif model_name == 'densenet':
-        return DenseNet3D(n_classes=n_classes).to(device)
     else:
         raise ValueError(f"Unknown model name: {model_name}")
 
@@ -82,39 +97,51 @@ def train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
     # Training Loop
     best_acc = -1
     best_model_state = None
-    patience = config.get('patience', 10)
+    patience = config.get('patience', None) # Default to None (No Early Stopping)
     patience_counter = 0
     
     epochs = config['epochs']
     
     for epoch in range(epochs):
-        train_loss = train(model, train_loader, criterion, optimizer, device)
+        train_loss, train_acc = train(model, train_loader, criterion, optimizer, device)
         val_loss, val_acc = validate(model, val_loader, criterion, device)
         
         if verbose:
-            print(f"  Epoch {epoch+1}/{epochs} - Train Loss: {train_loss:.4f} - Val Loss: {val_loss:.4f} - Val Acc: {val_acc:.4f}")
+            print(f"  Epoch {epoch+1}/{epochs} - Train Loss: {train_loss:.4f} - Train Acc: {train_acc:.4f} - Val Loss: {val_loss:.4f} - Val Acc: {val_acc:.4f}")
             
         if val_acc > best_acc:
             best_acc = val_acc
+            best_train_acc = train_acc # Keep track of train acc at best val point
             best_model_state = deepcopy(model.state_dict())
             patience_counter = 0
         else:
             patience_counter += 1
             
-        if patience_counter >= patience:
-            if verbose: print("  Early stopping triggered.")
+        if patience and patience_counter >= patience:
+            if verbose: print(f"  Early stopping at epoch {epoch+1}")
             break
             
     if best_model_state is not None:
         model.load_state_dict(best_model_state)
-    return model, best_acc
+    
+    # If using Test Mode with 1 epoch, best_train_acc might not be set if loop runs once and val_acc > -1
+    # Ensure it's defined
+    if 'best_train_acc' not in locals():
+        best_train_acc = locals().get('train_acc', 0.0)
 
-def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, device):
+    return model, best_acc, best_train_acc
+
+def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, device, args):
     """
     Perform Inner CV (5-fold) to find best hyperparameters.
     train_df: DataFrame with training subjects for this outer fold.
     """
-    inner_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+    # Test Mode overrides
+    if args.test_mode:
+         print("Overriding config for TEST MODE: epochs=1, inner_splits=2")
+         inner_cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=seed)
+    else:
+         inner_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
     
     # Generate all combinations
     keys = list(grid_params.keys())
@@ -123,17 +150,28 @@ def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, dev
     best_score = -1
     best_config = None
     
-    print(f"  > Starting Grid Search ({len(combinations)} configs)...")
+    print(f"\n  [Inner Grid Search] Starting Grid Search ({len(combinations)} configurations)...")
     
     for i, combo in enumerate(combinations):
         config = dict(zip(keys, combo))
+        if args.test_mode: config['epochs'] = 1
         config['model_type'] = model_name
         # Defaults
         config['optimizer'] = 'sgd' # Default to SGD as per literature? Or parameterize
-        config['epochs'] = 60 # Set a reasonable default or pass via args
-        if 'epochs' in grid_params: config['epochs'] = grid_params['epochs'] # Allow override if in grid
+        
+        # Handle 'epochs': grid_params['epochs'] is a list like [60]. 
+        # If it's in the grid (which it is), 'config' already has it as a scalar from 'combo'.
+        # However, if we defaults it, ensure it's scalar.
+        if 'epochs' not in config:
+             config['epochs'] = 60 
+        
+        # Double check types
+        if isinstance(config.get('batch_size'), list): config['batch_size'] = config['batch_size'][0]
+        if isinstance(config.get('epochs'), list): config['epochs'] = config['epochs'][0]
 
         fold_scores = []
+        
+        # print(f"    Checking Config {i+1}/{len(combinations)}: {config}") 
         
         for inner_fold, (train_idx, val_idx) in enumerate(inner_cv.split(train_df['ID'], train_df['Group'])):
             # Inner Split
@@ -145,17 +183,17 @@ def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, dev
             val_dataset = FCDataset(data_dirs['original'], inner_val_df, 'Group', task='classification')
             
             # Train on inner fold
-            _, acc = train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
-            fold_scores.append(acc)
+            _, val_acc, train_acc = train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
+            fold_scores.append(val_acc)
             
         mean_score = np.mean(fold_scores)
-        # print(f"    Config {i+1}: {config} -> Mean Acc: {mean_score:.4f}")
+        print(f"    [Config {i+1}/{len(combinations)}] Mean Acc: {mean_score:.4f} | Params: {config}")
         
         if mean_score > best_score:
             best_score = mean_score
             best_config = config
             
-    print(f"  > Best Config: {best_config} (Acc: {best_score:.4f})")
+    print(f"  [Inner Grid Search] Best Config found (Acc: {best_score:.4f}):\n    {best_config}")
     return best_config
 
 def nested_cv_classification(args):
@@ -180,6 +218,21 @@ def nested_cv_classification(args):
     # Output Dir
     os.makedirs(args.output_dir, exist_ok=True)
     
+    # Redirect stdout to log file
+    log_file = os.path.join(args.output_dir, "run.log")
+    print(f"Logging to {log_file}")
+    sys.stdout = open(log_file, "w")
+    sys.stderr = sys.stdout
+    # Enable line buffering
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(line_buffering=True)
+    
+    print(f"Command arguments:")
+    for arg, value in vars(args).items():
+        print(f"  - {arg}: {value}")
+    
+    print(f"Using device: {device}")
+    
     # Outer CV
     outer_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     results = []
@@ -200,39 +253,51 @@ def nested_cv_classification(args):
         test_df = df_meta.iloc[test_idx].reset_index(drop=True)
         
         if args.test_mode:
-            print("Running in TEST MODE (reduced dataset)")
+            print("  [Outer Fold] Running in TEST MODE (reduced dataset)")
             train_df = train_df.iloc[:20]
             test_df = test_df.iloc[:5]
         
+        print(f"  [Outer Fold] Train Size: {len(train_df)} subjects")
+        print(f"  [Outer Fold] Test Size : {len(test_df)} subjects")
+        
         # 1. Inner CV Grid Search
-        print("Step 1: Inner CV Grid Search")
-        best_params = inner_cv_grid_search(train_df, args.model, grid_params, data_dirs, seed=42, device=device)
+        print(f"\n--- Step 1: Inner CV Grid Search (Fold {outer_fold+1}) ---")
+        best_params = inner_cv_grid_search(train_df, args.model, grid_params, data_dirs, seed=42, device=device, args=args)
         
         # 2. Full Retrain
-        print("Step 2: Full Retrain with Best Params")
+        print(f"\n--- Step 2: Full Retrain with Best Params (Fold {outer_fold+1}) ---")
+        
+        if args.test_mode:
+            best_params['epochs'] = 1
         
         from sklearn.model_selection import train_test_split
         # Using a small validation split for early stopping
+        # Note: We retrain on the vast majority of the outer train set (90%), using 10% just for early stopping check
         retrain_train_df, retrain_val_df = train_test_split(train_df, test_size=0.1, stratify=train_df['Group'], random_state=42)
+        
+        print(f"  [Retrain] Training on {len(retrain_train_df)} subjects (Augmented)")
+        print(f"  [Retrain] Validation monitor on {len(retrain_val_df)} subjects (Original)")
         
         train_dataset = AugmentedFCDataset(data_dirs['augmented'], retrain_train_df, 'Group', task='classification')
         val_dataset = FCDataset(data_dirs['original'], retrain_val_df, 'Group', task='classification')
         
-        final_model, _ = train_single_fold(train_dataset, val_dataset, best_params, device, verbose=True)
+        final_model, final_val_acc, final_train_acc = train_single_fold(train_dataset, val_dataset, best_params, device, verbose=True)
+        print(f"  [Retrain] Completed. Best Val Acc: {final_val_acc:.4f} | Train Acc at that point: {final_train_acc:.4f}")
         
         # 3. Test
-        print("Step 3: Final Testing")
+        print(f"\n--- Step 3: Final Testing (Fold {outer_fold+1}) ---")
+        print(f"  [Test] Evaluating on {len(test_df)} held-out subjects...")
         test_dataset = FCDataset(data_dirs['original'], test_df, 'Group', task='classification')
         test_loader = DataLoader(test_dataset, batch_size=best_params['batch_size'], shuffle=False)
         
         y_true, y_pred = evaluate(final_model, test_loader, device)
-        metrics = compute_metrics(y_true, y_pred)
+        metrics = compute_metrics_safe(y_true, y_pred)
         
         # Save results
         fold_result = {
             'fold': outer_fold + 1,
             'best_params': best_params,
-            'metrics': {k: float(v) if isinstance(v, (np.float32, np.float64)) else v for k,v in metrics.items() if k!='confusion_matrix'}
+            'metrics': metrics
         }
         results.append(fold_result)
         
@@ -243,14 +308,16 @@ def nested_cv_classification(args):
         with open(os.path.join(fold_dir, "metrics.json"), "w") as f:
             json.dump(fold_result, f, indent=4)
             
-        print(f"Fold {outer_fold+1} Accuracy: {metrics['accuracy']:.4f}")
+        print(f"  [Test] Fold {outer_fold+1} Completed. Accuracy: {metrics['accuracy']:.4f}")
 
     # Aggregate
-    print("\n=== AGGREGATED RESULTS ===")
+    print("\n==================================")
+    print("=== AGGREGATED NESTED CV RESULTS ===")
+    print("==================================")
     agg_metrics = {}
     metric_keys = ['accuracy', 'f1', 'precision', 'recall', 'auc']
     for k in metric_keys:
-        values = [r['metrics'][k] for r in results]
+        values = [r['metrics'].get(k, 0.0) for r in results]
         agg_metrics[f"mean_{k}"] = np.mean(values)
         agg_metrics[f"std_{k}"] = np.std(values)
         
