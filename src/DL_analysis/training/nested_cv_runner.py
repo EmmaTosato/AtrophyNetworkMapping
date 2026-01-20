@@ -94,6 +94,17 @@ def train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
     else:
         raise ValueError(f"Unsupported optimizer: {config['optimizer']}")
         
+    # Scheduler
+    scheduler = None
+    if config['model_type'] == 'resnet':
+        # ResNet Paper: Divide by 10 at 50% and 75% of training
+        total_epochs = config['epochs']
+        milestones = [int(total_epochs * 0.5), int(total_epochs * 0.75)]
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
+    elif config['model_type'] in ['alexnet', 'vgg16']:
+        # AlexNet/VGG Paper: Divide by 10 when validation error plateaus.
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=5)
+        
     # Training Loop
     best_acc = -1
     best_model_state = None
@@ -105,6 +116,13 @@ def train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
     for epoch in range(epochs):
         train_loss, train_acc = train(model, train_loader, criterion, optimizer, device)
         val_loss, val_acc = validate(model, val_loader, criterion, device)
+        
+        # Step Scheduler
+        if scheduler:
+            if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                scheduler.step(val_acc) # Monitor Val Accuracy directly
+            else:
+                scheduler.step()
         
         if verbose:
             print(f"  Epoch {epoch+1}/{epochs} - Train Loss: {train_loss:.4f} - Train Acc: {train_acc:.4f} - Val Loss: {val_loss:.4f} - Val Acc: {val_acc:.4f}")
@@ -164,14 +182,19 @@ def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, dev
         # However, if we defaults it, ensure it's scalar.
         if 'epochs' not in config:
              config['epochs'] = 60 
+             
+        # Handle 'patience' if in grid/config
+        if 'patience' not in config:
+             config['patience'] = None # Default
         
         # Double check types
         if isinstance(config.get('batch_size'), list): config['batch_size'] = config['batch_size'][0]
         if isinstance(config.get('epochs'), list): config['epochs'] = config['epochs'][0]
+        if isinstance(config.get('patience'), list): config['patience'] = config['patience'][0]
 
         fold_scores = []
         
-        # print(f"    Checking Config {i+1}/{len(combinations)}: {config}") 
+        fold_scores = []
         
         for inner_fold, (train_idx, val_idx) in enumerate(inner_cv.split(train_df['ID'], train_df['Group'])):
             # Inner Split

@@ -99,43 +99,6 @@
 - Inner CV: 5-fold per validation
 - NO data leakage: test outer MAI visto durante grid search
 
-**GRIGLIA IPERPARAMETRI (Semplificata):**
-
-### AlexNet3D
-```python
-{
-    'lr': [1e-2, 5e-3, 1e-3],           # 3 valori
-    'batch_size': [16, 32],              # 2 valori  
-    'weight_decay': [5e-4, 1e-4],        # 2 valori
-}
-# Totale: 3×2×2 = 12 configurazioni
-```
-
-### ResNet18 (r3d_18)
-```python
-{
-    'lr': [1e-1, 5e-2, 1e-2],            # 3 valori
-    'batch_size': [32, 64],               # 2 valori
-    'weight_decay': [1e-4, 5e-5],         # 2 valori
-}
-# Totale: 3×2×2 = 12 configurazioni
-```
-
-### VGG16_3D
-```python
-{
-    'lr': [1e-2, 5e-3, 1e-3],            # 3 valori
-    'batch_size': [16, 32],               # 2 valori
-    'weight_decay': [5e-4, 1e-4],         # 2 valori
-}
-# Totale: 3×2×2 = 12 configurazioni
-```
-
-**TEMPO STIMATO PER GRUPPO (ADNI vs PSP):**
-- Grid search: 12 config × 5 inner folds = 60 esecuzioni
-- Per outer fold: ~8-10 ore (con early stopping)
-- 5 outer folds: ~40-50 ore ≈ **2 giorni** per gruppo
-
 ---
 
 ## 4. MODELLI E IPERPARAMETRI DA LETTERATURA
@@ -156,18 +119,24 @@ Flatten → FC1: 4096 → Dropout(0.5) → ReLU
 ```
 
 **Iperparametri Originali (Paper):**
-- Learning Rate: **0.01** (ridotto ÷10 quando validation plateau)
+- Learning Rate: **0.01**
 - Batch Size: **128**
 - Momentum: **0.9**
 - Weight Decay: **0.0005**
-- Dropout: **0.5** (primi 2 FC layers)
-- Epochs: **90** (5-6 giorni su ImageNet)
+- Dropout: **0.5**
+- Epochs: **90**
 - Optimizer: **SGD + Momentum**
 
-**Adattamenti per Medical Imaging (Grid Search):**
-- lr: [1e-2, 5e-3, 1e-3] (partenza 0.01, esplora più bassi)
-- batch_size: [16, 32] (dataset piccolo)
-- weight_decay: [5e-4, 1e-4] (da 5e-4 originale)
+**Adattamenti (Grid Search - Single Value):**
+```python
+{
+    'lr': [1e-2],                 # Fixed 0.01 (da valutare)
+    'batch_size': [8],             # Fixed (constraint)
+    'weight_decay': [5e-4],        # Original
+    'epochs': [40],                # Reduced
+    'patience': [15]               # Early Stopping
+}
+```
 
 ---
 
@@ -186,18 +155,24 @@ AdaptiveAvgPool3D → FC: num_classes
 ```
 
 **Iperparametri Originali (Paper):**
-- Learning Rate: **0.1** (÷10 a 30, 60 epochs)
+- Learning Rate: **0.1** (0.01 warmup)
 - Batch Size: **256**
 - Momentum: **0.9**
 - Weight Decay: **0.0001**
 - NO Dropout
-- Epochs: **60** (ImageNet)
+- Epochs: **60**
 - Optimizer: **SGD + Momentum**
 
-**Adattamenti (Grid Search):**
-- lr: [1e-1, 5e-2, 1e-2] (da 0.1 originale)
-- batch_size: [32, 64] (GPU memory constraint)
-- weight_decay: [1e-4, 5e-5] (da 1e-4 originale)
+**Adattamenti (Grid Search - Single Value):**
+```python
+{
+    'lr': [1e-2],                 # Fixed 0.01 (Safe warmup/batch adj)
+    'batch_size': [8],             # Fixed (constraint)
+    'weight_decay': [1e-4],        # Original
+    'epochs': [40],                # Reduced
+    'patience': [15]               # Early Stopping
+}
+```
 
 ---
 
@@ -218,18 +193,24 @@ FC3: num_classes → Softmax
 ```
 
 **Iperparametri Originali (Paper):**
-- Learning Rate: **0.01** (÷10 dopo plateau, 3 volte)
+- Learning Rate: **0.01**
 - Batch Size: **256**
 - Momentum: **0.9**
 - Weight Decay: **5e-4**
-- Dropout: **0.5** (primi 2 FC)
-- Epochs: **74** (370K iterations ImageNet)
+- Dropout: **0.5**
+- Epochs: **74**
 - Optimizer: **SGD + Momentum**
 
-**Adattamenti (Grid Search):**
-- lr: [1e-2, 5e-3, 1e-3] (da 1e-2 originale)
-- batch_size: [16, 32] (memoria GPU)
-- weight_decay: [5e-4, 1e-4] (da 5e-4 originale)
+**Adattamenti (Grid Search - Single Value):**
+```python
+{
+    'lr': [1e-2],                 # Fixed 0.01 (Original)
+    'batch_size': [8],             # Fixed (constraint)
+    'weight_decay': [5e-4],        # Original
+    'epochs': [40],                # Reduced
+    'patience': [15]               # Early Stopping
+}
+```
 
 ---
 

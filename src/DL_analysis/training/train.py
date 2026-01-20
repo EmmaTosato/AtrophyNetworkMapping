@@ -37,7 +37,7 @@ def train(model, train_loader, criterion, optimizer, device):
         # Accumulate the loss weighted by batch size
         running_loss += loss.item() * x_train.size(0)
         
-        # Calculate accuracy for this batch (optional but good for tracking)
+        # Calculate accuracy for this batch
         _, predicted = torch.max(outputs, 1)
         correct_train += (predicted == y_train).sum().item()
 
