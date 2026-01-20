@@ -1,0 +1,67 @@
+{
+    "grids": {
+        "alexnet": {
+            "lr": [
+                1e-2,
+                5e-3,
+                1e-3
+            ],
+            "batch_size": [
+                16,
+                32
+            ],
+            "weight_decay": [
+                5e-4,
+                1e-4
+            ],
+            "epochs": [
+                90
+            ],
+            "optimizer": [
+                "sgd"
+            ]
+        },
+        "resnet": {
+            "lr": [
+                1e-1,
+                5e-2,
+                1e-2
+            ],
+            "batch_size": [
+                32,
+                64
+            ],
+            "weight_decay": [
+                1e-4,
+                5e-5
+            ],
+            "epochs": [
+                60
+            ],
+            "optimizer": [
+                "sgd"
+            ]
+        },
+        "vgg16": {
+            "lr": [
+                1e-2,
+                5e-3,
+                1e-3
+            ],
+            "batch_size": [
+                16,
+                32
+            ],
+            "weight_decay": [
+                5e-4,
+                1e-4
+            ],
+            "epochs": [
+                74
+            ],
+            "optimizer": [
+                "sgd"
+            ]
+        }
+    }
+}
