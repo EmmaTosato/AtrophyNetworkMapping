@@ -90,10 +90,10 @@ x_all_umap = run_umap(x_all)
 
 ### High Priority
 
-1. **Cross-validation strategy**
-   - Current: Single train/test split
-   - Issue: Results depend on specific split
-   - Recommendation: Implement nested CV or repeated stratified k-fold
+1. **Cross-validation strategy** ✅ IMPLEMENTED
+   - Old: Single train/test split
+   - New: Optional nested CV with `use_fixed_split=false`
+   - Benefit: Robust performance estimates with mean ± std
 
 2. **Feature selection**
    - Current: All voxels/features used

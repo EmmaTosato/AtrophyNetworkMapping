@@ -1,0 +1,123 @@
+digraph DL_Pipeline {
+    rankdir=TB;
+    node [shape=box, style="rounded,filled", fillcolor=lightblue, fontname="Arial"];
+    edge [fontname="Arial"];
+
+    // PHASE 1: HYPERPARAMETER TUNING
+    subgraph cluster_tuning {
+        label=<<B>PHASE 1: HYPERPARAMETER TUNING</B>>;
+        style=filled;
+        fillcolor=lightyellow;
+        
+        grid [label="Grid Search\n(cnn_grid.json)", fillcolor=gold];
+        config_loop [label="For each config:\n• Model (ResNet/DenseNet/VGG16)\n• LR (1e-3, 1e-4, 1e-5)\n• Batch size (4, 8, 16)\n• Optimizer (Adam, SGD)", fillcolor=lightgoldenrod];
+        cv_tuning [label="5-Fold Cross-Validation\n(105 train patients)", fillcolor=lightgreen];
+        best_fold_tuning [label="Select Best Fold\n(max val accuracy)", fillcolor=lightcoral];
+        test_tuning [label="Test on Test Set\n(27 patients)", fillcolor=lightcyan];
+        save_tuning [label="Save:\n• grid_results.csv\n• best_model_fold{1-5}.pt", fillcolor=plum];
+        
+        grid -> config_loop;
+        config_loop -> cv_tuning;
+        cv_tuning -> best_fold_tuning;
+        best_fold_tuning -> test_tuning;
+        test_tuning -> save_tuning;
+    }
+
+    // Decision node
+    select_best [label="Select Top Configs\n(by test accuracy)", shape=diamond, fillcolor=orange];
+    save_tuning -> select_best;
+
+    // PHASE 2: FINAL RUNS
+    subgraph cluster_runs {
+        label=<<B>PHASE 2: FINAL RUNS (Multi-Seed)</B>>;
+        style=filled;
+        fillcolor=lightcyan;
+        
+        best_hyperparams [label="Use Best Hyperparameters\nfrom Tuning", fillcolor=gold];
+        seed_loop [label="For each seed:\n42, 123, 2023, 31415, 98765", fillcolor=lightgoldenrod];
+        cv_runs [label="5-Fold Cross-Validation\n(105 train patients)", fillcolor=lightgreen];
+        best_fold_runs [label="Select Best Fold\n(max val accuracy)", fillcolor=lightcoral];
+        save_runs [label="Save:\n• all_training_results.csv\n• best_model_fold{N}.pt", fillcolor=plum];
+        
+        best_hyperparams -> seed_loop;
+        seed_loop -> cv_runs;
+        cv_runs -> best_fold_runs;
+        best_fold_runs -> save_runs;
+    }
+
+    select_best -> best_hyperparams;
+
+    // PHASE 3: FINAL TESTING
+    subgraph cluster_testing {
+        label=<<B>PHASE 3: FINAL TESTING</B>>;
+        style=filled;
+        fillcolor=lightpink;
+        
+        load_results [label="Load:\nall_training_results.csv", fillcolor=gold];
+        test_loop [label="For each run:\n• Load best_model_fold{N}.pt\n• Test on 27 patients", fillcolor=lightcyan];
+        metrics [label="Compute Metrics:\n• Accuracy\n• Precision, Recall, F1\n• Confusion Matrix", fillcolor=lightgreen];
+        save_test [label="Save:\n• all_testing_results.csv\n• Confusion matrices", fillcolor=plum];
+        analysis [label="Analyze:\n• Mean ± Std across seeds\n• Robustness evaluation", fillcolor=lightcoral];
+        
+        load_results -> test_loop;
+        test_loop -> metrics;
+        metrics -> save_test;
+        save_test -> analysis;
+    }
+
+    save_runs -> load_results;
+
+    // DATA FLOW (left side)
+    subgraph cluster_data {
+        label=<<B>DATA SOURCES</B>>;
+        style=filled;
+        fillcolor=lightgrey;
+        rank=same;
+        
+        splits [label="Split CSVs\n(assets/split_cnn/)\n• ADNI_PSP_splitted.csv\n• ADNI_CBS_splitted.csv\n• PSP_CBS_splitted.csv", fillcolor=wheat];
+        data_aug [label="Augmented Data\n(FCmaps_augmented_processed/)\n50× HCP bootstrap\nUSED ONLY IN TRAINING", fillcolor=lightgreen];
+        data_orig [label="Original Data\n(FCmaps_processed/)\nUSED IN VALIDATION & TEST", fillcolor=lightblue];
+        
+        splits -> cv_tuning [style=dashed, label="train split"];
+        splits -> cv_runs [style=dashed, label="train split"];
+        splits -> test_tuning [style=dashed, label="test split"];
+        splits -> test_loop [style=dashed, label="test split"];
+        
+        data_aug -> cv_tuning [style=dashed, label="train fold"];
+        data_aug -> cv_runs [style=dashed, label="train fold"];
+        
+        data_orig -> cv_tuning [style=dashed, label="val fold"];
+        data_orig -> cv_runs [style=dashed, label="val fold"];
+        data_orig -> test_tuning [style=dashed];
+        data_orig -> test_loop [style=dashed];
+    }
+
+    // KEY CONCEPTS (right side)
+    subgraph cluster_concepts {
+        label=<<B>KEY CONCEPTS</B>>;
+        style=filled;
+        fillcolor=lavender;
+        rank=same;
+        
+        cv_concept [label="Cross-Validation\n• 5-fold stratified\n• ~84 train, ~21 val per fold\n• Best fold by val accuracy", fillcolor=lightgreen];
+        seed_concept [label="Seed Management\n• KFold seed: Controls splits\n• PyTorch seed: Controls init\n• Multi-seed: Robustness", fillcolor=lightcoral];
+        early_stop [label="Early Stopping\n• Primary: max val accuracy\n• Tiebreaker: min val loss\n• Saves best epoch", fillcolor=lightyellow];
+        
+        cv_tuning -> cv_concept [style=dotted, color=grey];
+        seed_loop -> seed_concept [style=dotted, color=grey];
+        best_fold_runs -> early_stop [style=dotted, color=grey];
+    }
+
+    // Legend
+    subgraph cluster_legend {
+        label=<<B>LEGEND</B>>;
+        style=filled;
+        fillcolor=white;
+        rank=sink;
+        
+        leg_process [label="Process", fillcolor=lightblue];
+        leg_decision [label="Decision", shape=diamond, fillcolor=orange];
+        leg_data [label="Data", fillcolor=wheat];
+        leg_output [label="Output", fillcolor=plum];
+    }
+}

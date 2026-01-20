@@ -143,76 +143,6 @@ def evaluate_metrics(y_true, y_pred, y_proba=None):
             metrics["auc_roc"] = None
     return metrics
 
-def compute_bootstrap_ci(y_true, y_pred, y_proba=None, n_bootstrap=1000, confidence=0.95, seed=42):
-    """
-    Compute bootstrap confidence intervals for classification metrics.
-    
-    Args:
-        y_true: True labels
-        y_pred: Predicted labels
-        y_proba: Predicted probabilities (optional, for AUC)
-        n_bootstrap: Number of bootstrap iterations
-        confidence: Confidence level (default 0.95 for 95% CI)
-        seed: Random seed for reproducibility
-    
-    Returns:
-        Dictionary with metrics and their confidence intervals
-    """
-    from sklearn.utils import resample
-    
-    np.random.seed(seed)
-    n_samples = len(y_true)
-    
-    bootstrap_metrics = {
-        'accuracy': [],
-        'precision': [],
-        'recall': [],
-        'f1': []
-    }
-    
-    if y_proba is not None:
-        bootstrap_metrics['auc_roc'] = []
-    
-    for i in range(n_bootstrap):
-        # Resample with replacement
-        indices = resample(range(n_samples), replace=True, random_state=seed+i)
-        y_true_boot = y_true[indices]
-        y_pred_boot = y_pred[indices]
-        
-        # Compute metrics
-        bootstrap_metrics['accuracy'].append(accuracy_score(y_true_boot, y_pred_boot))
-        bootstrap_metrics['precision'].append(precision_score(y_true_boot, y_pred_boot, average="macro", zero_division=0))
-        bootstrap_metrics['recall'].append(recall_score(y_true_boot, y_pred_boot, average="macro", zero_division=0))
-        bootstrap_metrics['f1'].append(f1_score(y_true_boot, y_pred_boot, average="macro", zero_division=0))
-        
-        if y_proba is not None:
-            y_proba_boot = y_proba[indices]
-            try:
-                auc = roc_auc_score(y_true_boot, y_proba_boot[:, 1])
-                bootstrap_metrics['auc_roc'].append(auc)
-            except:
-                bootstrap_metrics['auc_roc'].append(np.nan)
-    
-    # Compute confidence intervals
-    alpha = (1 - confidence) / 2
-    lower_percentile = alpha * 100
-    upper_percentile = (1 - alpha) * 100
-    
-    ci_results = {}
-    for metric, values in bootstrap_metrics.items():
-        values = np.array(values)
-        values = values[~np.isnan(values)]  # Remove NaN values
-        
-        if len(values) > 0:
-            ci_results[metric] = {
-                'mean': np.mean(values),
-                'ci_lower': np.percentile(values, lower_percentile),
-                'ci_upper': np.percentile(values, upper_percentile)
-            }
-        else:
-            ci_results[metric] = {'mean': None, 'ci_lower': None, 'ci_upper': None}
-    
-    return ci_results
 def train_and_evaluate_model(base_model, model_name, param_dict, data: DataSplit, params: dict):
     """Train model with or without hyperparameter tuning and evaluate on test data."""
     seed = params["seed"]
@@ -255,19 +185,8 @@ def train_and_evaluate_model(base_model, model_name, param_dict, data: DataSplit
             save_path=os.path.join(params["path_umap_class_seed"], f"conf_matrix_test_{model_name}.png")
         )
 
-        # Compute metrics with bootstrap CI
+        # Compute metrics
         metrics = evaluate_metrics(data.y_test, y_pred, y_proba)
-        
-        # Add bootstrap confidence intervals if enabled
-        if params.get("bootstrap_ci", False):
-            ci_results = compute_bootstrap_ci(
-                y_true=data.y_test,
-                y_pred=y_pred,
-                y_proba=y_proba,
-                n_bootstrap=params.get("n_bootstrap", 1000),
-                seed=seed
-            )
-            metrics['bootstrap_ci'] = ci_results
 
         return best_model, best_params, metrics, y_pred
 
@@ -289,19 +208,8 @@ def train_and_evaluate_model(base_model, model_name, param_dict, data: DataSplit
             save_path=os.path.join(params["path_umap_class_seed"], f"conf_matrix_test_{model_name}.png")
         )
 
-        # Compute metrics with bootstrap CI
+        # Compute metrics
         metrics = evaluate_metrics(data.y_test, y_pred, y_proba)
-        
-        # Add bootstrap confidence intervals if enabled
-        if params.get("bootstrap_ci", False):
-            ci_results = compute_bootstrap_ci(
-                y_true=data.y_test,
-                y_pred=y_pred,
-                y_proba=y_proba,
-                n_bootstrap=params.get("n_bootstrap", 1000),
-                seed=seed
-            )
-            metrics['bootstrap_ci'] = ci_results
 
         # Run permutation test if specified
         if params.get("permutation_test", False):
@@ -379,6 +287,7 @@ def classification_pipeline(data: DataSplit, params: dict):
     return df_results, df_preds_all
 
 def main_classification(params, df_input):
+    """Main entry point for classification. Routes to fixed split or nested CV."""
     group_dir = f"{params['group1'].lower()}_{params['group2'].lower()}"
     output_dir = os.path.join(
         build_output_path(params['output_dir'], params['task_type'], params['dataset_type'], params['umap'], False),
@@ -389,12 +298,28 @@ def main_classification(params, df_input):
     log_path = os.path.join(output_dir, "log.txt")
     log_to_file(log_path)
 
+    # Route to appropriate classification method
+    if params.get("use_fixed_split", True):
+        print("=" * 60)
+        print("CLASSIFICATION MODE: Fixed train/test split from CSV")
+        print("=" * 60)
+        single_split_classification(params, df_input, output_dir)
+    else:
+        print("=" * 60)
+        print("CLASSIFICATION MODE: Nested Cross-Validation")
+        print("=" * 60)
+        nested_cv_classification(params, df_input, output_dir)
+
+    reset_stdout()
+
+
+def single_split_classification(params, df_input, output_dir):
+    """Original approach: fixed train/test split from CSV, repeated across seeds."""
     # Path to the unified predictions file
     out_preds = os.path.join(output_dir, "all_test_predictions.csv")
-    # Overwrite if exists from previous runs
     if os.path.exists(out_preds):
         os.remove(out_preds)
-    first_write = True  # flag to control header inclusion
+    first_write = True
 
     split_path = resolve_split_csv_path(params["dir_split"], params["group1"], params["group2"])
     data = DataSplit(df_input, split_path, use_full_input=False)
@@ -406,7 +331,6 @@ def main_classification(params, df_input):
         x_train_umap, x_test_umap = run_umap(data.x_train, data.x_test)
         data.x_train = x_train_umap
         data.x_test = x_test_umap
-
     else:
         data.prepare_features()
         data.apply_split()
@@ -428,14 +352,140 @@ def main_classification(params, df_input):
 
         if df_preds is not None:
             df_preds.to_csv(out_preds, mode='a', header=first_write, index=False)
-            first_write = False  # only include header once
+            first_write = False
 
     if all_results:
-        pd.concat(all_results).reset_index(drop=True).to_csv(
-            os.path.join(output_dir, "summary_all_seeds.csv"), index=False
-        )
+        df_final = pd.concat(all_results).reset_index(drop=True)
+        df_final.to_csv(os.path.join(output_dir, "summary_all_seeds.csv"), index=False)
+        
+        # Print summary statistics
+        print("\n" + "=" * 60)
+        print("SUMMARY: Stability across seeds (same test set)")
+        print("=" * 60)
+        summary = df_final.groupby("model")[["test_accuracy", "test_precision", "test_recall", "test_f1"]].agg(["mean", "std"]).round(3)
+        print(summary)
 
-    reset_stdout()
+
+def nested_cv_classification(params, df_input, output_dir):
+    """Nested cross-validation: different train/test splits, repeated across seeds."""
+    from sklearn.model_selection import StratifiedKFold
+    
+    # Filter only selected groups
+    df_filtered = df_input[df_input["Group"].isin([params["group1"], params["group2"]])].copy()
+    
+    print(f"\nDataset: {len(df_filtered)} subjects ({params['group1']}, {params['group2']})")
+    print(f"Outer folds: {params.get('n_outer_folds', 5)}")
+    print(f"Seeds per fold: {len(params['seeds'])}")
+    print(f"Total evaluations: {params.get('n_outer_folds', 5)} × {len(params['seeds'])} = {params.get('n_outer_folds', 5) * len(params['seeds'])}\n")
+    
+    # Prepare features
+    meta_columns = ["ID", "Group", "Sex", "Age", "Education", "CDR_SB", "MMSE"]
+    available_meta = [col for col in meta_columns if col in df_filtered.columns]
+    
+    X = df_filtered.drop(columns=available_meta).to_numpy()
+    y = df_filtered["Group"].to_numpy()
+    ids = df_filtered["ID"].to_numpy()
+    
+    le = LabelEncoder()
+    y_encoded = le.fit_transform(y)
+    
+    # Outer cross-validation
+    outer_cv = StratifiedKFold(
+        n_splits=params.get("n_outer_folds", 5),
+        shuffle=True,
+        random_state=42  # Fixed for reproducibility
+    )
+    
+    all_results = []
+    all_predictions = []
+    
+    for fold_idx, (train_idx, test_idx) in enumerate(outer_cv.split(X, y_encoded), start=1):
+        print("\n" + "=" * 60)
+        print(f"OUTER FOLD {fold_idx}/{params.get('n_outer_folds', 5)}")
+        print("=" * 60)
+        
+        X_train_fold, X_test_fold = X[train_idx], X[test_idx]
+        y_train_fold, y_test_fold = y_encoded[train_idx], y_encoded[test_idx]
+        ids_train, ids_test = ids[train_idx], ids[test_idx]
+        
+        print(f"Train: {len(X_train_fold)} subjects | Test: {len(X_test_fold)} subjects")
+        print(f"Train distribution: {dict(zip(*np.unique(y_train_fold, return_counts=True)))}")
+        print(f"Test distribution: {dict(zip(*np.unique(y_test_fold, return_counts=True)))}")
+        
+        # Apply UMAP if needed (fit on train, transform test)
+        if params.get("umap", False):
+            print("Applying UMAP...")
+            X_train_fold, X_test_fold = run_umap(X_train_fold, X_test_fold)
+        
+        # Create DataSplit-like object for compatibility
+        data = type('DataSplit', (), {})()
+        data.x_train = X_train_fold
+        data.x_test = X_test_fold
+        data.y_train = y_train_fold
+        data.y_test = y_test_fold
+        data.le = le
+        
+        # Create temporary dataframe for ID tracking
+        df_temp = pd.DataFrame({
+            "ID": np.concatenate([ids_train, ids_test]),
+            "split": ["train"] * len(ids_train) + ["test"] * len(ids_test)
+        })
+        data.df = df_temp
+        data.splits = df_temp["split"].to_numpy()
+        
+        # Run classification for each seed on this fold
+        for seed in params["seeds"]:
+            print(f"\n  → Seed {seed}")
+            params["seed"] = seed
+            params["fold"] = fold_idx
+            set_seed(seed)
+            
+            # Create output directory for this fold-seed combination
+            fold_seed_dir = os.path.join(output_dir, f"fold_{fold_idx}", f"seed_{seed}")
+            os.makedirs(fold_seed_dir, exist_ok=True)
+            params["path_umap_class_seed"] = fold_seed_dir
+            
+            df_summary, df_preds = classification_pipeline(data, params)
+            
+            if df_summary is not None:
+                df_summary["outer_fold"] = fold_idx
+                df_summary["seed"] = seed
+                all_results.append(df_summary)
+            
+            if df_preds is not None:
+                df_preds["outer_fold"] = fold_idx
+                df_preds["seed"] = seed
+                all_predictions.append(df_preds)
+    
+    # Save and summarize results
+    if all_results:
+        df_all = pd.concat(all_results).reset_index(drop=True)
+        df_all.to_csv(os.path.join(output_dir, "nested_cv_all_results.csv"), index=False)
+        
+        # Summary statistics
+        print("\n" + "=" * 60)
+        print("NESTED CV SUMMARY: Aggregated across folds and seeds")
+        print("=" * 60)
+        
+        # Group by model
+        summary = df_all.groupby("model")[["test_accuracy", "test_precision", "test_recall", "test_f1"]].agg(["mean", "std"]).round(3)
+        print("\nOverall performance (all folds × all seeds):")
+        print(summary)
+        
+        # Also show per-fold variability
+        print("\nPer-fold variability (averaged across seeds):")
+        fold_summary = df_all.groupby(["model", "outer_fold"])[["test_accuracy"]].mean().round(3)
+        for model in df_all["model"].unique():
+            model_data = fold_summary.loc[model]
+            print(f"\n{model}:")
+            print(f"  Fold accuracies: {model_data['test_accuracy'].tolist()}")
+            print(f"  Mean: {model_data['test_accuracy'].mean():.3f} ± {model_data['test_accuracy'].std():.3f}")
+        
+        summary.to_csv(os.path.join(output_dir, "nested_cv_summary.csv"))
+    
+    if all_predictions:
+        df_all_preds = pd.concat(all_predictions).reset_index(drop=True)
+        df_all_preds.to_csv(os.path.join(output_dir, "nested_cv_all_predictions.csv"), index=False)
 
 if __name__ == "__main__":
     loader = ConfigLoader()

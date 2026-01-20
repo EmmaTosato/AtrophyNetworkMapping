@@ -6,6 +6,8 @@
     "umap": true
   },
   "classification": {
+    "use_fixed_split": true,
+    "n_outer_folds": 5,
     "tuning": false,
     "umap_all": false,
     "permutation_test": true,
