@@ -69,3 +69,7 @@ results/old/
 results/DL/**/models
 
 
+
+# Logs
+log/
+logs/

@@ -9,63 +9,63 @@
 ## 1. ARCHITETTURA NESTED CV
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│ OUTER CROSS-VALIDATION (5-fold StratifiedKFold)             │
-│ • Seed fisso: 42 (riproducibilità)                          │
-│ • Split: 80% Train (~105 pz) / 20% Test (~27 pz)           │
-│ • Per ogni fold: train diverso, test diverso                │
-└──────────────────────────────────────────────────────────────┘
-                            ▼
-┌──────────────────────────────────────────────────────────────┐
-│ FOLD 1 OUTER                                                 │
-│ Train: ~84 soggetti | Test: ~21 soggetti                    │
-└──────────────────────────────────────────────────────────────┘
-                            ▼
-┌──────────────────────────────────────────────────────────────┐
-│ INNER CROSS-VALIDATION (5-fold StratifiedKFold)             │
-│ • Su SOLO Train Outer (~84 pz)                              │
-│ • Grid Search: N configurazioni di iperparametri            │
-│ • Validation: fold interno (dati ORIGINALI)                 │
-│ • Seed: 42 (stesso outer per riproducibilità)               │
-└──────────────────────────────────────────────────────────────┘
-                            ▼
-         ┌──────────────────────────────────────┐
-         │ Inner Fold 1: Train ~67 | Val ~17   │
-         │ Inner Fold 2: Train ~67 | Val ~17   │
-         │ Inner Fold 3: Train ~67 | Val ~17   │
-         │ Inner Fold 4: Train ~67 | Val ~17   │
-         │ Inner Fold 5: Train ~67 | Val ~17   │
-         └──────────────────────────────────────┘
-                            ▼
-┌──────────────────────────────────────────────────────────────┐
-│ SELEZIONE BEST HYPERPARAMETERS                               │
-│ • Media accuracy su 5 inner folds                            │
-│ • Configurazione con accuracy maggiore → BEST PARAMS         │
-└──────────────────────────────────────────────────────────────┘
-                            ▼
-┌──────────────────────────────────────────────────────────────┐
-│ FULL RETRAIN (con best params)                              │
-│ • Train: TUTTI gli 84 pz del fold esterno                   │
-│ • Dati AUGMENTATI: 10× HCP bootstrap                        │
-│ • Epochs: fino a convergenza (con early stopping)            │
-└──────────────────────────────────────────────────────────────┘
-                            ▼
-┌──────────────────────────────────────────────────────────────┐
-│ TESTING FOLD 1                                               │
-│ • Test: 21 pz del fold esterno                              │
-│ • Dati ORIGINALI (NO augmentation)                          │
-│ • Metriche: Accuracy, F1, Precision, Recall, AUC            │
-└──────────────────────────────────────────────────────────────┘
-                            ▼
+
+ OUTER CROSS-VALIDATION (5-fold StratifiedKFold)             
+ • Seed fisso: 42 (riproducibilità)                          
+ • Split: 80% Train (~105 pz) / 20% Test (~27 pz)           
+ • Per ogni fold: train diverso, test diverso                
+
+                            
+
+ FOLD 1 OUTER                                                 
+ Train: ~84 soggetti | Test: ~21 soggetti                    
+
+                            
+
+ INNER CROSS-VALIDATION (5-fold StratifiedKFold)             
+ • Su SOLO Train Outer (~84 pz)                              
+ • Grid Search: N configurazioni di iperparametri            
+ • Validation: fold interno (dati ORIGINALI)                 
+ • Seed: 42 (stesso outer per riproducibilità)               
+
+                            
+         
+          Inner Fold 1: Train ~67 | Val ~17   
+          Inner Fold 2: Train ~67 | Val ~17   
+          Inner Fold 3: Train ~67 | Val ~17   
+          Inner Fold 4: Train ~67 | Val ~17   
+          Inner Fold 5: Train ~67 | Val ~17   
+         
+                            
+
+ SELEZIONE BEST HYPERPARAMETERS                               
+ • Media accuracy su 5 inner folds                            
+ • Configurazione con accuracy maggiore → BEST PARAMS         
+
+                            
+
+ FULL RETRAIN (con best params)                              
+ • Train: TUTTI gli 84 pz del fold esterno                   
+ • Dati AUGMENTATI: 10× HCP bootstrap                        
+ • Epochs: fino a convergenza (con early stopping)            
+
+                            
+
+ TESTING FOLD 1                                               
+ • Test: 21 pz del fold esterno                              
+ • Dati ORIGINALI (NO augmentation)                          
+ • Metriche: Accuracy, F1, Precision, Recall, AUC            
+
+                            
        [RIPETI per FOLD 2, 3, 4, 5 OUTER]
-                            ▼
-┌──────────────────────────────────────────────────────────────┐
-│ AGGREGAZIONE RISULTATI FINALI                                │
-│ • Mean ± Std su 5 outer folds                                │
-│ • Per-fold metrics (tabella completa)                        │
-│ • Best model selection: fold con accuracy maggiore           │
-│ • Salvataggio: results/nested_cv/GROUP/aggregated.json      │
-└──────────────────────────────────────────────────────────────┘
+                            
+
+ AGGREGAZIONE RISULTATI FINALI                                
+ • Mean ± Std su 5 outer folds                                
+ • Per-fold metrics (tabella completa)                        
+ • Best model selection: fold con accuracy maggiore           
+ • Salvataggio: results/nested_cv/GROUP/aggregated.json      
+
 ```
 
 ---
@@ -73,8 +73,8 @@
 ## 2. DATA AUGMENTATION (10× HCP BOOTSTRAP)
 
 **POLICY FONDAMENTALE:**
-- ✅ **AUGMENTATION**: SOLO nei set di TRAINING (outer train, inner train durante grid search, full retrain)
-- ❌ **NO AUGMENTATION**: SEMPRE in validation e test (dati originali)
+-  **AUGMENTATION**: SOLO nei set di TRAINING (outer train, inner train durante grid search, full retrain)
+-  **NO AUGMENTATION**: SEMPRE in validation e test (dati originali)
 
 **Dataset Classes:**
 - `FCDataset`: dati originali (validation e test)
@@ -86,9 +86,9 @@
 - Validation/Test: `FCDataset` carica da `data/FCmaps_processed/` (originali)
 
 **Modifica necessaria:**
-- ❌ NON serve soluzione ibrida
-- ✅ Dynamic splitting diretto: `StratifiedKFold` su lista soggetti in memoria
-- ✅ `datasets.py` già compatibile: accetta DataFrame con ID, label
+-  NON serve soluzione ibrida
+-  Dynamic splitting diretto: `StratifiedKFold` su lista soggetti in memoria
+-  `datasets.py` già compatibile: accetta DataFrame con ID, label
 
 ---
 
@@ -263,16 +263,16 @@ FC3: num_classes → Softmax
 **Struttura Output:**
 ```
 results/nested_cv/
-├── ADNI_PSP/
-│   ├── fold_1/
-│   │   ├── best_model.pt
-│   │   ├── metrics.json
-│   │   ├── confusion_matrix.png
-│   │   └── training_curves.png
-│   ├── fold_2/ ... fold_5/
-│   └── aggregated_results.json
-├── ADNI_CBS/ (stessa struttura)
-└── PSP_CBS/ (stessa struttura)
+ ADNI_PSP/
+    fold_1/
+       best_model.pt
+       metrics.json
+       confusion_matrix.png
+       training_curves.png
+    fold_2/ ... fold_5/
+    aggregated_results.json
+ ADNI_CBS/ (stessa struttura)
+ PSP_CBS/ (stessa struttura)
 
 ---
 
@@ -344,18 +344,18 @@ def inner_cv_grid_search(train_df, model_name, grid_params):
         if mean_score > best_score:
             best_score = mean_score
             
-### **6.2 Modifica `datasets.py`** ✅ GIÀ COMPATIBILE
+### **6.2 Modifica `datasets.py`**  GIÀ COMPATIBILE
 - `FCDataset` e `AugmentedFCDataset` accettano DataFrame
 - Nessuna modifica necessaria
 
 ### **6.3 Eliminare Dipendenza CSV**
-- ❌ Rimuovi: `resolve_split_csv_path()` da `cnn_utils.py`
-- ✅ Usa: Dynamic splitting in memoria con StratifiedKFold
+-  Rimuovi: `resolve_split_csv_path()` da `cnn_utils.py`
+-  Usa: Dynamic splitting in memoria con StratifiedKFold
 
 ### **7.4 Aggiorna `models.py`**
-- ✅ Aggiungi: Classe `AlexNet3D` (vedi architettura sopra)
-- ✅ Modifica: `ResNet3D` usa `r3d_18` invece di `r3d_34`
-- ✅ Mantieni: `VGG16_3D` invariato
+-  Aggiungi: Classe `AlexNet3D` (vedi architettura sopra)
+-  Modifica: `ResNet3D` usa `r3d_18` invece di `r3d_34`
+-  Mantieni: `VGG16_3D` invariato
 
 ---
 

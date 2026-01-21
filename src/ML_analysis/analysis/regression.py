@@ -9,7 +9,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from ML_analysis.loading.config import ConfigLoader
 from preprocessing.processflat import x_features_return
 from ML_analysis.analysis.plotting import plot_ols_diagnostics, plot_actual_vs_predicted, plot_umap_embedding
-from ML_analysis.utils.ml_utils import log_to_file, reset_stdout, run_umap, build_output_path
+from ML_analysis.ml_utils import log_to_file, reset_stdout, run_umap, build_output_path
 
 
 

@@ -1,4 +1,4 @@
-﻿Atrophy network mapping reveals convergent network architecture and clinical relevance, but limited diagnostic specificity in tauopathies
+Atrophy network mapping reveals convergent network architecture and clinical relevance, but limited diagnostic specificity in tauopathies
 Silvia Saglia1,†, Emma Maria Sole Tosato2,†, Lorenzo Pini2,3, Giorgio Dolci1,4, Lorenza Brusini1, Chiara Tuzzato5, Maurizio Corbetta2,3,6, Ilaria Boscolo Galazzo1,§, Gloria Menegaz1,§; Alzheimer’s Disease Neuroimaging Initiative and 4-R-Tauopathy Neuroimaging Initiative Consortium*
 1: Department of Engineering for Innovation Medicine, University of Verona, Verona, Italy;
 2: Padova Neuroscience Center, University of di Padova, Padova, Italy;

@@ -63,27 +63,27 @@ To test clinical relevance, we associated ANM features with clinical severity (M
 
 ```
 ANM_Verona/
-├── data/                   # Raw and processed data (ignored by git)
-│   ├── FCmaps/             # Original W-score maps
-│   ├── FCmaps_processed/   # Preprocessed .npy files for training
-│   └── dataframes/         # Tabular data (features, networks)
-├── assets/                 # Metadata and configuration resources
-│   ├── split/              # ML train/test split CSVs
-│   ├── split_cnn/          # CNN train/test split CSVs
-│   ├── metadata/           # Patient metadata (labels, demographics)
-│   └── masks/              # Brain masks (GM mask, etc.)
-├── results/                # Analysis outputs
-│   ├── ml_analysis/        # ML classification results
-│   ├── runs/               # CNN training checkpoints and logs
-│   └── tuning/             # Hyperparameter tuning results
-├── src/                    # Source code
-│   ├── cnn/                # 3D CNN model architectures and dataset loaders
-│   ├── training/           # CNN training loops and runners
-│   ├── analysis/           # ML analysis scripts (classification, clustering)
-│   ├── preprocessing/      # Data processing scripts (3D mapping, splitting)
-│   ├── augmentation/       # Data augmentation logic
-│   └── config/             # Configuration JSONs
-└── notebooks/              # Jupyter notebooks for exploration and viz
+ data/                   # Raw and processed data (ignored by git)
+    FCmaps/             # Original W-score maps
+    FCmaps_processed/   # Preprocessed .npy files for training
+    dataframes/         # Tabular data (features, networks)
+ assets/                 # Metadata and configuration resources
+    split/              # ML train/test split CSVs
+    split_cnn/          # CNN train/test split CSVs
+    metadata/           # Patient metadata (labels, demographics)
+    masks/              # Brain masks (GM mask, etc.)
+ results/                # Analysis outputs
+    ml_analysis/        # ML classification results
+    runs/               # CNN training checkpoints and logs
+    tuning/             # Hyperparameter tuning results
+ src/                    # Source code
+    cnn/                # 3D CNN model architectures and dataset loaders
+    training/           # CNN training loops and runners
+    analysis/           # ML analysis scripts (classification, clustering)
+    preprocessing/      # Data processing scripts (3D mapping, splitting)
+    augmentation/       # Data augmentation logic
+    config/             # Configuration JSONs
+ notebooks/              # Jupyter notebooks for exploration and viz
 ```
 
 ## Documentation

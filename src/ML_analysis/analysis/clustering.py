@@ -13,7 +13,7 @@ from ML_analysis.loading.config import ConfigLoader
 from preprocessing.processflat import x_features_return
 from ML_analysis.analysis.clustering_evaluation import evaluate_kmeans, evaluate_gmm, evaluate_hdbscan, evaluate_consensus
 from ML_analysis.analysis.plotting import plot_umap_embedding, plot_clusters_vs_groups
-from ML_analysis.utils.ml_utils import log_to_file, reset_stdout, run_umap, build_output_path
+from ML_analysis.ml_utils import log_to_file, reset_stdout, run_umap, build_output_path
 
 # Suppress warnings for cleaner output
 warnings.filterwarnings("ignore")

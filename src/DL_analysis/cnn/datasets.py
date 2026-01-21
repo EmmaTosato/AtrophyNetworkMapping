@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
-from DL_analysis.utils.cnn_utils import resolve_split_csv_path
+from DL_analysis.cnn_utils import resolve_split_csv_path
 
 class FCDataset(Dataset):
     """

@@ -193,10 +193,10 @@ happen in that neuron. However, we still find that the following local normaliza
 generalization. Denoting by aix,y the activity of a neuron computed by applying kernel i at position
 (x, y) and then applying the ReLU nonlinearity, the response-normalized activity bix,y is given by
 the expression
-                                                                          β
+                                                                          β
                                                   min(N −1,i+n/2)
                                                         X
-                            bix,y = aix,y /k + α                (ajx,y )2 
+                            bix,y = aix,y /k + α                (ajx,y )2 
                                                       j=max(0,i−n/2)
 where the sum runs over n “adjacent” kernel maps at the same spatial position, and N is the total
 number of kernels in the layer. The ordering of the kernel maps is of course arbitrary and determined

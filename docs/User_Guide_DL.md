@@ -2,7 +2,7 @@
 
 This guide provides step-by-step instructions on how to use, configure, and interpret the Deep Learning pipeline for the ANM Verona project.
 
-## 1. Quick Start 🚀
+## 1. Quick Start 
 
 ## 1. Quick Start
 
@@ -67,15 +67,15 @@ All results are stored in `results/DL/` organized by **Comparison > Model**.
 Structure:
 ```
 results/DL/
-└── AD_PSP/
-    └── resnet/
-        ├── aggregated_results.json  <-- IL REPORT FINALE
-        ├── fold_1/                  <-- Outer Fold 1 (Esperimento Indipendente)
-        │   ├── metrics.json         <-- Risultato Test Set
-        │   ├── history.json         <-- Curve di Training
-        │   ├── plots/               <-- Grafici PNG
-        │   └── models/              <-- Checkpoint (.pt)
-        └── ...
+ AD_PSP/
+     resnet/
+         aggregated_results.json  <-- IL REPORT FINALE
+         fold_1/                  <-- Outer Fold 1 (Esperimento Indipendente)
+            metrics.json         <-- Risultato Test Set
+            history.json         <-- Curve di Training
+            plots/               <-- Grafici PNG
+            models/              <-- Checkpoint (.pt)
+         ...
 ```
 
 ### How to Read the Files

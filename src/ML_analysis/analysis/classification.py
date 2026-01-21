@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("src")
 from ML_analysis.loading.config import ConfigLoader
-from ML_analysis.utils.ml_utils import run_umap, log_to_file, reset_stdout, resolve_split_csv_path, build_output_path
+from ML_analysis.ml_utils import run_umap, log_to_file, reset_stdout, resolve_split_csv_path, build_output_path
 from ML_analysis.analysis.plotting import plot_confusion_matrix
 
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -38,7 +38,11 @@ class DataSplit:
              self.df = df_input.copy()
 
         self.label_col = label_col
-        self.meta_columns = ["ID", "Group", "Sex", "Age", "Education", "CDR_SB", "MMSE", "split"]
+        # Extended metadata columns to exclude from features
+        self.meta_columns = [
+            "ID", "Group", "Sex", "Age", "Education", "CDR_SB", "MMSE", "split",
+            "labels_gmm_cdr", "labels_km", "labels_hdb"
+        ]
         
         # Only keep available meta columns to avoid KeyErrors
         self.meta_columns = [col for col in self.meta_columns if col in self.df.columns]
