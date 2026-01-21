@@ -87,6 +87,19 @@ class ConfigLoader:
             raise ValueError(f"Unsupported dataset_type: {dataset_type}")
 
         meta = pd.read_csv(self.args["df_meta"])
+        
+        # Merge Group/Metadata into df_input
+        # Voxel data might be large, but we need Group for classification
+        if "Group" not in df_input.columns:
+             df_input = pd.merge(df_input, meta, on="ID", how="inner")
+        
+        # Handle missings/NaNs: User requested to DROP rows with missing metadata
+        initial_len = len(df_input)
+        df_input = df_input.dropna()
+        dropped_len = initial_len - len(df_input)
+        
+        if dropped_len > 0:
+            print(f"WARNING: Dropped {dropped_len} subjects due to missing metadata (NaNs).")
 
         return self.args, df_input, meta
 

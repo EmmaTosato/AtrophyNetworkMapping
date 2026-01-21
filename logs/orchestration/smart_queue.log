@@ -1,0 +1,4 @@
+nohup: ignoring input
+  File "/data/users/etosato/ANM_Verona/src/DL_analysis/training/run_smart_queue.py", line 8
+    while True:
+IndentationError: unexpected indent

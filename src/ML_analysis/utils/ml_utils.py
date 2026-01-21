@@ -41,7 +41,7 @@ def log_to_file(log_path):
     Redirects stdout to a file.
     Useful for saving all print() outputs during script execution.
     """
-    sys.stdout = open(log_path, "w")
+    sys.stdout = open(log_path, "w", buffering=1) # Line-buffering
 
 def reset_stdout():
     """

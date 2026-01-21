@@ -1,5 +1,6 @@
 import json
 import subprocess
+import os
 
 # Percorsi
 config_path = "src/ML_analysis/config/ml_config.json"
@@ -67,7 +68,7 @@ for cfg in configs:
 
     # Modifica la sezione "classification"
     full_config["classification"] = {
-        "tuning": False,
+        "tuning": True,
         "umap_all": cfg["umap_all"],
         "permutation_test": True,
         "n_permutations": 100,
@@ -87,4 +88,5 @@ for cfg in configs:
 
     # Esegui lo script classification.py
     print(f"\n>>> Running classification.py for {cfg['group1']} vs {cfg['group2']} | {cfg['dataset_type'].upper()}")
-    subprocess.run(["python", script_path])
+    p = subprocess.run(["python", script_path], env={**os.environ, "PYTHONPATH": "src"})
+

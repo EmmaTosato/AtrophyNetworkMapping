@@ -1,14 +1,12 @@
 {
   "job": {
-    "dataset_type": "voxel",
+    "dataset_type": "networks",
     "threshold": false,
-    "task_type": "regression",
-    "umap": true
+    "task_type": "classification",
+    "umap": false
   },
   "classification": {
-    "use_fixed_split": true,
-    "n_outer_folds": 5,
-    "tuning": false,
+    "tuning": true,
     "umap_all": false,
     "permutation_test": true,
     "n_permutations": 100,
@@ -56,7 +54,7 @@
     "separated_plots": true
   },
   "fixed_parameters": {
-    "output_dir": "results/ml_analysis/",
+    "output_dir": "results/ML/",
     "covariates": [
       "Sex",
       "Age",

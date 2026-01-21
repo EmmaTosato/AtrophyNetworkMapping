@@ -71,7 +71,9 @@ def main():
         
     # 3. Base Dir
     # We assume we are running from project root
-    base_output_dir = "results/nested_cv"
+    # 3. Base Dir
+    # We assume we are running from project root
+    base_output_dir = "results/DL"
     
     print("="*60)
     print(f"BENCHMARK RUNNER CONFIGURATION")

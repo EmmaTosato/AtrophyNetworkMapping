@@ -3,6 +3,7 @@ import os
 import sys
 import json
 import argparse
+import re
 import pandas as pd
 import numpy as np
 import torch
@@ -262,17 +263,28 @@ def nested_cv_classification(args):
     log_file = os.path.join(logs_dir, "run.log")
     
     # Save Full Config for Reproducibility
-    with open(os.path.join(args.output_dir, "config_snapshot.json"), "w") as f:
-        # Load grid used
-        with open(args.config_path, 'r') as cf:
-            original_config = json.load(cf)
-        
-        snapshot = {
-            'args': vars(args),
-            'original_config': original_config,
-            'device': str(device)
-        }
-        json.dump(snapshot, f, indent=4)
+    # Config snapshot disabled as per user request (redundant with logs/global config)
+    # with open(os.path.join(args.output_dir, "config_snapshot.json"), "w") as f:
+    #     # Load grid used
+    #     with open(args.config_path, 'r') as cf:
+    #         original_config = json.load(cf)
+    #     
+    #     snapshot = {
+    #         'args': vars(args),
+    #         'original_config': original_config,
+    #         'device': str(device)
+    #     }
+    #     
+    #     # Determine strict formatting
+    #     # We want to compact lists like [0.01] into single lines
+    #     json_str = json.dumps(snapshot, indent=4)
+    #     
+    #     # Regex to find lists that are expanded and collapse them
+    #     # Logic: Find [ followed by non-bracket content followed by ]
+    #     # This safely collapses lists of numbers/strings/nulls
+    #     json_str = re.sub(r'\[\s+([^\[\]\{\}]+?)\s+\]', lambda m: '[' + ' '.join(m.group(1).split()) + ']', json_str)
+    #     
+    #     f.write(json_str)
     print(f"Logging to {log_file}")
     sys.stdout = open(log_file, "w")
     sys.stderr = sys.stdout
@@ -372,9 +384,17 @@ def nested_cv_classification(args):
         with open(os.path.join(fold_dir, "metrics.json"), "w") as f:
             json.dump(fold_result, f, indent=4)
         
-        # 4. History (Optional but good for debug)
+        # 4. History (Row-oriented for readability)
+        history_list = []
+        num_epochs = len(history['train_loss'])
+        for i in range(num_epochs):
+            entry = {'epoch': i + 1}
+            for k, v in history.items():
+                entry[k] = round(v[i], 4) # Round for readability
+            history_list.append(entry)
+
         with open(os.path.join(fold_dir, "history.json"), "w") as f:
-            json.dump(history, f, indent=4)
+            json.dump(history_list, f, indent=4)
             
         print(f"  [Test] Fold {outer_fold+1} Completed. Accuracy: {metrics['accuracy']:.4f}")
 
