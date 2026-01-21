@@ -1,0 +1,13 @@
+============================================================
+STARTING NESTED CV PIPELINE for ADNI vs CBS
+============================================================
+
+Dataset: 44 subjects (ADNI, CBS)
+Outer folds: 5
+
+============================================================
+OUTER FOLD 1/5
+============================================================
+Train: 35 subjects | Test: 9 subjects
+  > Processing RandomForest...
+  > Processing GradientBoosting...

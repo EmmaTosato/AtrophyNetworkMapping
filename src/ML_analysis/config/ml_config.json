@@ -11,7 +11,7 @@
     "permutation_test": true,
     "n_permutations": 100,
     "perm_cv": 5,
-    "group1": "ADNI",
+    "group1": "PSP",
     "group2": "CBS",
     "seeds": [
       42,
@@ -22,21 +22,21 @@
     ],
     "n_folds": 5,
     "RandomForest": {
-      "n_estimators": 200,
+      "n_estimators": 300,
       "max_depth": null,
-      "max_features": "log2",
-      "min_samples_split": 10
+      "max_features": "sqrt",
+      "min_samples_split": 5
     },
     "GradientBoosting": {
-      "n_estimators": 100,
+      "n_estimators": 200,
       "learning_rate": 0.01,
       "max_depth": 3,
-      "subsample": 1.0
+      "subsample": 0.8
     },
     "KNN": {
-      "n_neighbors": 9,
-      "weights": "uniform",
-      "metric": "manhattan"
+      "n_neighbors": 3,
+      "weights": "distance",
+      "metric": "euclidean"
     }
   },
   "regression": {
