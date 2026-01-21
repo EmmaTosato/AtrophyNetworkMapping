@@ -262,7 +262,7 @@ def nested_cv_classification(args):
     log_file = os.path.join(logs_dir, "run.log")
     
     # Save Full Config for Reproducibility
-    with open(os.path.join(logs_dir, "config_snapshot.json"), "w") as f:
+    with open(os.path.join(args.output_dir, "config_snapshot.json"), "w") as f:
         # Load grid used
         with open(args.config_path, 'r') as cf:
             original_config = json.load(cf)
