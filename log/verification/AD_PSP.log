@@ -1,0 +1,84 @@
+
+[VERIFICATION REPORT] AD vs PSP
+============================================================
+Total Subjects: 132
+   - AD: 72
+   - PSP: 60
+
+[OUTER FOLD 1/5]
+   [PASS] Split Integrity (No overlap between Train/Test)
+   - Outer Train Size: 105
+   - Outer Test Size : 27
+   [DATA CHECK] Inner Fold 1:
+     [PASS] Train Set: Uses AUGMENTED folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_augmented_processed...
+        Subjects: 84 -> Dataset Length: 840 (Ratio: 10.0x)
+     [PASS] Val Set  : Uses ORIGINAL folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_processed...
+        Subjects: 21 -> Dataset Length: 21 (Ratio: 1.0x)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+
+[OUTER FOLD 2/5]
+   [PASS] Split Integrity (No overlap between Train/Test)
+   - Outer Train Size: 105
+   - Outer Test Size : 27
+   [DATA CHECK] Inner Fold 1:
+     [PASS] Train Set: Uses AUGMENTED folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_augmented_processed...
+        Subjects: 84 -> Dataset Length: 840 (Ratio: 10.0x)
+     [PASS] Val Set  : Uses ORIGINAL folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_processed...
+        Subjects: 21 -> Dataset Length: 21 (Ratio: 1.0x)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+
+[OUTER FOLD 3/5]
+   [PASS] Split Integrity (No overlap between Train/Test)
+   - Outer Train Size: 106
+   - Outer Test Size : 26
+   [DATA CHECK] Inner Fold 1:
+     [PASS] Train Set: Uses AUGMENTED folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_augmented_processed...
+        Subjects: 84 -> Dataset Length: 840 (Ratio: 10.0x)
+     [PASS] Val Set  : Uses ORIGINAL folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_processed...
+        Subjects: 22 -> Dataset Length: 22 (Ratio: 1.0x)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+
+[OUTER FOLD 4/5]
+   [PASS] Split Integrity (No overlap between Train/Test)
+   - Outer Train Size: 106
+   - Outer Test Size : 26
+   [DATA CHECK] Inner Fold 1:
+     [PASS] Train Set: Uses AUGMENTED folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_augmented_processed...
+        Subjects: 84 -> Dataset Length: 840 (Ratio: 10.0x)
+     [PASS] Val Set  : Uses ORIGINAL folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_processed...
+        Subjects: 22 -> Dataset Length: 22 (Ratio: 1.0x)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+
+[OUTER FOLD 5/5]
+   [PASS] Split Integrity (No overlap between Train/Test)
+   - Outer Train Size: 106
+   - Outer Test Size : 26
+   [DATA CHECK] Inner Fold 1:
+     [PASS] Train Set: Uses AUGMENTED folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_augmented_processed...
+        Subjects: 84 -> Dataset Length: 840 (Ratio: 10.0x)
+     [PASS] Val Set  : Uses ORIGINAL folder
+        Path: /data/users/etosato/ANM_Verona/data/FCmaps_processed...
+        Subjects: 22 -> Dataset Length: 22 (Ratio: 1.0x)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+   [PASS] Inner CV Loops (5/5 folds checked for leakage)
+
+============================================================
+[CROSS-VALIDATION DISTRIBUTION CHECK]
+Checking that each subject appears exactly once in Test set across 5 folds...
+   [PASS] PERFECT DISTRIBUTION: All 132 subjects tested exactly 1 time.
+   [PASS] PERFECT TRAIN FREQUENCY: All 132 subjects trained exactly 4 times.
+============================================================
+

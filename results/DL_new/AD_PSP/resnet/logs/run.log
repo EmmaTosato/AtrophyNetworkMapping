@@ -1,0 +1,327 @@
+Command arguments:
+  - group1: AD
+  - group2: PSP
+  - model: resnet
+  - config_path: src/DL_analysis/config/nested_cv_config.json
+  - metadata_path: /data/users/etosato/ANM_Verona/assets/metadata/labels.csv
+  - data_dir: /data/users/etosato/ANM_Verona/data/FCmaps_processed
+  - data_dir_augmented: /data/users/etosato/ANM_Verona/data/FCmaps_augmented_processed
+  - output_dir: results/nested_cv/AD_PSP/resnet
+  - test_mode: False
+Using device: cuda
+
+=== OUTER FOLD 1/5 ===
+  [Outer Fold] Train Size: 105 subjects
+  [Outer Fold] Test Size : 27 subjects
+
+--- Step 1: Inner CV Grid Search (Fold 1) ---
+
+  [Inner Grid Search] Starting Grid Search (1 configurations)...
+    [Config 1/1] Mean Acc: 0.7238 | Params: {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+  [Inner Grid Search] Best Config found (Acc: 0.7238):
+    {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+
+--- Step 2: Full Retrain with Best Params (Fold 1) ---
+  [Retrain] Training on 94 subjects (Augmented)
+  [Retrain] Validation monitor on 11 subjects (Original)
+  Epoch 1/40 - Train Loss: 0.9490 - Train Acc: 0.4681 - Val Loss: 0.6732 - Val Acc: 0.5455
+  Epoch 2/40 - Train Loss: 0.7894 - Train Acc: 0.5085 - Val Loss: 0.6938 - Val Acc: 0.5455
+  Epoch 3/40 - Train Loss: 0.7129 - Train Acc: 0.5170 - Val Loss: 0.6577 - Val Acc: 0.5455
+  Epoch 4/40 - Train Loss: 0.6949 - Train Acc: 0.5681 - Val Loss: 0.5484 - Val Acc: 0.6364
+  Epoch 5/40 - Train Loss: 0.6758 - Train Acc: 0.6117 - Val Loss: 0.5440 - Val Acc: 0.9091
+  Epoch 6/40 - Train Loss: 0.6399 - Train Acc: 0.6330 - Val Loss: 0.4018 - Val Acc: 1.0000
+  Epoch 7/40 - Train Loss: 0.6229 - Train Acc: 0.6628 - Val Loss: 0.9746 - Val Acc: 0.5455
+  Epoch 8/40 - Train Loss: 0.5955 - Train Acc: 0.6862 - Val Loss: 0.5046 - Val Acc: 0.7273
+  Epoch 9/40 - Train Loss: 0.5858 - Train Acc: 0.6809 - Val Loss: 0.6605 - Val Acc: 0.6364
+  Epoch 10/40 - Train Loss: 0.5641 - Train Acc: 0.7085 - Val Loss: 0.3604 - Val Acc: 0.8182
+  Epoch 11/40 - Train Loss: 0.5583 - Train Acc: 0.7170 - Val Loss: 0.2756 - Val Acc: 0.9091
+  Epoch 12/40 - Train Loss: 0.5725 - Train Acc: 0.7202 - Val Loss: 0.6524 - Val Acc: 0.6364
+  Epoch 13/40 - Train Loss: 0.4910 - Train Acc: 0.7564 - Val Loss: 0.3793 - Val Acc: 0.8182
+  Epoch 14/40 - Train Loss: 0.4508 - Train Acc: 0.7957 - Val Loss: 0.5038 - Val Acc: 0.9091
+  Epoch 15/40 - Train Loss: 0.4869 - Train Acc: 0.7798 - Val Loss: 0.5093 - Val Acc: 0.8182
+  Epoch 16/40 - Train Loss: 0.4734 - Train Acc: 0.7755 - Val Loss: 0.3428 - Val Acc: 0.9091
+  Epoch 17/40 - Train Loss: 0.3898 - Train Acc: 0.8287 - Val Loss: 0.3468 - Val Acc: 0.8182
+  Epoch 18/40 - Train Loss: 0.3699 - Train Acc: 0.8436 - Val Loss: 0.4625 - Val Acc: 0.7273
+  Epoch 19/40 - Train Loss: 0.3381 - Train Acc: 0.8617 - Val Loss: 0.4264 - Val Acc: 0.8182
+  Epoch 20/40 - Train Loss: 0.3070 - Train Acc: 0.8798 - Val Loss: 0.4414 - Val Acc: 0.6364
+  Epoch 21/40 - Train Loss: 0.2231 - Train Acc: 0.9106 - Val Loss: 0.2357 - Val Acc: 0.9091
+  Epoch 22/40 - Train Loss: 0.1666 - Train Acc: 0.9383 - Val Loss: 0.1749 - Val Acc: 0.9091
+  Epoch 23/40 - Train Loss: 0.1531 - Train Acc: 0.9319 - Val Loss: 0.1695 - Val Acc: 1.0000
+  Epoch 24/40 - Train Loss: 0.1707 - Train Acc: 0.9245 - Val Loss: 0.1651 - Val Acc: 0.9091
+  Epoch 25/40 - Train Loss: 0.1252 - Train Acc: 0.9511 - Val Loss: 0.1751 - Val Acc: 0.9091
+  Epoch 26/40 - Train Loss: 0.1330 - Train Acc: 0.9511 - Val Loss: 0.2189 - Val Acc: 0.8182
+  Epoch 27/40 - Train Loss: 0.1156 - Train Acc: 0.9511 - Val Loss: 0.2831 - Val Acc: 0.8182
+  Epoch 28/40 - Train Loss: 0.1055 - Train Acc: 0.9628 - Val Loss: 0.2082 - Val Acc: 0.9091
+  Epoch 29/40 - Train Loss: 0.1099 - Train Acc: 0.9553 - Val Loss: 0.1441 - Val Acc: 0.9091
+  Epoch 30/40 - Train Loss: 0.0981 - Train Acc: 0.9638 - Val Loss: 0.2121 - Val Acc: 0.9091
+  Epoch 31/40 - Train Loss: 0.0894 - Train Acc: 0.9617 - Val Loss: 0.1765 - Val Acc: 0.9091
+  Epoch 32/40 - Train Loss: 0.0796 - Train Acc: 0.9691 - Val Loss: 0.1922 - Val Acc: 0.9091
+  Epoch 33/40 - Train Loss: 0.0884 - Train Acc: 0.9723 - Val Loss: 0.1550 - Val Acc: 0.9091
+  Epoch 34/40 - Train Loss: 0.0827 - Train Acc: 0.9681 - Val Loss: 0.1555 - Val Acc: 0.9091
+  Epoch 35/40 - Train Loss: 0.0789 - Train Acc: 0.9660 - Val Loss: 0.1661 - Val Acc: 0.9091
+  Epoch 36/40 - Train Loss: 0.0791 - Train Acc: 0.9713 - Val Loss: 0.1339 - Val Acc: 0.9091
+  Epoch 37/40 - Train Loss: 0.0845 - Train Acc: 0.9670 - Val Loss: 0.1423 - Val Acc: 0.9091
+  Epoch 38/40 - Train Loss: 0.0765 - Train Acc: 0.9691 - Val Loss: 0.1431 - Val Acc: 0.9091
+  Epoch 39/40 - Train Loss: 0.0838 - Train Acc: 0.9660 - Val Loss: 0.1345 - Val Acc: 0.9091
+  Epoch 40/40 - Train Loss: 0.0746 - Train Acc: 0.9713 - Val Loss: 0.1437 - Val Acc: 0.9091
+  [Retrain] Completed. Best Val Acc: 1.0000 | Train Acc at that point: 0.6330
+
+--- Step 3: Final Testing (Fold 1) ---
+  [Test] Evaluating on 27 held-out subjects...
+  [Test] Fold 1 Completed. Accuracy: 0.7037
+
+=== OUTER FOLD 2/5 ===
+  [Outer Fold] Train Size: 105 subjects
+  [Outer Fold] Test Size : 27 subjects
+
+--- Step 1: Inner CV Grid Search (Fold 2) ---
+
+  [Inner Grid Search] Starting Grid Search (1 configurations)...
+    [Config 1/1] Mean Acc: 0.8286 | Params: {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+  [Inner Grid Search] Best Config found (Acc: 0.8286):
+    {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+
+--- Step 2: Full Retrain with Best Params (Fold 2) ---
+  [Retrain] Training on 94 subjects (Augmented)
+  [Retrain] Validation monitor on 11 subjects (Original)
+  Epoch 1/40 - Train Loss: 0.8901 - Train Acc: 0.5883 - Val Loss: 0.9577 - Val Acc: 0.5455
+  Epoch 2/40 - Train Loss: 0.6801 - Train Acc: 0.6840 - Val Loss: 0.2930 - Val Acc: 0.9091
+  Epoch 3/40 - Train Loss: 0.5732 - Train Acc: 0.7021 - Val Loss: 0.4940 - Val Acc: 0.6364
+  Epoch 4/40 - Train Loss: 0.5526 - Train Acc: 0.7404 - Val Loss: 0.4396 - Val Acc: 0.9091
+  Epoch 5/40 - Train Loss: 0.5117 - Train Acc: 0.7628 - Val Loss: 0.7108 - Val Acc: 0.6364
+  Epoch 6/40 - Train Loss: 0.5148 - Train Acc: 0.7606 - Val Loss: 0.4909 - Val Acc: 0.7273
+  Epoch 7/40 - Train Loss: 0.4474 - Train Acc: 0.7883 - Val Loss: 0.2105 - Val Acc: 0.9091
+  Epoch 8/40 - Train Loss: 0.4218 - Train Acc: 0.8181 - Val Loss: 0.4170 - Val Acc: 0.8182
+  Epoch 9/40 - Train Loss: 0.3581 - Train Acc: 0.8564 - Val Loss: 0.2652 - Val Acc: 0.8182
+  Epoch 10/40 - Train Loss: 0.2692 - Train Acc: 0.8957 - Val Loss: 0.3422 - Val Acc: 0.8182
+  Epoch 11/40 - Train Loss: 0.2584 - Train Acc: 0.9053 - Val Loss: 0.6345 - Val Acc: 0.6364
+  Epoch 12/40 - Train Loss: 0.2491 - Train Acc: 0.9053 - Val Loss: 0.3524 - Val Acc: 0.7273
+  Epoch 13/40 - Train Loss: 0.2351 - Train Acc: 0.9053 - Val Loss: 0.4146 - Val Acc: 0.6364
+  Epoch 14/40 - Train Loss: 0.1977 - Train Acc: 0.9266 - Val Loss: 0.3394 - Val Acc: 0.7273
+  Epoch 15/40 - Train Loss: 0.1874 - Train Acc: 0.9394 - Val Loss: 0.3963 - Val Acc: 0.8182
+  Epoch 16/40 - Train Loss: 0.1814 - Train Acc: 0.9383 - Val Loss: 0.3977 - Val Acc: 0.7273
+  Epoch 17/40 - Train Loss: 0.0717 - Train Acc: 0.9777 - Val Loss: 0.3065 - Val Acc: 0.7273
+  Epoch 18/40 - Train Loss: 0.0745 - Train Acc: 0.9798 - Val Loss: 0.6392 - Val Acc: 0.7273
+  Epoch 19/40 - Train Loss: 0.0913 - Train Acc: 0.9702 - Val Loss: 0.7196 - Val Acc: 0.7273
+  Epoch 20/40 - Train Loss: 0.0781 - Train Acc: 0.9723 - Val Loss: 0.3097 - Val Acc: 0.8182
+  Epoch 21/40 - Train Loss: 0.0374 - Train Acc: 0.9872 - Val Loss: 0.3800 - Val Acc: 0.8182
+  Epoch 22/40 - Train Loss: 0.0197 - Train Acc: 0.9968 - Val Loss: 0.3677 - Val Acc: 0.8182
+  Epoch 23/40 - Train Loss: 0.0166 - Train Acc: 0.9936 - Val Loss: 0.4225 - Val Acc: 0.8182
+  Epoch 24/40 - Train Loss: 0.0137 - Train Acc: 0.9957 - Val Loss: 0.3784 - Val Acc: 0.8182
+  Epoch 25/40 - Train Loss: 0.0220 - Train Acc: 0.9936 - Val Loss: 0.3602 - Val Acc: 0.8182
+  Epoch 26/40 - Train Loss: 0.0194 - Train Acc: 0.9915 - Val Loss: 0.4353 - Val Acc: 0.8182
+  Epoch 27/40 - Train Loss: 0.0140 - Train Acc: 0.9979 - Val Loss: 0.3376 - Val Acc: 0.8182
+  Epoch 28/40 - Train Loss: 0.0077 - Train Acc: 1.0000 - Val Loss: 0.4380 - Val Acc: 0.8182
+  Epoch 29/40 - Train Loss: 0.0093 - Train Acc: 0.9968 - Val Loss: 0.4192 - Val Acc: 0.8182
+  Epoch 30/40 - Train Loss: 0.0047 - Train Acc: 1.0000 - Val Loss: 0.4145 - Val Acc: 0.8182
+  Epoch 31/40 - Train Loss: 0.0122 - Train Acc: 0.9979 - Val Loss: 0.3799 - Val Acc: 0.8182
+  Epoch 32/40 - Train Loss: 0.0078 - Train Acc: 0.9989 - Val Loss: 0.4978 - Val Acc: 0.8182
+  Epoch 33/40 - Train Loss: 0.0062 - Train Acc: 1.0000 - Val Loss: 0.5024 - Val Acc: 0.8182
+  Epoch 34/40 - Train Loss: 0.0063 - Train Acc: 0.9989 - Val Loss: 0.4157 - Val Acc: 0.8182
+  Epoch 35/40 - Train Loss: 0.0065 - Train Acc: 0.9989 - Val Loss: 0.3688 - Val Acc: 0.8182
+  Epoch 36/40 - Train Loss: 0.0069 - Train Acc: 0.9989 - Val Loss: 0.5021 - Val Acc: 0.8182
+  Epoch 37/40 - Train Loss: 0.0102 - Train Acc: 0.9979 - Val Loss: 0.4456 - Val Acc: 0.8182
+  Epoch 38/40 - Train Loss: 0.0069 - Train Acc: 0.9979 - Val Loss: 0.4000 - Val Acc: 0.8182
+  Epoch 39/40 - Train Loss: 0.0055 - Train Acc: 0.9989 - Val Loss: 0.4165 - Val Acc: 0.8182
+  Epoch 40/40 - Train Loss: 0.0038 - Train Acc: 1.0000 - Val Loss: 0.4170 - Val Acc: 0.8182
+  [Retrain] Completed. Best Val Acc: 0.9091 | Train Acc at that point: 0.6840
+
+--- Step 3: Final Testing (Fold 2) ---
+  [Test] Evaluating on 27 held-out subjects...
+  [Test] Fold 2 Completed. Accuracy: 0.4815
+
+=== OUTER FOLD 3/5 ===
+  [Outer Fold] Train Size: 106 subjects
+  [Outer Fold] Test Size : 26 subjects
+
+--- Step 1: Inner CV Grid Search (Fold 3) ---
+
+  [Inner Grid Search] Starting Grid Search (1 configurations)...
+    [Config 1/1] Mean Acc: 0.7537 | Params: {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+  [Inner Grid Search] Best Config found (Acc: 0.7537):
+    {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+
+--- Step 2: Full Retrain with Best Params (Fold 3) ---
+  [Retrain] Training on 95 subjects (Augmented)
+  [Retrain] Validation monitor on 11 subjects (Original)
+  Epoch 1/40 - Train Loss: 0.9299 - Train Acc: 0.5200 - Val Loss: 10.0400 - Val Acc: 0.4545
+  Epoch 2/40 - Train Loss: 0.7981 - Train Acc: 0.5474 - Val Loss: 0.6128 - Val Acc: 0.7273
+  Epoch 3/40 - Train Loss: 0.7277 - Train Acc: 0.6242 - Val Loss: 0.4967 - Val Acc: 0.6364
+  Epoch 4/40 - Train Loss: 0.6865 - Train Acc: 0.6495 - Val Loss: 0.6799 - Val Acc: 0.6364
+  Epoch 5/40 - Train Loss: 0.5862 - Train Acc: 0.6895 - Val Loss: 0.9927 - Val Acc: 0.6364
+  Epoch 6/40 - Train Loss: 0.5869 - Train Acc: 0.6968 - Val Loss: 0.7256 - Val Acc: 0.5455
+  Epoch 7/40 - Train Loss: 0.5318 - Train Acc: 0.7358 - Val Loss: 0.6342 - Val Acc: 0.8182
+  Epoch 8/40 - Train Loss: 0.5207 - Train Acc: 0.7526 - Val Loss: 0.5035 - Val Acc: 0.7273
+  Epoch 9/40 - Train Loss: 0.4938 - Train Acc: 0.7779 - Val Loss: 0.6089 - Val Acc: 0.6364
+  Epoch 10/40 - Train Loss: 0.4215 - Train Acc: 0.8179 - Val Loss: 0.5665 - Val Acc: 0.8182
+  Epoch 11/40 - Train Loss: 0.3353 - Train Acc: 0.8579 - Val Loss: 0.7500 - Val Acc: 0.6364
+  Epoch 12/40 - Train Loss: 0.3196 - Train Acc: 0.8768 - Val Loss: 0.5555 - Val Acc: 0.7273
+  Epoch 13/40 - Train Loss: 0.2583 - Train Acc: 0.9000 - Val Loss: 0.6533 - Val Acc: 0.8182
+  Epoch 14/40 - Train Loss: 0.1819 - Train Acc: 0.9368 - Val Loss: 0.8045 - Val Acc: 0.7273
+  Epoch 15/40 - Train Loss: 0.2013 - Train Acc: 0.9337 - Val Loss: 0.9787 - Val Acc: 0.7273
+  Epoch 16/40 - Train Loss: 0.0996 - Train Acc: 0.9684 - Val Loss: 0.8360 - Val Acc: 0.6364
+  Epoch 17/40 - Train Loss: 0.1396 - Train Acc: 0.9432 - Val Loss: 1.3613 - Val Acc: 0.5455
+  Epoch 18/40 - Train Loss: 0.1255 - Train Acc: 0.9547 - Val Loss: 0.5974 - Val Acc: 0.8182
+  Epoch 19/40 - Train Loss: 0.1197 - Train Acc: 0.9568 - Val Loss: 0.9782 - Val Acc: 0.6364
+  Epoch 20/40 - Train Loss: 0.0775 - Train Acc: 0.9747 - Val Loss: 1.0371 - Val Acc: 0.6364
+  Epoch 21/40 - Train Loss: 0.0354 - Train Acc: 0.9926 - Val Loss: 0.8553 - Val Acc: 0.6364
+  Epoch 22/40 - Train Loss: 0.0211 - Train Acc: 0.9958 - Val Loss: 0.8011 - Val Acc: 0.6364
+  Epoch 23/40 - Train Loss: 0.0189 - Train Acc: 0.9958 - Val Loss: 0.7976 - Val Acc: 0.6364
+  Epoch 24/40 - Train Loss: 0.0199 - Train Acc: 0.9968 - Val Loss: 0.7904 - Val Acc: 0.7273
+  Epoch 25/40 - Train Loss: 0.0169 - Train Acc: 0.9958 - Val Loss: 0.7671 - Val Acc: 0.6364
+  Epoch 26/40 - Train Loss: 0.0158 - Train Acc: 0.9958 - Val Loss: 0.8153 - Val Acc: 0.8182
+  Epoch 27/40 - Train Loss: 0.0086 - Train Acc: 0.9989 - Val Loss: 0.7891 - Val Acc: 0.6364
+  Epoch 28/40 - Train Loss: 0.0106 - Train Acc: 0.9979 - Val Loss: 0.7482 - Val Acc: 0.7273
+  Epoch 29/40 - Train Loss: 0.0090 - Train Acc: 0.9979 - Val Loss: 0.8097 - Val Acc: 0.8182
+  Epoch 30/40 - Train Loss: 0.0092 - Train Acc: 0.9979 - Val Loss: 0.8594 - Val Acc: 0.7273
+  Epoch 31/40 - Train Loss: 0.0092 - Train Acc: 0.9989 - Val Loss: 0.9102 - Val Acc: 0.6364
+  Epoch 32/40 - Train Loss: 0.0121 - Train Acc: 0.9968 - Val Loss: 0.8440 - Val Acc: 0.7273
+  Epoch 33/40 - Train Loss: 0.0090 - Train Acc: 0.9989 - Val Loss: 0.7995 - Val Acc: 0.7273
+  Epoch 34/40 - Train Loss: 0.0055 - Train Acc: 1.0000 - Val Loss: 0.7770 - Val Acc: 0.7273
+  Epoch 35/40 - Train Loss: 0.0087 - Train Acc: 0.9979 - Val Loss: 0.8183 - Val Acc: 0.7273
+  Epoch 36/40 - Train Loss: 0.0119 - Train Acc: 0.9989 - Val Loss: 0.8240 - Val Acc: 0.7273
+  Epoch 37/40 - Train Loss: 0.0108 - Train Acc: 0.9968 - Val Loss: 0.7710 - Val Acc: 0.6364
+  Epoch 38/40 - Train Loss: 0.0104 - Train Acc: 0.9958 - Val Loss: 0.8036 - Val Acc: 0.7273
+  Epoch 39/40 - Train Loss: 0.0067 - Train Acc: 0.9989 - Val Loss: 0.8840 - Val Acc: 0.7273
+  Epoch 40/40 - Train Loss: 0.0130 - Train Acc: 0.9979 - Val Loss: 0.7307 - Val Acc: 0.6364
+  [Retrain] Completed. Best Val Acc: 0.8182 | Train Acc at that point: 0.7358
+
+--- Step 3: Final Testing (Fold 3) ---
+  [Test] Evaluating on 26 held-out subjects...
+  [Test] Fold 3 Completed. Accuracy: 0.6923
+
+=== OUTER FOLD 4/5 ===
+  [Outer Fold] Train Size: 106 subjects
+  [Outer Fold] Test Size : 26 subjects
+
+--- Step 1: Inner CV Grid Search (Fold 4) ---
+
+  [Inner Grid Search] Starting Grid Search (1 configurations)...
+    [Config 1/1] Mean Acc: 0.7450 | Params: {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+  [Inner Grid Search] Best Config found (Acc: 0.7450):
+    {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+
+--- Step 2: Full Retrain with Best Params (Fold 4) ---
+  [Retrain] Training on 95 subjects (Augmented)
+  [Retrain] Validation monitor on 11 subjects (Original)
+  Epoch 1/40 - Train Loss: 1.0167 - Train Acc: 0.4853 - Val Loss: 0.6931 - Val Acc: 0.4545
+  Epoch 2/40 - Train Loss: 0.7383 - Train Acc: 0.5274 - Val Loss: 0.7275 - Val Acc: 0.5455
+  Epoch 3/40 - Train Loss: 0.6965 - Train Acc: 0.5411 - Val Loss: 0.7026 - Val Acc: 0.3636
+  Epoch 4/40 - Train Loss: 0.6755 - Train Acc: 0.5747 - Val Loss: 0.6617 - Val Acc: 0.5455
+  Epoch 5/40 - Train Loss: 0.6688 - Train Acc: 0.5926 - Val Loss: 0.6130 - Val Acc: 0.3636
+  Epoch 6/40 - Train Loss: 0.6327 - Train Acc: 0.6411 - Val Loss: 0.5046 - Val Acc: 0.8182
+  Epoch 7/40 - Train Loss: 0.5915 - Train Acc: 0.6684 - Val Loss: 0.5266 - Val Acc: 0.6364
+  Epoch 8/40 - Train Loss: 0.5629 - Train Acc: 0.6853 - Val Loss: 1.2561 - Val Acc: 0.5455
+  Epoch 9/40 - Train Loss: 0.5372 - Train Acc: 0.7137 - Val Loss: 0.4783 - Val Acc: 0.7273
+  Epoch 10/40 - Train Loss: 0.5115 - Train Acc: 0.7316 - Val Loss: 0.5487 - Val Acc: 0.5455
+  Epoch 11/40 - Train Loss: 0.4681 - Train Acc: 0.7747 - Val Loss: 0.4417 - Val Acc: 0.7273
+  Epoch 12/40 - Train Loss: 0.4672 - Train Acc: 0.7716 - Val Loss: 0.6945 - Val Acc: 0.6364
+  Epoch 13/40 - Train Loss: 0.4336 - Train Acc: 0.7926 - Val Loss: 1.9404 - Val Acc: 0.4545
+  Epoch 14/40 - Train Loss: 0.4271 - Train Acc: 0.7979 - Val Loss: 0.5171 - Val Acc: 0.5455
+  Epoch 15/40 - Train Loss: 0.3479 - Train Acc: 0.8621 - Val Loss: 0.4585 - Val Acc: 0.7273
+  Epoch 16/40 - Train Loss: 0.2989 - Train Acc: 0.8684 - Val Loss: 0.7927 - Val Acc: 0.6364
+  Epoch 17/40 - Train Loss: 0.2973 - Train Acc: 0.8779 - Val Loss: 0.5376 - Val Acc: 0.7273
+  Epoch 18/40 - Train Loss: 0.2409 - Train Acc: 0.8926 - Val Loss: 1.0291 - Val Acc: 0.6364
+  Epoch 19/40 - Train Loss: 0.2517 - Train Acc: 0.9042 - Val Loss: 0.4293 - Val Acc: 0.8182
+  Epoch 20/40 - Train Loss: 0.2074 - Train Acc: 0.9126 - Val Loss: 0.9799 - Val Acc: 0.3636
+  Epoch 21/40 - Train Loss: 0.1811 - Train Acc: 0.9158 - Val Loss: 0.9799 - Val Acc: 0.6364
+  Epoch 22/40 - Train Loss: 0.0985 - Train Acc: 0.9663 - Val Loss: 0.9195 - Val Acc: 0.6364
+  Epoch 23/40 - Train Loss: 0.0879 - Train Acc: 0.9642 - Val Loss: 0.9804 - Val Acc: 0.6364
+  Epoch 24/40 - Train Loss: 0.0765 - Train Acc: 0.9705 - Val Loss: 1.0778 - Val Acc: 0.6364
+  Epoch 25/40 - Train Loss: 0.0712 - Train Acc: 0.9726 - Val Loss: 0.9058 - Val Acc: 0.6364
+  Epoch 26/40 - Train Loss: 0.0781 - Train Acc: 0.9747 - Val Loss: 1.1825 - Val Acc: 0.6364
+  Epoch 27/40 - Train Loss: 0.0511 - Train Acc: 0.9832 - Val Loss: 1.1857 - Val Acc: 0.6364
+  Epoch 28/40 - Train Loss: 0.0476 - Train Acc: 0.9821 - Val Loss: 1.2696 - Val Acc: 0.6364
+  Epoch 29/40 - Train Loss: 0.0396 - Train Acc: 0.9853 - Val Loss: 1.3178 - Val Acc: 0.6364
+  Epoch 30/40 - Train Loss: 0.0354 - Train Acc: 0.9884 - Val Loss: 1.5549 - Val Acc: 0.6364
+  Epoch 31/40 - Train Loss: 0.0221 - Train Acc: 0.9937 - Val Loss: 1.5782 - Val Acc: 0.6364
+  Epoch 32/40 - Train Loss: 0.0293 - Train Acc: 0.9895 - Val Loss: 1.4600 - Val Acc: 0.6364
+  Epoch 33/40 - Train Loss: 0.0275 - Train Acc: 0.9916 - Val Loss: 1.4794 - Val Acc: 0.6364
+  Epoch 34/40 - Train Loss: 0.0371 - Train Acc: 0.9895 - Val Loss: 1.3904 - Val Acc: 0.6364
+  Epoch 35/40 - Train Loss: 0.0289 - Train Acc: 0.9905 - Val Loss: 1.4422 - Val Acc: 0.6364
+  Epoch 36/40 - Train Loss: 0.0277 - Train Acc: 0.9937 - Val Loss: 1.3828 - Val Acc: 0.6364
+  Epoch 37/40 - Train Loss: 0.0294 - Train Acc: 0.9926 - Val Loss: 1.4602 - Val Acc: 0.6364
+  Epoch 38/40 - Train Loss: 0.0232 - Train Acc: 0.9958 - Val Loss: 1.4491 - Val Acc: 0.6364
+  Epoch 39/40 - Train Loss: 0.0408 - Train Acc: 0.9853 - Val Loss: 1.4491 - Val Acc: 0.6364
+  Epoch 40/40 - Train Loss: 0.0265 - Train Acc: 0.9947 - Val Loss: 1.4189 - Val Acc: 0.6364
+  [Retrain] Completed. Best Val Acc: 0.8182 | Train Acc at that point: 0.6411
+
+--- Step 3: Final Testing (Fold 4) ---
+  [Test] Evaluating on 26 held-out subjects...
+  [Test] Fold 4 Completed. Accuracy: 0.6538
+
+=== OUTER FOLD 5/5 ===
+  [Outer Fold] Train Size: 106 subjects
+  [Outer Fold] Test Size : 26 subjects
+
+--- Step 1: Inner CV Grid Search (Fold 5) ---
+
+  [Inner Grid Search] Starting Grid Search (1 configurations)...
+    [Config 1/1] Mean Acc: 0.7074 | Params: {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+  [Inner Grid Search] Best Config found (Acc: 0.7074):
+    {'lr': 0.01, 'batch_size': 8, 'weight_decay': 0.0001, 'epochs': 40, 'optimizer': 'sgd', 'patience': None, 'model_type': 'resnet'}
+
+--- Step 2: Full Retrain with Best Params (Fold 5) ---
+  [Retrain] Training on 95 subjects (Augmented)
+  [Retrain] Validation monitor on 11 subjects (Original)
+  Epoch 1/40 - Train Loss: 1.0331 - Train Acc: 0.5211 - Val Loss: 0.7894 - Val Acc: 0.5455
+  Epoch 2/40 - Train Loss: 0.7582 - Train Acc: 0.5063 - Val Loss: 0.7440 - Val Acc: 0.4545
+  Epoch 3/40 - Train Loss: 0.7129 - Train Acc: 0.5274 - Val Loss: 0.7057 - Val Acc: 0.4545
+  Epoch 4/40 - Train Loss: 0.6909 - Train Acc: 0.5653 - Val Loss: 0.7068 - Val Acc: 0.6364
+  Epoch 5/40 - Train Loss: 0.6574 - Train Acc: 0.6011 - Val Loss: 0.7580 - Val Acc: 0.4545
+  Epoch 6/40 - Train Loss: 0.6458 - Train Acc: 0.6011 - Val Loss: 0.8715 - Val Acc: 0.4545
+  Epoch 7/40 - Train Loss: 0.5996 - Train Acc: 0.6621 - Val Loss: 1.1149 - Val Acc: 0.5455
+  Epoch 8/40 - Train Loss: 0.5818 - Train Acc: 0.6895 - Val Loss: 0.8190 - Val Acc: 0.6364
+  Epoch 9/40 - Train Loss: 0.6008 - Train Acc: 0.6842 - Val Loss: 0.7974 - Val Acc: 0.6364
+  Epoch 10/40 - Train Loss: 0.5622 - Train Acc: 0.7200 - Val Loss: 5.5995 - Val Acc: 0.6364
+  Epoch 11/40 - Train Loss: 0.5585 - Train Acc: 0.7232 - Val Loss: 0.6510 - Val Acc: 0.6364
+  Epoch 12/40 - Train Loss: 0.5763 - Train Acc: 0.7042 - Val Loss: 0.6703 - Val Acc: 0.5455
+  Epoch 13/40 - Train Loss: 0.5001 - Train Acc: 0.7632 - Val Loss: 0.5907 - Val Acc: 0.7273
+  Epoch 14/40 - Train Loss: 0.4612 - Train Acc: 0.7821 - Val Loss: 0.6889 - Val Acc: 0.5455
+  Epoch 15/40 - Train Loss: 0.5248 - Train Acc: 0.7400 - Val Loss: 0.6299 - Val Acc: 0.6364
+  Epoch 16/40 - Train Loss: 0.4918 - Train Acc: 0.7432 - Val Loss: 0.5568 - Val Acc: 0.6364
+  Epoch 17/40 - Train Loss: 0.4566 - Train Acc: 0.7779 - Val Loss: 0.5940 - Val Acc: 0.6364
+  Epoch 18/40 - Train Loss: 0.4120 - Train Acc: 0.8137 - Val Loss: 0.5875 - Val Acc: 0.7273
+  Epoch 19/40 - Train Loss: 0.3310 - Train Acc: 0.8758 - Val Loss: 1.0037 - Val Acc: 0.5455
+  Epoch 20/40 - Train Loss: 0.3798 - Train Acc: 0.8516 - Val Loss: 0.4262 - Val Acc: 0.7273
+  Epoch 21/40 - Train Loss: 0.1728 - Train Acc: 0.9484 - Val Loss: 0.6427 - Val Acc: 0.7273
+  Epoch 22/40 - Train Loss: 0.1183 - Train Acc: 0.9537 - Val Loss: 0.7070 - Val Acc: 0.6364
+  Epoch 23/40 - Train Loss: 0.1262 - Train Acc: 0.9558 - Val Loss: 0.8779 - Val Acc: 0.6364
+  Epoch 24/40 - Train Loss: 0.1175 - Train Acc: 0.9579 - Val Loss: 0.8095 - Val Acc: 0.7273
+  Epoch 25/40 - Train Loss: 0.1015 - Train Acc: 0.9632 - Val Loss: 1.0938 - Val Acc: 0.6364
+  Epoch 26/40 - Train Loss: 0.1160 - Train Acc: 0.9495 - Val Loss: 0.8970 - Val Acc: 0.7273
+  Epoch 27/40 - Train Loss: 0.0863 - Train Acc: 0.9642 - Val Loss: 0.8176 - Val Acc: 0.7273
+  Epoch 28/40 - Train Loss: 0.0886 - Train Acc: 0.9663 - Val Loss: 0.9645 - Val Acc: 0.6364
+  Epoch 29/40 - Train Loss: 0.0851 - Train Acc: 0.9674 - Val Loss: 0.6557 - Val Acc: 0.7273
+  Epoch 30/40 - Train Loss: 0.0616 - Train Acc: 0.9800 - Val Loss: 0.9866 - Val Acc: 0.7273
+  Epoch 31/40 - Train Loss: 0.0503 - Train Acc: 0.9842 - Val Loss: 0.8182 - Val Acc: 0.7273
+  Epoch 32/40 - Train Loss: 0.0699 - Train Acc: 0.9716 - Val Loss: 0.9182 - Val Acc: 0.6364
+  Epoch 33/40 - Train Loss: 0.0565 - Train Acc: 0.9821 - Val Loss: 0.9644 - Val Acc: 0.6364
+  Epoch 34/40 - Train Loss: 0.0444 - Train Acc: 0.9884 - Val Loss: 0.8567 - Val Acc: 0.6364
+  Epoch 35/40 - Train Loss: 0.0532 - Train Acc: 0.9800 - Val Loss: 1.1260 - Val Acc: 0.6364
+  Epoch 36/40 - Train Loss: 0.0495 - Train Acc: 0.9832 - Val Loss: 0.8852 - Val Acc: 0.6364
+  Epoch 37/40 - Train Loss: 0.0578 - Train Acc: 0.9832 - Val Loss: 1.0615 - Val Acc: 0.6364
+  Epoch 38/40 - Train Loss: 0.0700 - Train Acc: 0.9758 - Val Loss: 0.9787 - Val Acc: 0.6364
+  Epoch 39/40 - Train Loss: 0.0483 - Train Acc: 0.9853 - Val Loss: 1.1450 - Val Acc: 0.6364
+  Epoch 40/40 - Train Loss: 0.0507 - Train Acc: 0.9853 - Val Loss: 1.1351 - Val Acc: 0.6364
+  [Retrain] Completed. Best Val Acc: 0.7273 | Train Acc at that point: 0.7632
+
+--- Step 3: Final Testing (Fold 5) ---
+  [Test] Evaluating on 26 held-out subjects...
+  [Test] Fold 5 Completed. Accuracy: 0.6538
+
+==================================
+=== AGGREGATED NESTED CV RESULTS ===
+==================================
+{
+    "mean_accuracy": 0.6370370370370371,
+    "std_accuracy": 0.08032672464192059,
+    "mean_f1": 0.6273530255960094,
+    "std_f1": 0.07704391451013005,
+    "mean_precision": 0.652239378555168,
+    "std_precision": 0.08297627053608468,
+    "mean_recall": 0.6370370370370371,
+    "std_recall": 0.08032672464192059,
+    "mean_auc": 0.0,
+    "std_auc": 0.0
+}

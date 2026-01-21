@@ -2,6 +2,7 @@
 
 **Data:** 20 Gennaio 2026  
 **Versione:** 1.0 - Documento Finale
+**Conda environment:** anm --> `conda activate anm`
 
 ---
 
