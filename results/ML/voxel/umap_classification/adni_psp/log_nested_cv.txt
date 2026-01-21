@@ -1,0 +1,14 @@
+============================================================
+STARTING NESTED CV PIPELINE for ADNI vs PSP
+============================================================
+
+Dataset: 60 subjects (ADNI, PSP)
+Outer folds: 5
+
+============================================================
+OUTER FOLD 1/5
+============================================================
+Train: 48 subjects | Test: 12 subjects
+Applying UMAP (Fit Train -> Transform Test)...
+  > Processing RandomForest...
+  > Processing GradientBoosting...
