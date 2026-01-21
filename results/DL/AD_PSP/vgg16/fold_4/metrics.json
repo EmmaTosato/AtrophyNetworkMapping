@@ -1,0 +1,19 @@
+{
+    "fold": 4,
+    "best_params": {
+        "lr": 0.01,
+        "batch_size": 8,
+        "weight_decay": 0.0005,
+        "epochs": 40,
+        "optimizer": "sgd",
+        "patience": null,
+        "model_type": "vgg16"
+    },
+    "metrics": {
+        "accuracy": 0.5384615384615384,
+        "precision": 0.28994082840236685,
+        "recall": 0.5384615384615384,
+        "f1": 0.37692307692307686,
+        "auc": 0.0
+    }
+}

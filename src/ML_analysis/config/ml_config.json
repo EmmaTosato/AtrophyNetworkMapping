@@ -1,18 +1,18 @@
 {
   "job": {
-    "dataset_type": "networks",
+    "dataset_type": "voxel",
     "threshold": false,
     "task_type": "classification",
-    "umap": false
+    "umap": true
   },
   "classification": {
     "tuning": true,
-    "umap_all": false,
+    "umap_all": true,
     "permutation_test": true,
     "n_permutations": 100,
     "perm_cv": 5,
-    "group1": "PSP",
-    "group2": "CBS",
+    "group1": "AD",
+    "group2": "PSP",
     "seeds": [
       42,
       123,
@@ -22,20 +22,20 @@
     ],
     "n_folds": 5,
     "RandomForest": {
-      "n_estimators": 300,
+      "n_estimators": 100,
       "max_depth": null,
       "max_features": "sqrt",
-      "min_samples_split": 5
+      "min_samples_split": 10
     },
     "GradientBoosting": {
-      "n_estimators": 200,
+      "n_estimators": 300,
       "learning_rate": 0.01,
       "max_depth": 3,
       "subsample": 0.8
     },
     "KNN": {
-      "n_neighbors": 3,
-      "weights": "distance",
+      "n_neighbors": 7,
+      "weights": "uniform",
       "metric": "euclidean"
     }
   },

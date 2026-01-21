@@ -245,8 +245,9 @@ def nested_cv_classification(params, df_input, output_dir):
     X = data_container.x_all
     y_encoded = data_container.y_encoded
     ids = df_filtered["ID"].to_numpy()
+    ids = df_filtered["ID"].to_numpy()
     groups = df_filtered["Group"].to_numpy()
-    
+
     # Fixed seed for Outer CV - ensuring reproducibility of the folds
     outer_cv = StratifiedKFold(
         n_splits=params.get("n_outer_folds", 5),

@@ -6,29 +6,17 @@ import sys
 
 # Configuration based on user request
 QUEUE = [
-    # (Group1, Group2, Model)
-    ('AD', 'PSP', 'alexnet'),
+    # 1. ResNet (Missing Groups)
     ('AD', 'CBS', 'resnet'),
     ('PSP', 'CBS', 'resnet'),
+    
+    # 2. AlexNet (All Groups)
+    ('AD', 'PSP', 'alexnet'),
     ('AD', 'CBS', 'alexnet'),
-    ('PSP', 'CBS', 'alexnet'),
-    ('AD', 'CBS', 'vgg16'),
-    ('PSP', 'CBS', 'vgg16')
+    ('PSP', 'CBS', 'alexnet')
+    
+    # VGG16 for others is kept for later manually if needed
 ]
-
-def wait_for_pid(pid):
-    """Waits for a specific PID to terminate."""
-    print(f"[SmartQueue] Waiting for existing VGG process (PID {pid}) to finish...")
-    while True:
-        try:
-            # os.kill(pid, 0) does not kill the process, just checks if we can send a signal
-            os.kill(pid, 0)
-            time.sleep(60) # Check every minute
-        except OSError:
-            # Process dead or permission denied (usually dead if we own it)
-            break
-            
-    print(f"\\n[SmartQueue] PID {pid} finished. Resuming queue.")
 
 def run_task(g1, g2, model):
     print(f"\\n[SmartQueue] Starting: {g1} vs {g2} | {model}")
@@ -50,15 +38,8 @@ def run_task(g1, g2, model):
     print(f"[SmartQueue] Finished: {g1} vs {g2} | {model}")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python run_smart_queue.py <PID_TO_WAIT_FOR>")
-        sys.exit(1)
-        
-    wait_pid = int(sys.argv[1])
+    print("Starting Smart Queue immediately (No PID wait)...")
     
-    # 1. Wait
-    wait_for_pid(wait_pid)
-    
-    # 2. Execute Queue
+    # Execute Queue
     for g1, g2, model in QUEUE:
         run_task(g1, g2, model)

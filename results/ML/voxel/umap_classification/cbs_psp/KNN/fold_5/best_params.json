@@ -1,5 +1,0 @@
-{
-    "metric": "manhattan",
-    "n_neighbors": 7,
-    "weights": "distance"
-}

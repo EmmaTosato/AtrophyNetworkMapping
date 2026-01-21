@@ -11,14 +11,14 @@ configs = [
     # VOXEL
     {
         "dataset_type": "voxel", "umap": True, "umap_all": True,
-        "group1": "ADNI", "group2": "PSP",
+        "group1": "AD", "group2": "PSP",
         "RandomForest": {"n_estimators": 100, "max_depth": None, "max_features": "sqrt", "min_samples_split": 10},
         "GradientBoosting": {"n_estimators": 300, "learning_rate": 0.01, "max_depth": 3, "subsample": 0.8},
         "KNN": {"n_neighbors": 7, "weights": "uniform", "metric": "euclidean"}
     },
     {
         "dataset_type": "voxel", "umap": True, "umap_all": True,
-        "group1": "ADNI", "group2": "CBS",
+        "group1": "AD", "group2": "CBS",
         "RandomForest": {"n_estimators": 200, "max_depth": None, "max_features": "sqrt", "min_samples_split": 10},
         "GradientBoosting": {"n_estimators": 100, "learning_rate": 0.01, "max_depth": 5, "subsample": 1.0},
         "KNN": {"n_neighbors": 5, "weights": "uniform", "metric": "manhattan"}
@@ -33,14 +33,14 @@ configs = [
     # NETWORK
     {
         "dataset_type": "networks", "umap": False, "umap_all": False,
-        "group1": "ADNI", "group2": "PSP",
+        "group1": "AD", "group2": "PSP",
         "RandomForest": {"n_estimators": 100, "max_depth": None, "max_features": "sqrt", "min_samples_split": 5},
         "GradientBoosting": {"n_estimators": 100, "learning_rate": 0.01, "max_depth": 3, "subsample": 0.8},
         "KNN": {"n_neighbors": 5, "weights": "uniform", "metric": "euclidean"}
     },
     {
         "dataset_type": "networks", "umap": False, "umap_all": False,
-        "group1": "ADNI", "group2": "CBS",
+        "group1": "AD", "group2": "CBS",
         "RandomForest": {"n_estimators": 200, "max_depth": None, "max_features": "log2", "min_samples_split": 10},
         "GradientBoosting": {"n_estimators": 100, "learning_rate": 0.01, "max_depth": 3, "subsample": 1.0},
         "KNN": {"n_neighbors": 9, "weights": "uniform", "metric": "manhattan"}
