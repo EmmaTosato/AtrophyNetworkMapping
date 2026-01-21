@@ -10,40 +10,55 @@ OUTER FOLD 1/5
 ============================================================
 Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
+    [Timing] RandomForest processing time: 3.67 seconds
   > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.87 seconds
   > Processing KNN...
+    [Timing] KNN processing time: 0.15 seconds
 
 ============================================================
 OUTER FOLD 2/5
 ============================================================
 Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
+    [Timing] RandomForest processing time: 2.69 seconds
   > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.82 seconds
   > Processing KNN...
+    [Timing] KNN processing time: 0.16 seconds
 
 ============================================================
 OUTER FOLD 3/5
 ============================================================
 Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
+    [Timing] RandomForest processing time: 2.39 seconds
   > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.84 seconds
   > Processing KNN...
+    [Timing] KNN processing time: 0.13 seconds
 
 ============================================================
 OUTER FOLD 4/5
 ============================================================
 Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
+    [Timing] RandomForest processing time: 2.25 seconds
   > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.85 seconds
   > Processing KNN...
+    [Timing] KNN processing time: 0.15 seconds
 
 ============================================================
 OUTER FOLD 5/5
 ============================================================
 Train: 84 subjects | Test: 20 subjects
   > Processing RandomForest...
+    [Timing] RandomForest processing time: 2.29 seconds
   > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.80 seconds
   > Processing KNN...
+    [Timing] KNN processing time: 0.12 seconds
 
 ============================================================
 NESTED CV SUMMARY (Mean + Std across 5 Folds)

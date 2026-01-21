@@ -313,9 +313,13 @@ def nested_cv_classification(params, df_input, output_dir):
             
             # 4. Train (Inner CV) & Evaluate
             # base_model is cloned inside GridSearch, so we pass instance
+            import time
+            start_time = time.time()
             best_model, best_params, metrics, y_pred = train_and_evaluate_model(
                  base_model, model_name, param_grids[model_name], data_fold, params, model_fold_dir
             )
+            elapsed_time = time.time() - start_time
+            print(f"    [Timing] {model_name} processing time: {elapsed_time:.2f} seconds")
             
             # 5. Collect metrics
             result_entry = {
