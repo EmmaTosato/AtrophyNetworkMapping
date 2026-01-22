@@ -1,0 +1,6 @@
+,accuracy,accuracy,precision,precision,recall,recall,f1,f1,auc_roc,auc_roc
+,mean,std,mean,std,mean,std,mean,std,mean,std
+model,,,,,,,,,,
+GradientBoosting,0.576,0.164,0.603,0.183,0.556,0.128,0.531,0.143,0.543,0.142
+KNN,0.577,0.062,0.562,0.085,0.548,0.066,0.534,0.056,0.553,0.08
+RandomForest,0.516,0.09,0.52,0.095,0.514,0.068,0.478,0.072,0.553,0.088

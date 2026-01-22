@@ -9,13 +9,13 @@ script_path = "src/ML_analysis/analysis/classification.py"
 # Combinazioni da eseguire
 configs = [
     # VOXEL
-    {
-        "dataset_type": "voxel", "umap": True, "umap_all": True,
-        "group1": "AD", "group2": "PSP",
-        "RandomForest": {"n_estimators": 100, "max_depth": None, "max_features": "sqrt", "min_samples_split": 10},
-        "GradientBoosting": {"n_estimators": 300, "learning_rate": 0.01, "max_depth": 3, "subsample": 0.8},
-        "KNN": {"n_neighbors": 7, "weights": "uniform", "metric": "euclidean"}
-    },
+    # {
+    #     "dataset_type": "voxel", "umap": True, "umap_all": True,
+    #     "group1": "AD", "group2": "PSP",
+    #     "RandomForest": {"n_estimators": 100, "max_depth": None, "max_features": "sqrt", "min_samples_split": 10},
+    #     "GradientBoosting": {"n_estimators": 300, "learning_rate": 0.01, "max_depth": 3, "subsample": 0.8},
+    #     "KNN": {"n_neighbors": 7, "weights": "uniform", "metric": "euclidean"}
+    # },
     {
         "dataset_type": "voxel", "umap": True, "umap_all": True,
         "group1": "AD", "group2": "CBS",

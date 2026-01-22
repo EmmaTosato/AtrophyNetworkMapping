@@ -1,0 +1,35 @@
+{
+    "comment": "Define experiments to run. Each entry in 'experiments' will be executed.",
+    "global": {
+        "base_output_dir": "results/DL",
+        "test_mode": false,
+        "metadata_path": "/data/users/etosato/ANM_Verona/assets/metadata/labels.csv",
+        "data_dir": "/data/users/etosato/ANM_Verona/data/FCmaps_processed",
+        "data_dir_augmented": "/data/users/etosato/ANM_Verona/data/FCmaps_augmented_processed"
+    },
+    "experiments": [
+        {
+            "group1": "AD",
+            "group2": "CBS",
+            "models": [
+                "resnet",
+                "alexnet"
+            ]
+        },
+        {
+            "group1": "PSP",
+            "group2": "CBS",
+            "models": [
+                "resnet",
+                "alexnet"
+            ]
+        },
+        {
+            "group1": "AD",
+            "group2": "PSP",
+            "models": [
+                "alexnet"
+            ]
+        }
+    ]
+}

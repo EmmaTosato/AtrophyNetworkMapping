@@ -1,0 +1,17 @@
+params,mean_test_score,std_test_score,rank_test_score
+"{'metric': 'euclidean', 'n_neighbors': 3, 'weights': 'uniform'}",0.543,0.137,14
+"{'metric': 'euclidean', 'n_neighbors': 3, 'weights': 'distance'}",0.543,0.14,13
+"{'metric': 'euclidean', 'n_neighbors': 5, 'weights': 'uniform'}",0.619,0.08,7
+"{'metric': 'euclidean', 'n_neighbors': 5, 'weights': 'distance'}",0.571,0.1,12
+"{'metric': 'euclidean', 'n_neighbors': 7, 'weights': 'uniform'}",0.638,0.093,4
+"{'metric': 'euclidean', 'n_neighbors': 7, 'weights': 'distance'}",0.6,0.107,8
+"{'metric': 'euclidean', 'n_neighbors': 9, 'weights': 'uniform'}",0.638,0.071,3
+"{'metric': 'euclidean', 'n_neighbors': 9, 'weights': 'distance'}",0.59,0.077,9
+"{'metric': 'manhattan', 'n_neighbors': 3, 'weights': 'uniform'}",0.533,0.126,15
+"{'metric': 'manhattan', 'n_neighbors': 3, 'weights': 'distance'}",0.514,0.133,16
+"{'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'uniform'}",0.638,0.119,4
+"{'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'distance'}",0.581,0.126,11
+"{'metric': 'manhattan', 'n_neighbors': 7, 'weights': 'uniform'}",0.667,0.117,1
+"{'metric': 'manhattan', 'n_neighbors': 7, 'weights': 'distance'}",0.59,0.107,10
+"{'metric': 'manhattan', 'n_neighbors': 9, 'weights': 'uniform'}",0.667,0.09,2
+"{'metric': 'manhattan', 'n_neighbors': 9, 'weights': 'distance'}",0.629,0.082,6
