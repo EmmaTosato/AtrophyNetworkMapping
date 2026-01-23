@@ -113,29 +113,50 @@ def regression_pipeline(df_input, df_meta, args):
     """
     # Remove missing values based on target variable
     df_input = remove_missing_values(df_input, df_meta, args['target_variable'])
+    print(f"DEBUG: df_input shape after removing missing: {df_input.shape}")
+    
     # Merge input features with metadata
     df_merged, x_feature = x_features_return(df_input, df_meta)
+    print(f"DEBUG: df_merged shape: {df_merged.shape}, x_feature shape: {x_feature.shape}")
+    
+    # Ensure x_feature is strictly numeric (drop any stray metadata leaks) and clean
+    if hasattr(x_feature, 'select_dtypes'):
+        x_feature = x_feature.select_dtypes(include=[np.number]).fillna(0)
 
     # Target variable handling
     y = np.log1p(df_merged[args['target_variable']]) if args['y_log_transform'] else df_merged[args['target_variable']]
+    
     # Feature projection
     if args["umap"]:
+        print("DEBUG: Running UMAP...")
         x = run_umap(x_feature)
     else:
         x = x_feature
 
     x_ols = build_design_matrix(df_merged, x, args["covariates"])
+    
+    print(f"DEBUG: Design Matrix shape: {x_ols.shape}")
+
+
 
     # Fit OLS model
     model, y_pred, residuals = fit_ols_model(x_ols, y)
+    print("DEBUG: Model fitted.")
+    
     # Perform shuffling regression
     r2_real, r2_shuffled, p_value = shuffling_regression(x_ols, y)
+    
     # Compute RMSE statistics
     df_sorted, rmse_stats = compute_rmse_stats(df_merged, y_pred, residuals)
 
     # Plotting
     group_labels = df_merged[args['group_name']]
-    plot_ols_diagnostics(y, y_pred, residuals,args['prefix'], args['output_dir'], args['plot_regression'], args['save_flag'],args['color_by_group'], group_labels)
+    stats = (model.rsquared, model.f_pvalue)
+    
+    print(f"DEBUG: Plotting to {args['output_dir']} with prefix {args['prefix']}")
+    plot_ols_diagnostics(y, y_pred, residuals, args['prefix'], args['output_dir'], 
+                         args['plot_regression'], args['save_flag'], 
+                         args['color_by_group'], group_labels, stats=stats)
     plot_actual_vs_predicted(y, y_pred, args['prefix'], args['output_dir'], args['plot_regression'], args['save_flag'])
 
     print("OLS REGRESSION SUMMARY")
@@ -158,6 +179,9 @@ def main_regression(params, df_input, df_meta):
     base_out_temp = build_output_path(params['output_dir'], params['task_type'], params['dataset_type'], params['umap'])
     base_out = os.path.join(base_out_temp, params["target_variable"])
     os.makedirs(base_out, exist_ok=True)
+    
+    print(f"DEBUG: Output Base Directory -> {base_out}")
+
 
     params['log'] = f"log_{params['threshold']}_threshold" if params['threshold'] in [0.1, 0.2] else "log_no_threshold"
     params['prefix'] = f"{params['threshold']} Threshold" if params['threshold'] in [0.1, 0.2] else "No Threshold"

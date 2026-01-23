@@ -22,23 +22,28 @@ def clean_title_string(title):
 def plot_ols_diagnostics(target, predictions, residuals,
                          title, save_path=None,
                          plot_flag=True, save_flag=False,
-                         color_by_group=False, group_labels=None):
+                         color_by_group=False, group_labels=None,
+                         stats=None, ax=None):
     """
-    Plots OLS diagnostics (True vs Predicted) with optional group coloring and uniform formatting.
+    Plots OLS diagnostics (True vs Predicted) with optional group coloring.
+    Uses sns.lmplot for grouped data to match original paper style.
     """
     def _format_axes(ax, xlabel="True Score", ylabel="Predicted Score", fontsize=18):
-        ax.set_xlabel(xlabel, fontsize=fontsize, fontweight='bold', labelpad=18)
-        ax.set_ylabel(ylabel, fontsize=fontsize, fontweight='bold', labelpad=18)
+        ax.set_xlabel(xlabel, fontsize=fontsize, fontweight='bold', labelpad=10)
+        ax.set_ylabel(ylabel, fontsize=fontsize, fontweight='bold', labelpad=10)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.spines['bottom'].set_linewidth(1.0)
         ax.spines['left'].set_linewidth(1.0)
         ax.spines['bottom'].set_edgecolor('black')
         ax.spines['left'].set_edgecolor('black')
-        ax.tick_params(labelsize=14)
+        ax.tick_params(labelsize=14, width=1.0)
         ax.grid(False)
         for label in ax.get_xticklabels() + ax.get_yticklabels():
             label.set_fontweight('bold')
+
+    # Logic: If color_by_group, use sns.lmplot (creates new Figure).
+    # If standard, use ax if provided or create new.
 
     if color_by_group and group_labels is not None:
         df_plot = pd.DataFrame({
@@ -47,12 +52,14 @@ def plot_ols_diagnostics(target, predictions, residuals,
             'residuals': residuals,
             'group': group_labels
         })
-
+        
+        # Determine axis limits for square aspect
         x_min, x_max = df_plot['target'].min(), df_plot['target'].max()
         y_min, y_max = df_plot['predictions'].min(), df_plot['predictions'].max()
         axis_min = min(x_min, y_min) - 1
         axis_max = max(x_max, y_max) + 1
 
+        # Use lmplot matching the EXACT separate file style
         g = sns.lmplot(
             data=df_plot,
             x='target',
@@ -63,59 +70,99 @@ def plot_ols_diagnostics(target, predictions, residuals,
             aspect=1,
             scatter_kws=dict(s=110, alpha=0.9, edgecolor="black", linewidths=0.6),
             line_kws=dict(linewidth=2.0),
-            ci=95
+            ci=95,
+            legend=False 
         )
-
+        
+        # Set uniform limits
         g.set(xlim=(axis_min, axis_max), ylim=(axis_min, axis_max))
-        for ax in g.axes.flat:
-            ax.set_aspect('equal', adjustable='box')
-            _format_axes(ax)
-            for coll in ax.collections:
+        
+        for ax_curr in g.axes.flat:
+            ax_curr.set_aspect('equal', adjustable='box')
+            _format_axes(ax_curr)
+            # Fix transparency of confidence intervals
+            for coll in ax_curr.collections:
                 if isinstance(coll, mcoll.PolyCollection):
                     coll.set_alpha(0.2)
+            
+            # Add Stats if provided (DISABLED per user request)
+            # if stats:
+            #     r2, p = stats
+            #     p_text = "< .001" if p < 0.001 else f"= {p:.3f}"
+            #     stats_text = f"$R^2 = {r2:.3f}$\n$p {p_text}$"
+            #     ax_curr.text(0.05, 0.90, stats_text, transform=ax_curr.transAxes, 
+            #                  fontsize=16, fontweight='bold', va='top', ha='left')
 
-        g.fig.suptitle("OLS True vs Predicted", fontsize=20, fontweight='bold', y=1.02)
 
-        leg = g._legend
-        if leg is not None:
-            leg.set_title("Group", prop={'weight': 'bold', 'size': 16})
-            for text in leg.texts:
-                text.set_fontsize(16)
-            leg.get_frame().set_facecolor("white")
-            leg.get_frame().set_edgecolor("black")
-            leg.get_frame().set_linewidth(0)
-
+        # Legend Styling
+        # sns.lmplot places legend outside by default. We can customize it from g._legend
+        if g._legend:
+             g._legend.set_title("Group")
+             g._legend.get_title().set_fontsize(16)
+             g._legend.get_title().set_fontweight('bold')
+             for t in g._legend.texts:
+                 t.set_fontsize(16)
+             g._legend.get_frame().set_facecolor("white")
+             g._legend.get_frame().set_linewidth(0)
+        
         if save_path and save_flag:
-            fname = clean_title_string(title) + "_diagnostics_labelled.png"
-            g.savefig(os.path.join(save_path, fname), dpi=300, bbox_inches='tight', pad_inches=0.05)
+            clean_t = clean_title_string(title)
+            fname = clean_t + "_diagnostics_labelled.png"
+            g.savefig(os.path.join(save_path, fname), dpi=300, bbox_inches='tight', pad_inches=0.1)
 
         if plot_flag:
             plt.show()
-
-        plt.close()
+        
+        plt.close() # Close figure
 
     else:
-        fig, ax = plt.subplots(figsize=(7, 6))
+        # SINGLE PLOT (No hues)
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(7, 6))
+            created_fig = True
+        else:
+            created_fig = False
+            fig = ax.figure
 
-        sns.scatterplot(x=target, y=predictions, ax=ax,
-                        color='#61bdcd', edgecolor='black', alpha=0.9, s=110, linewidth=0.6)
-        ax.plot([target.min(), target.max()], [target.min(), target.max()],
-                '--', color='gray', linewidth=1.5)
+        df_plot = pd.DataFrame({'target': target, 'predictions': predictions})
+
+        sns.scatterplot(
+            data=df_plot, x='target', y='predictions',
+            color='#61bdcd', edgecolor='black', alpha=0.9, s=110, linewidth=0.6, ax=ax
+        )
+        sns.regplot(
+             data=df_plot, x='target', y='predictions',
+             color='#61bdcd', scatter=False, ci=95, ax=ax, truncate=False,
+             line_kws={'linewidth': 2.5}
+        )
+
+        # Stats
+        if stats:
+            r2, p = stats
+            p_text = "< .001" if p < 0.001 else f"= {p:.3f}"
+            stats_text = f"$R^2 = {r2:.3f}$\n$p {p_text}$"
+            ax.text(0.05, 0.92, stats_text, transform=ax.transAxes, 
+                    fontsize=16, fontweight='bold', va='top', ha='left')
 
         _format_axes(ax)
-        ax.set_title("OLS True vs Predicted", fontsize=18, fontweight='bold', pad=10)
-        ax.set_aspect('equal', adjustable='box')
+        if not color_by_group: # Title only if not grouped/subplot
+             ax.set_title("OLS True vs Predicted", fontsize=16, fontweight='bold', pad=10)
+        
+        if ax is not None and not created_fig:
+            # If we are part of a subplot, we don't save or show individually here usually,
+            # unless instructed. But existing 'regression.py' loop assumes we save.
+            # But the 'else' block here is for single plots.
+            pass
 
-        plt.tight_layout()
-
-        if save_path and save_flag:
+        if save_path and save_flag and created_fig:
             fname = clean_title_string(title) + "_diagnostics.png"
-            plt.savefig(os.path.join(save_path, fname), dpi=300, bbox_inches='tight')
+            fig.savefig(os.path.join(save_path, fname), dpi=300, bbox_inches='tight', pad_inches=0.1)
 
-        if plot_flag:
+        if plot_flag and created_fig:
             plt.show()
 
-        plt.close()
+        if created_fig:
+            plt.close(fig)
 
 
 def plot_actual_vs_predicted(target, predictions,
