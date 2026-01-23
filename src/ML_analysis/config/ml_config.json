@@ -1,9 +1,9 @@
 {
   "job": {
-    "dataset_type": "networks",
+    "dataset_type": "voxel",
     "threshold": false,
-    "task_type": "classification",
-    "umap": false
+    "task_type": "regression",
+    "umap": true
   },
   "classification": {
     "tuning": true,
@@ -40,9 +40,9 @@
     }
   },
   "regression": {
-    "target_variable": "CDR_SB",
-    "flag_covariates": true,
-    "group_regression": true,
+    "target_variable": "MMSE",
+    "flag_covariates": false,
+    "group_regression": false,
     "group_col": "Group"
   },
   "plotting": {
@@ -55,11 +55,7 @@
   },
   "fixed_parameters": {
     "output_dir": "results/ML/",
-    "covariates": [
-      "Sex",
-      "Age",
-      "Education"
-    ],
+    "covariates": [],
     "y_log_transform": false,
     "color_by_group": true,
     "group_name": "Group"
