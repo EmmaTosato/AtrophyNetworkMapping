@@ -95,10 +95,53 @@ def x_features_return(df_voxel, df_labels):
     - the matrix of features only (X), excluding metadata columns.
     """
     meta_columns = list(df_labels.columns)
-    dataframe_merge = pd.merge(df_voxel, df_labels, on='ID', how='left', validate='one_to_one')
-    ordered_cols = meta_columns + [col for col in dataframe_merge.columns if col not in meta_columns]
+    # Ensure ID match
+    df_voxel['ID'] = df_voxel['ID'].astype(str)
+    df_labels['ID'] = df_labels['ID'].astype(str)
+    
+    # Debug info
+    print(f"DEBUG: df_voxel IDs sample: {df_voxel['ID'].head().tolist()}")
+    print(f"DEBUG: df_labels IDs sample: {df_labels['ID'].head().tolist()}")
+    print(f"DEBUG: df_labels columns: {list(df_labels.columns)}")
+    
+    dataframe_merge = pd.merge(df_voxel, df_labels, on='ID', how='left')
+    
+    # Identify which expected columns are actually present
+    present_meta = [col for col in meta_columns if col in dataframe_merge.columns]
+    missing_meta = [col for col in meta_columns if col not in dataframe_merge.columns]
+    
+    if missing_meta:
+        print(f"Warning: The following metadata columns were not found after merge: {missing_meta}")
+        
+        # Generic fix for suffix collisions (e.g. Sex_y -> Sex)
+        for col in missing_meta:
+            suffixed = f"{col}_y"
+            if suffixed in dataframe_merge.columns:
+                 print(f"Detected suffixed column {suffixed}! Renaming to {col}...")
+                 dataframe_merge.rename(columns={suffixed: col}, inplace=True)
+                 present_meta.append(col)
+
+
+    # Feature columns (everything else)
+    # Exclude:
+    # 1. Exact meta columns (e.g. 'Group')
+    # 2. Columns we confirmed present via renaming (present_meta)
+    feature_cols = [
+        col for col in dataframe_merge.columns 
+        if col not in meta_columns 
+        and col not in present_meta
+        and not (isinstance(col, str) and col.endswith('_x') and col[:-2] in meta_columns)
+        and not (isinstance(col, str) and col.endswith('_y') and col[:-2] in meta_columns)
+    ]
+
+    
+    ordered_cols = present_meta + feature_cols
     dataframe_merge = dataframe_merge[ordered_cols]
-    x = dataframe_merge.drop(columns=meta_columns)
+    
+    if present_meta:
+        x = dataframe_merge.drop(columns=present_meta)
+    else:
+        x = dataframe_merge.copy() # Fallback if no meta columns found (unlikely)
 
     print("\n-------------------- Dataset Info --------------------")
     print(f"{'Meta columns (Labels and Covariates):':40s} {len(meta_columns):>5d}")
