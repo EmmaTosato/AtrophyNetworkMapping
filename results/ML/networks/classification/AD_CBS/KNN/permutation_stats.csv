@@ -1,2 +1,0 @@
-groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
-ADvsCBS,KNN,100,0.6822463768115942,0.009900990099009901,0.5670036231884058,0.0446549484000839

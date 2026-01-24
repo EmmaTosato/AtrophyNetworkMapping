@@ -1,2 +1,0 @@
-dataset,groups,model,n_perms,true_score,p_value,mean_perm_score
-voxel,ADvsCBS,RandomForest,1000,0.5514492753623188,0.4945054945054945,0.5512728260869566

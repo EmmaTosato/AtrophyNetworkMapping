@@ -1,0 +1,6 @@
+outer_fold,model,dataset,accuracy,precision,recall,f1,auc_roc,best_params
+1,RandomForest,voxel,0.429,0.417,0.417,0.417,0.468,"{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_split': 2, 'n_estimators': 100}"
+2,RandomForest,voxel,0.429,0.393,0.403,0.394,0.491,"{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}"
+3,RandomForest,voxel,0.571,0.583,0.583,0.571,0.583,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}"
+4,RandomForest,voxel,0.714,0.708,0.708,0.708,0.671,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 10, 'n_estimators': 200}"
+5,RandomForest,voxel,0.7,0.688,0.688,0.688,0.812,"{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_split': 2, 'n_estimators': 100}"

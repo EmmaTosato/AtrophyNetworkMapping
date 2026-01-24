@@ -1,0 +1,6 @@
+outer_fold,model,dataset,accuracy,precision,recall,f1,auc_roc,best_params
+1,GradientBoosting,voxel,0.75,0.733,0.733,0.733,0.685,"{'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 200, 'subsample': 0.8}"
+2,GradientBoosting,voxel,0.478,0.512,0.512,0.477,0.579,"{'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100, 'subsample': 0.8}"
+3,GradientBoosting,voxel,0.348,0.371,0.385,0.343,0.425,"{'learning_rate': 0.05, 'max_depth': 5, 'n_estimators': 100, 'subsample': 0.8}"
+4,GradientBoosting,voxel,0.696,0.833,0.611,0.582,0.659,"{'learning_rate': 0.05, 'max_depth': 3, 'n_estimators': 200, 'subsample': 1.0}"
+5,GradientBoosting,voxel,0.609,0.566,0.54,0.517,0.365,"{'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100, 'subsample': 0.8}"

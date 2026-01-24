@@ -1,0 +1,6 @@
+outer_fold,model,dataset,accuracy,precision,recall,f1,auc_roc,best_params
+1,KNN,networks,0.5,0.437,0.444,0.438,0.411,"{'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'uniform'}"
+2,KNN,networks,0.783,0.789,0.717,0.732,0.721,"{'metric': 'euclidean', 'n_neighbors': 7, 'weights': 'uniform'}"
+3,KNN,networks,0.522,0.488,0.488,0.487,0.52,"{'metric': 'euclidean', 'n_neighbors': 3, 'weights': 'distance'}"
+4,KNN,networks,0.652,0.658,0.575,0.549,0.655,"{'metric': 'manhattan', 'n_neighbors': 9, 'weights': 'uniform'}"
+5,KNN,networks,0.609,0.56,0.52,0.462,0.567,"{'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'uniform'}"

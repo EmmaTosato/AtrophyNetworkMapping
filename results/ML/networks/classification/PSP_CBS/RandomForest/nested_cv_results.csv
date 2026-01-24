@@ -1,0 +1,6 @@
+outer_fold,model,dataset,accuracy,precision,recall,f1,auc_roc,best_params
+1,RandomForest,networks,0.667,0.699,0.625,0.61,0.722,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 10, 'n_estimators': 100}"
+2,RandomForest,networks,0.762,0.853,0.722,0.721,0.731,"{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_split': 2, 'n_estimators': 300}"
+3,RandomForest,networks,0.429,0.432,0.431,0.427,0.454,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}"
+4,RandomForest,networks,0.571,0.568,0.569,0.568,0.639,"{'max_depth': None, 'max_features': 'log2', 'min_samples_split': 10, 'n_estimators': 100}"
+5,RandomForest,networks,0.7,0.69,0.667,0.67,0.75,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 2, 'n_estimators': 100}"

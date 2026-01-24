@@ -1,0 +1,4 @@
+comparison,model,accuracy_mean,accuracy_std,precision_mean,precision_std,recall_mean,recall_std,f1_mean,f1_std,auc_roc_mean,auc_roc_std
+AD_PSP,alexnet,0.652,0.178,0.602,0.239,0.652,0.178,0.616,0.211,0.746,0.169
+AD_PSP,resnet,0.637,0.08,0.652,0.083,0.637,0.08,0.627,0.077,0.72,0.152
+AD_PSP,vgg16,0.545,0.008,0.297,0.009,0.545,0.008,0.385,0.01,0.528,0.088

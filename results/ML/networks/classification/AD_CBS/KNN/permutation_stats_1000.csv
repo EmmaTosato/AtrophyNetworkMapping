@@ -1,2 +1,0 @@
-dataset,groups,model,n_perms,true_score,p_value,mean_perm_score
-networks,ADvsCBS,KNN,1000,0.6822463768115942,0.004995004995004995,0.5643086956521739

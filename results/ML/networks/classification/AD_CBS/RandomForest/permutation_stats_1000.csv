@@ -1,2 +1,0 @@
-dataset,groups,model,n_perms,true_score,p_value,mean_perm_score
-networks,ADvsCBS,RandomForest,1000,0.5706521739130435,0.37362637362637363,0.5595456521739132

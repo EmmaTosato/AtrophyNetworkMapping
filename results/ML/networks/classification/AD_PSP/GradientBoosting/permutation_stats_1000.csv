@@ -1,2 +1,0 @@
-dataset,groups,model,n_perms,true_score,p_value,mean_perm_score
-networks,ADvsPSP,GradientBoosting,1000,0.7054131054131053,0.000999000999000999,0.5091689458689459

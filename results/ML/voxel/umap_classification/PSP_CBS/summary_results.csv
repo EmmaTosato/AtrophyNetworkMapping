@@ -1,0 +1,4 @@
+comparison,model,accuracy_mean,accuracy_std,precision_mean,precision_std,recall_mean,recall_std,f1_mean,f1_std,auc_roc_mean,auc_roc_std
+PSP_CBS,GradientBoosting,0.54,0.137,0.562,0.194,0.526,0.131,0.502,0.135,0.554,0.16
+PSP_CBS,KNN,0.625,0.036,0.622,0.051,0.593,0.026,0.587,0.023,0.592,0.092
+PSP_CBS,RandomForest,0.569,0.139,0.558,0.148,0.56,0.145,0.556,0.147,0.605,0.141

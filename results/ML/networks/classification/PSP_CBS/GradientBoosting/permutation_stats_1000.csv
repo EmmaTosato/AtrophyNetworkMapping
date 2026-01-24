@@ -1,2 +1,0 @@
-dataset,groups,model,n_perms,true_score,p_value,mean_perm_score
-networks,PSPvsCBS,GradientBoosting,1000,0.6638095238095237,0.006993006993006993,0.5181076190476192
