@@ -1,0 +1,2 @@
+groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
+CBSvsPSP,GradientBoosting,100,0.6152380952380953,0.0297029702970297,0.5127666666666667,0.05720689645722423

@@ -1,0 +1,2 @@
+dataset,groups,model,n_perms,true_score,p_value,mean_perm_score
+voxel,ADvsCBS,KNN,1000,0.5771739130434782,0.4515484515484515,0.5693141304347825

@@ -1,0 +1,2 @@
+groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
+CBSvsPSP,RandomForest,100,0.5580952380952382,0.3564356435643564,0.5383190476190475,0.051843539909862325

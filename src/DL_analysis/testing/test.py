@@ -17,7 +17,7 @@ def evaluate(model, loader, device):
         - Returns two NumPy arrays: ground-truth labels and predicted labels.
     """
     model.eval()  # Set the model to evaluation mode (no dropout, etc.)
-    true_labels, pred_labels = [], []
+    true_labels, pred_labels, pred_probs = [], [], []
 
     with torch.no_grad():  # Disable gradient computation for efficiency
         for batch in loader:
@@ -32,8 +32,12 @@ def evaluate(model, loader, device):
             # Store ground-truth and predictions
             true_labels.extend(y.cpu().numpy())
             pred_labels.extend(preds.cpu().numpy())
+            
+            # Store probabilities (softmax)
+            probs = torch.softmax(outputs, dim=1)
+            pred_probs.extend(probs.cpu().numpy())
 
-    return np.array(true_labels), np.array(pred_labels)
+    return np.array(true_labels), np.array(pred_labels), np.array(pred_probs)
 
 
 def compute_metrics(y_true, y_pred):

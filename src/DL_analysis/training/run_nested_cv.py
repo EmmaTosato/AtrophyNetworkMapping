@@ -42,8 +42,20 @@ def compute_metrics_safe(y_true, y_pred, probas=None):
     metrics['recall'] = recall_score(y_true, y_pred, average='weighted', zero_division=0)
     metrics['f1'] = f1_score(y_true, y_pred, average='weighted', zero_division=0)
     
-    # AUC if probabilities are provided (optional, for now just 0)
-    metrics['auc'] = 0.0
+    # AUC if probabilities are provided
+    if probas is not None:
+        try:
+            # Handle binary case specifically if n_classes=2
+            if probas.shape[1] == 2:
+                # Use probability of positive class (index 1)
+                metrics['auc'] = roc_auc_score(y_true, probas[:, 1])
+            else:
+                metrics['auc'] = roc_auc_score(y_true, probas, multi_class='ovr')
+        except Exception as e:
+            print(f"Warning: AUC calculation failed: {e}")
+            metrics['auc'] = 0.0
+    else:
+        metrics['auc'] = 0.0
     
     return metrics
 
@@ -360,8 +372,8 @@ def nested_cv_classification(args):
         test_dataset = FCDataset(data_dirs['original'], test_df, 'Group', task='classification')
         test_loader = DataLoader(test_dataset, batch_size=best_params['batch_size'], shuffle=False)
         
-        y_true, y_pred = evaluate(final_model, test_loader, device)
-        metrics = compute_metrics_safe(y_true, y_pred)
+        y_true, y_pred, y_probs = evaluate(final_model, test_loader, device)
+        metrics = compute_metrics_safe(y_true, y_pred, y_probs)
         
         # Save results
         fold_result = {

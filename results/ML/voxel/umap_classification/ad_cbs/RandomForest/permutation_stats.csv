@@ -1,0 +1,2 @@
+groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
+ADvsCBS,RandomForest,100,0.577536231884058,0.32673267326732675,0.5629963768115942,0.050397382617038584

@@ -1,0 +1,2 @@
+dataset,groups,model,n_perms,true_score,p_value,mean_perm_score
+networks,PSPvsCBS,RandomForest,1000,0.6638095238095237,0.00999000999000999,0.5214842857142856

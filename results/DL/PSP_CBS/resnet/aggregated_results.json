@@ -1,0 +1,126 @@
+{
+    "aggregate": {
+        "mean_accuracy": 0.5,
+        "std_accuracy": 0.08780518530755131,
+        "mean_f1": 0.48826762810823404,
+        "std_f1": 0.08239641259545381,
+        "mean_precision": 0.5113827349121467,
+        "std_precision": 0.09100870543344891,
+        "mean_recall": 0.5,
+        "std_recall": 0.08780518530755131,
+        "mean_auc": 0.49699074074074073,
+        "std_auc": 0.08577817957111807
+    },
+    "folds": [
+        {
+            "fold": 1,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0001,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "resnet"
+            },
+            "metrics": {
+                "accuracy": 0.5714285714285714,
+                "precision": 0.577922077922078,
+                "recall": 0.5714285714285714,
+                "f1": 0.5733899967309578,
+                "auc": 0.5185185185185186
+            }
+        },
+        {
+            "fold": 2,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0001,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "resnet"
+            },
+            "metrics": {
+                "accuracy": 0.5714285714285714,
+                "precision": 0.5504201680672269,
+                "recall": 0.5714285714285714,
+                "f1": 0.5259568018188707,
+                "auc": 0.6388888888888888
+            }
+        },
+        {
+            "fold": 3,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0001,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "resnet"
+            },
+            "metrics": {
+                "accuracy": 0.5238095238095238,
+                "precision": 0.5238095238095238,
+                "recall": 0.5238095238095238,
+                "f1": 0.5238095238095238,
+                "auc": 0.5
+            }
+        },
+        {
+            "fold": 4,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0001,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "resnet"
+            },
+            "metrics": {
+                "accuracy": 0.3333333333333333,
+                "precision": 0.3333333333333333,
+                "recall": 0.3333333333333333,
+                "f1": 0.3333333333333333,
+                "auc": 0.37962962962962965
+            }
+        },
+        {
+            "fold": 5,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0001,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "resnet"
+            },
+            "metrics": {
+                "accuracy": 0.5,
+                "precision": 0.5714285714285714,
+                "recall": 0.5,
+                "f1": 0.48484848484848475,
+                "auc": 0.44791666666666663
+            }
+        }
+    ]
+}

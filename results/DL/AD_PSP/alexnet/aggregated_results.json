@@ -1,0 +1,126 @@
+{
+    "aggregate": {
+        "mean_accuracy": 0.6521367521367522,
+        "std_accuracy": 0.1777704724921723,
+        "mean_f1": 0.6156413956413956,
+        "std_f1": 0.2112369428260526,
+        "mean_precision": 0.6017425902682312,
+        "std_precision": 0.23870501535419628,
+        "mean_recall": 0.6521367521367522,
+        "std_recall": 0.1777704724921723,
+        "mean_auc": 0.7456349206349205,
+        "std_auc": 0.1686589167044702
+    },
+    "folds": [
+        {
+            "fold": 1,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0005,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "alexnet"
+            },
+            "metrics": {
+                "accuracy": 0.8518518518518519,
+                "precision": 0.8518518518518519,
+                "recall": 0.8518518518518519,
+                "f1": 0.8518518518518519,
+                "auc": 0.8666666666666667
+            }
+        },
+        {
+            "fold": 2,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0005,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "alexnet"
+            },
+            "metrics": {
+                "accuracy": 0.37037037037037035,
+                "precision": 0.345679012345679,
+                "recall": 0.37037037037037035,
+                "f1": 0.354016354016354,
+                "auc": 0.43888888888888894
+            }
+        },
+        {
+            "fold": 3,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0005,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "alexnet"
+            },
+            "metrics": {
+                "accuracy": 0.5384615384615384,
+                "precision": 0.28994082840236685,
+                "recall": 0.5384615384615384,
+                "f1": 0.37692307692307686,
+                "auc": 0.75
+            }
+        },
+        {
+            "fold": 4,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0005,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "alexnet"
+            },
+            "metrics": {
+                "accuracy": 0.6923076923076923,
+                "precision": 0.6932692307692307,
+                "recall": 0.6923076923076923,
+                "f1": 0.6885780885780886,
+                "auc": 0.7440476190476191
+            }
+        },
+        {
+            "fold": 5,
+            "best_params": {
+                "lr": 0.01,
+                "batch_size": 8,
+                "weight_decay": 0.0005,
+                "epochs": 40,
+                "optimizer": "sgd",
+                "momentum": 0.9,
+                "scheduler_gamma": 0.1,
+                "scheduler_patience": 5,
+                "patience": null,
+                "model_type": "alexnet"
+            },
+            "metrics": {
+                "accuracy": 0.8076923076923077,
+                "precision": 0.8279720279720278,
+                "recall": 0.8076923076923077,
+                "f1": 0.8068376068376069,
+                "auc": 0.9285714285714286
+            }
+        }
+    ]
+}

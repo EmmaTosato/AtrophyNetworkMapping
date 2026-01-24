@@ -8,12 +8,5 @@
         "optimizer": "sgd",
         "patience": null,
         "model_type": "resnet"
-    },
-    "metrics": {
-        "accuracy": 0.6538461538461539,
-        "precision": 0.6526806526806527,
-        "recall": 0.6538461538461539,
-        "f1": 0.6522892399953869,
-        "auc": 0.0
     }
 }

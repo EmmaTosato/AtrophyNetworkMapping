@@ -1,0 +1,12 @@
+groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
+ADvsCBS,GradientBoosting,100,0.604,0.2673,0.5854,0.0384
+ADvsCBS,KNN,100,0.6822,0.0099,0.567,0.0447
+ADvsCBS,RandomForest,100,0.5707,0.3762,0.5656,0.0486
+,,,,,,
+ADvsPSP,GradientBoosting,100,0.7054,0.0099,0.5125,0.0509
+ADvsPSP,KNN,100,0.6288,0.0099,0.5104,0.0444
+ADvsPSP,RandomForest,100,0.6823,0.0099,0.5133,0.0522
+,,,,,,
+PSPvsCBS,GradientBoosting,100,0.6638,0.0099,0.5223,0.0534
+PSPvsCBS,KNN,100,0.6448,0.0198,0.5201,0.0607
+PSPvsCBS,RandomForest,100,0.6638,0.0198,0.5205,0.056

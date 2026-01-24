@@ -1,0 +1,2 @@
+groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
+ADvsCBS,GradientBoosting,100,0.5608695652173913,0.45544554455445546,0.5568623188405797,0.05394285884696797
