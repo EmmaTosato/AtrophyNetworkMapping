@@ -398,8 +398,14 @@ def nested_cv_classification(args):
         torch.save(last_model_state, os.path.join(models_dir, "last_model.pt"))
         
         # 3. Validated Metrics
+        # 3. Validated Metrics (Saved as Params only, as requested)
+        # We save only best_params and fold info to metrics.json
+        fold_info_only = {
+             'fold': outer_fold + 1,
+             'best_params': best_params
+        }
         with open(os.path.join(fold_dir, "metrics.json"), "w") as f:
-            json.dump(fold_result, f, indent=4)
+            json.dump(fold_info_only, f, indent=4)
         
         # 4. History (Row-oriented for readability)
         history_list = []
@@ -428,8 +434,27 @@ def nested_cv_classification(args):
         
     print(json.dumps(agg_metrics, indent=4))
     
-    with open(os.path.join(args.output_dir, "aggregated_results.json"), "w") as f:
-        json.dump({'aggregate': agg_metrics, 'folds': results}, f, indent=4)
+    # --- Save to CSV (Requested format) ---
+    
+    # 1. aggregated_results.csv (Mean/Std of metrics)
+    # Round to 3 decimals
+    agg_metrics_rounded = {k: round(v, 3) for k, v in agg_metrics.items()}
+    df_agg = pd.DataFrame([agg_metrics_rounded])
+    df_agg.to_csv(os.path.join(args.output_dir, "aggregated_results.csv"), index=False)
+    
+    # 2. nested_cv_results.csv (Per-fold metrics)
+    nested_rows = []
+    for r in results:
+        row = {'fold': r['fold']}
+        # Flatten metrics
+        for k, v in r['metrics'].items():
+            row[k] = round(v, 3) if isinstance(v, (int, float)) else v
+        nested_rows.append(row)
+        
+    df_nested = pd.DataFrame(nested_rows)
+    df_nested.to_csv(os.path.join(args.output_dir, "nested_cv_results.csv"), index=False)
+    
+    print(f"Results saved to {args.output_dir}/aggregated_results.csv and nested_cv_results.csv")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -1,2 +1,2 @@
 mean_accuracy,std_accuracy,mean_f1,std_f1,mean_precision,std_precision,mean_recall,std_recall,mean_auc,std_auc
-0.652,0.178,0.616,0.211,0.602,0.239,0.652,0.178,0.0,0.0
+0.652,0.178,0.616,0.211,0.602,0.239,0.652,0.178,0.746,0.169
