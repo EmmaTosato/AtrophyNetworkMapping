@@ -18,12 +18,20 @@ def clean_title_string(title):
     title = re.sub(r'_+', '_', title)
     return title.strip('_').lower()
 
+# Consistent color mapping for diagnostic groups (Set2 palette order)
+GROUP_COLORS = {
+    'AD': '#66c2a5',   # Turchese (Set2 index 0)
+    'CBS': '#fc8d62',  # Arancione (Set2 index 1)
+    'PSP': '#8da0cb',  # Violetto (Set2 index 2)
+}
+DEFAULT_COLOR = '#61bdcd'  # Fallback color
+
 # === Regression & Diagnostic Plots ===
 def plot_ols_diagnostics(target, predictions, residuals,
                          title, save_path=None,
                          plot_flag=True, save_flag=False,
                          color_by_group=False, group_labels=None,
-                         stats=None, ax=None):
+                         stats=None, ax=None, group_name=None):
     """
     Plots OLS diagnostics (True vs Predicted) with optional group coloring.
     Uses sns.lmplot for grouped data to match original paper style.
@@ -126,13 +134,16 @@ def plot_ols_diagnostics(target, predictions, residuals,
 
         df_plot = pd.DataFrame({'target': target, 'predictions': predictions})
 
+        # Use group-specific color if provided
+        plot_color = GROUP_COLORS.get(group_name, DEFAULT_COLOR) if group_name else DEFAULT_COLOR
+
         sns.scatterplot(
             data=df_plot, x='target', y='predictions',
-            color='#61bdcd', edgecolor='black', alpha=0.9, s=110, linewidth=0.6, ax=ax
+            color=plot_color, edgecolor='black', alpha=0.9, s=110, linewidth=0.6, ax=ax
         )
         sns.regplot(
              data=df_plot, x='target', y='predictions',
-             color='#61bdcd', scatter=False, ci=95, ax=ax, truncate=False,
+             color=plot_color, scatter=False, ci=95, ax=ax, truncate=False,
              line_kws={'linewidth': 2.5}
         )
 

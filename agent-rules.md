@@ -53,7 +53,7 @@ Ensure the project follows standard software engineering practices to promote ma
 ### Organization Guidelines
 
 This a basic structuring of the project:
-- **Source Code & Scripts (`src/`):** This is the core of the project. It MUST be organized into:
+- **Source Code (`src/`):** This is the core of the project. It MUST be organized into:
     - **Core Modules:** Shared utilities, base classes, and common logic (e.g., `src/utils`).
     - **Task-Specific Folders:** dedicated sub-packages for each main task (e.g., `src/preprocessing`). Each folder 
 	should contain both the specific logic and the executable scripts for that task.

@@ -4,7 +4,6 @@ import json
 import warnings
 import pandas as pd
 import numpy as np
-import nibabel as nib
 from sklearn.mixture import GaussianMixture
 from ML_analysis.loading.config import ConfigLoader
 
@@ -25,7 +24,8 @@ def apply_mask(df_thr, mask_path):
     Applies a binary 3D mask to the voxel data (excluding 'ID').
     The mask is flattened and used to retain only selected voxels.
     """
-
+    import nibabel as nib  # Lazy import - only needed for this function
+    
     mask = nib.load(mask_path).get_fdata().flatten().astype(bool)
     assert mask.shape[0] == df_thr.shape[1] - 1, "Mask and data length mismatch"
 

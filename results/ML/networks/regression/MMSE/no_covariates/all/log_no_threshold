@@ -1,17 +1,4 @@
 DEBUG: df_input shape after removing missing: (168, 18)
-DEBUG: df_voxel IDs sample: ['002_S_4654', '002_S_6695', '003_S_6264', '003_S_6268', '003_S_6432']
-DEBUG: df_labels IDs sample: ['002_S_4654', '002_S_6695', '003_S_6264', '003_S_6268', '003_S_6432']
-DEBUG: df_labels columns: ['ID', 'Group', 'Sex', 'Age', 'Education', 'CDR_SB', 'MMSE', 'labels_gmm_cdr', 'labels_km', 'labels_hdb']
-Warning: The following metadata columns were not found after merge: ['Group', 'Sex', 'Age', 'Education', 'CDR_SB', 'MMSE', 'labels_gmm_cdr', 'labels_km', 'labels_hdb']
-Detected suffixed column Group_y! Renaming to Group...
-Detected suffixed column Sex_y! Renaming to Sex...
-Detected suffixed column Age_y! Renaming to Age...
-Detected suffixed column Education_y! Renaming to Education...
-Detected suffixed column CDR_SB_y! Renaming to CDR_SB...
-Detected suffixed column MMSE_y! Renaming to MMSE...
-Detected suffixed column labels_gmm_cdr_y! Renaming to labels_gmm_cdr...
-Detected suffixed column labels_km_y! Renaming to labels_km...
-Detected suffixed column labels_hdb_y! Renaming to labels_hdb...
 
 -------------------- Dataset Info --------------------
 Meta columns (Labels and Covariates):       10
@@ -29,8 +16,8 @@ OLS REGRESSION SUMMARY
 Dep. Variable:                   MMSE   R-squared:                       0.264
 Model:                            OLS   Adj. R-squared:                  0.227
 Method:                 Least Squares   F-statistic:                     7.134
-Date:                Fri, 23 Jan 2026   Prob (F-statistic):           4.75e-08
-Time:                        15:13:14   Log-Likelihood:                -483.55
+Date:                Wed, 28 Jan 2026   Prob (F-statistic):           4.75e-08
+Time:                        11:39:11   Log-Likelihood:                -483.55
 No. Observations:                 168   AIC:                             985.1
 Df Residuals:                     159   BIC:                             1013.
 Df Model:                           8                                         
@@ -58,7 +45,7 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
 SHUFFLING REGRESSION
-R^2 real: 0.2641 | shuffled mean: 0.0470 | p-value: 0.0000
+R^2 real: 0.2641 | shuffled mean: 0.0475 | p-value: 0.0000
 
 RMSE BY GROUP
        Mean_RMSE  Std_RMSE   N

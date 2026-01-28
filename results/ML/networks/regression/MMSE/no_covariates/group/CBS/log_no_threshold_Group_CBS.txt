@@ -1,0 +1,100 @@
+DEBUG: df_input shape after removing missing: (41, 18)
+
+-------------------- Dataset Info --------------------
+Meta columns (Labels and Covariates):       10
+Feature matrix shape (X):                (41, 8)
+Complete dataframe shape after merge:    (41, 18)
+-------------------------------------------------------
+
+DEBUG: df_merged shape: (41, 18), x_feature shape: (41, 8)
+DEBUG: Design Matrix shape: (41, 8)
+DEBUG: Model fitted.
+DEBUG: Plotting to results/ML/networks/regression/MMSE/no_covariates/group/CBS with prefix No Threshold
+OLS REGRESSION SUMMARY
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                   MMSE   R-squared:                       0.480
+Model:                            OLS   Adj. R-squared:                  0.350
+Method:                 Least Squares   F-statistic:                     3.688
+Date:                Wed, 28 Jan 2026   Prob (F-statistic):            0.00375
+Time:                        11:39:11   Log-Likelihood:                -123.47
+No. Observations:                  41   AIC:                             264.9
+Df Residuals:                      32   BIC:                             280.4
+Df Model:                           8                                         
+Covariance Type:            nonrobust                                         
+====================================================================================
+                       coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------------
+const               31.7617      2.341     13.569      0.000      26.994      36.530
+VIS_mean           -15.3479     32.097     -0.478      0.636     -80.728      50.032
+VAN_mean           -55.3164     64.267     -0.861      0.396    -186.225      75.592
+DAN_mean            -9.9684     59.990     -0.166      0.869    -132.165     112.228
+DMN_mean           -92.0768     82.788     -1.112      0.274    -260.711      76.557
+LMB_mean           -19.9845    276.209     -0.072      0.943    -582.604     542.635
+FPN_mean            63.2240     52.635      1.201      0.238     -43.990     170.438
+SMN_mean            59.6304     33.093      1.802      0.081      -7.778     127.039
+SUBCORTICAL_mean   -85.9346     68.639     -1.252      0.220    -225.748      53.879
+==============================================================================
+Omnibus:                        3.680   Durbin-Watson:                   2.118
+Prob(Omnibus):                  0.159   Jarque-Bera (JB):                1.716
+Skew:                          -0.118   Prob(JB):                        0.424
+Kurtosis:                       2.026   Cond. No.                         351.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+SHUFFLING REGRESSION
+R^2 real: 0.4797 | shuffled mean: 0.1956 | p-value: 0.0000
+
+RMSE BY GROUP
+       Mean_RMSE  Std_RMSE   N
+Group                         
+CBS         4.22      2.56  41
+
+MAE: 4.2181
+RMSE: 4.9161
+
+SUBJECTS SORTED BY RMSE
+      ID Group  CDR_SB  Predicted CDR_SB     RMSE
+1_S_5016   CBS     2.0         29.622463 0.622463
+1_S_5094   CBS     4.0         21.742692 0.742692
+1_S_5098   CBS     2.5         28.055054 0.944946
+1_S_5085   CBS     1.5         29.981936 0.981936
+1_S_5053   CBS     0.0         31.076942 1.076942
+1_S_5031   CBS     3.5         16.555513 1.444487
+1_S_5000   CBS     5.0         22.610743 1.610743
+1_S_5036   CBS     1.5         26.275924 1.724076
+4_S_5009   CBS     9.0         25.730393 1.730393
+1_S_5027   CBS     1.0         22.193144 1.806856
+1_S_5019   CBS    11.0         15.874961 1.874961
+1_S_5018   CBS     1.5         24.873310 2.126690
+1_S_5048   CBS     4.0         24.823911 2.176089
+1_S_5017   CBS     4.5         28.523873 2.523873
+1_S_5060   CBS     1.0         26.375118 2.624882
+1_S_5006   CBS     7.0         27.881549 2.881549
+1_S_5009   CBS     6.0         26.963081 2.963081
+1_S_5072   CBS     5.5         23.092988 3.092988
+1_S_5022   CBS     0.5         21.644604 3.355396
+1_S_5083   CBS     4.5         29.819363 3.819363
+1_S_5076   CBS     1.0         23.809678 4.190322
+1_S_5054   CBS     0.5         22.438316 4.561684
+1_S_5092   CBS     5.0         22.642799 4.642799
+1_S_5089   CBS     3.5         20.240945 4.759055
+1_S_5013   CBS     1.0         23.232578 4.767422
+1_S_5079   CBS     1.5         20.153366 4.846634
+1_S_5046   CBS     5.0         22.035574 5.035574
+1_S_5021   CBS     0.5         24.893504 5.106496
+1_S_5026   CBS     6.0         22.783554 5.216446
+4_S_5006   CBS     5.0         28.547265 5.547265
+5_S_5009   CBS     1.0         23.444120 5.555880
+1_S_5001   CBS    15.0         16.690726 6.690726
+1_S_5039   CBS     5.5         20.221900 6.778100
+1_S_5038   CBS     9.0         14.880100 6.880100
+1_S_5043   CBS     2.0         18.082024 6.917976
+1_S_5041   CBS     4.0         20.097814 8.097814
+1_S_5024   CBS     7.5         28.339227 8.339227
+4_S_5001   CBS    12.0         13.365582 8.365582
+1_S_5075   CBS     6.0         19.235171 8.764829
+1_S_5073   CBS     2.0         16.198110 8.801890
+1_S_5023   CBS    16.0         12.950087 8.950087

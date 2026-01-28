@@ -140,7 +140,6 @@ def regression_pipeline(df_input, df_meta, args):
     print(f"DEBUG: Design Matrix shape: {x_ols.shape}")
 
 
-
     # Fit OLS model
     model, y_pred, residuals = fit_ols_model(x_ols, y)
     print("DEBUG: Model fitted.")
@@ -164,9 +163,15 @@ def regression_pipeline(df_input, df_meta, args):
     stats = (model.rsquared, model.f_pvalue)
     
     print(f"DEBUG: Plotting to {args['output_dir']} with prefix {args['prefix']}")
+    current_group = args.get('current_group', None)
+    
+    # When doing group-specific regression, disable color_by_group to use single-color plot
+    # with the group-specific color from GROUP_COLORS
+    use_color_by_group = args['color_by_group'] if current_group is None else False
+    
     plot_ols_diagnostics(y_plot, y_pred_plot, residuals, args['prefix'], args['output_dir'], 
                          args['plot_regression'], args['save_flag'], 
-                         args['color_by_group'], group_labels, stats=stats)
+                         use_color_by_group, group_labels, stats=stats, group_name=current_group)
     plot_actual_vs_predicted(y_plot, y_pred_plot, args['prefix'], args['output_dir'], args['plot_regression'], args['save_flag'])
 
     print("OLS REGRESSION SUMMARY")
@@ -209,6 +214,7 @@ def main_regression(params, df_input, df_meta):
         for group_val in sorted(df_meta[group_col].dropna().unique()):
             group_str = group_value_to_str(group_val)
             params['output_dir'] = os.path.join(base_out, group_col.lower(), group_str)
+            params['current_group'] = group_str  # Pass group name for color selection
             os.makedirs(params['output_dir'], exist_ok=True)
 
             log_path = os.path.join(params['output_dir'], f"{params['log']}_{group_col}_{group_str}.txt")

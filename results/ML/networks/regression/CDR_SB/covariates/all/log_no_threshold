@@ -1,3 +1,4 @@
+DEBUG: df_input shape after removing missing: (171, 18)
 
 -------------------- Dataset Info --------------------
 Meta columns (Labels and Covariates):       10
@@ -5,14 +6,18 @@ Feature matrix shape (X):                (171, 8)
 Complete dataframe shape after merge:    (171, 18)
 -------------------------------------------------------
 
+DEBUG: df_merged shape: (171, 18), x_feature shape: (171, 8)
+DEBUG: Design Matrix shape: (171, 11)
+DEBUG: Model fitted.
+DEBUG: Plotting to results/ML/networks/regression/CDR_SB/covariates/all with prefix No Threshold - Covariates
 OLS REGRESSION SUMMARY
                             OLS Regression Results                            
 ==============================================================================
 Dep. Variable:                 CDR_SB   R-squared:                       0.270
 Model:                            OLS   Adj. R-squared:                  0.220
 Method:                 Least Squares   F-statistic:                     5.350
-Date:                Thu, 04 Sep 2025   Prob (F-statistic):           3.44e-07
-Time:                        08:55:44   Log-Likelihood:                -426.42
+Date:                Wed, 28 Jan 2026   Prob (F-statistic):           3.44e-07
+Time:                        11:39:09   Log-Likelihood:                -426.42
 No. Observations:                 171   AIC:                             876.8
 Df Residuals:                     159   BIC:                             914.5
 Df Model:                          11                                         
@@ -45,7 +50,7 @@ Notes:
 strong multicollinearity or other numerical problems.
 
 SHUFFLING REGRESSION
-R^2 real: 0.2702 | shuffled mean: 0.0614 | p-value: 0.0000
+R^2 real: 0.2702 | shuffled mean: 0.0652 | p-value: 0.0000
 
 RMSE BY GROUP
        Mean_RMSE  Std_RMSE   N
