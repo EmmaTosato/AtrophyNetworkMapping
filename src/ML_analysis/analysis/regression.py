@@ -119,14 +119,16 @@ def regression_pipeline(df_input, df_meta, args):
     df_merged, x_feature = x_features_return(df_input, df_meta)
     print(f"DEBUG: df_merged shape: {df_merged.shape}, x_feature shape: {x_feature.shape}")
     
-    # Ensure x_feature is strictly numeric (drop any stray metadata leaks) and clean
-    if hasattr(x_feature, 'select_dtypes'):
-        x_feature = x_feature.select_dtypes(include=[np.number]).fillna(0)
+    # Ensure x_feature is strictly numeric (convert any stray columns) and clean
+    if hasattr(x_feature, 'apply'):
+        x_feature = x_feature.apply(pd.to_numeric, errors='coerce').fillna(0)
 
     # Target variable handling
     y = np.log1p(df_merged[args['target_variable']]) if args['y_log_transform'] else df_merged[args['target_variable']]
     
     # Feature projection
+    # Note: UMAP is fit on all data (no train/test split) because OLS regression is used 
+    # for exploratory analysis, not predictive modeling. Significance is validated via shuffling test.
     if args["umap"]:
         print("DEBUG: Running UMAP...")
         x = run_umap(x_feature)
@@ -149,15 +151,23 @@ def regression_pipeline(df_input, df_meta, args):
     # Compute RMSE statistics
     df_sorted, rmse_stats = compute_rmse_stats(df_merged, y_pred, residuals)
 
+    # Back-transform if log was applied (for interpretable plots)
+    if args['y_log_transform']:
+        y_plot = np.expm1(y)
+        y_pred_plot = np.expm1(y_pred)
+    else:
+        y_plot = y
+        y_pred_plot = y_pred
+
     # Plotting
     group_labels = df_merged[args['group_name']]
     stats = (model.rsquared, model.f_pvalue)
     
     print(f"DEBUG: Plotting to {args['output_dir']} with prefix {args['prefix']}")
-    plot_ols_diagnostics(y, y_pred, residuals, args['prefix'], args['output_dir'], 
+    plot_ols_diagnostics(y_plot, y_pred_plot, residuals, args['prefix'], args['output_dir'], 
                          args['plot_regression'], args['save_flag'], 
                          args['color_by_group'], group_labels, stats=stats)
-    plot_actual_vs_predicted(y, y_pred, args['prefix'], args['output_dir'], args['plot_regression'], args['save_flag'])
+    plot_actual_vs_predicted(y_plot, y_pred_plot, args['prefix'], args['output_dir'], args['plot_regression'], args['save_flag'])
 
     print("OLS REGRESSION SUMMARY")
     print(model.summary())
