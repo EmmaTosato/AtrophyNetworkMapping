@@ -43,7 +43,8 @@
     "target_variable": "MMSE",
     "flag_covariates": false,
     "group_regression": false,
-    "group_col": "Group"
+    "group_col": "Group",
+    "n_permutations": 1000
   },
   "plotting": {
     "do_evaluation": false,

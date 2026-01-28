@@ -120,11 +120,9 @@ def regression_pipeline(df_input, df_meta, args):
     """
     # Remove missing values based on target variable
     df_input = remove_missing_values(df_input, df_meta, args['target_variable'])
-    print(f"DEBUG: df_input shape after removing missing: {df_input.shape}")
     
     # Merge input features with metadata
     df_merged, x_feature = x_features_return(df_input, df_meta)
-    print(f"DEBUG: df_merged shape: {df_merged.shape}, x_feature shape: {x_feature.shape}")
     
     # Ensure x_feature is strictly numeric (convert any stray columns) and clean
     if hasattr(x_feature, 'apply'):
@@ -144,15 +142,15 @@ def regression_pipeline(df_input, df_meta, args):
 
     x_ols = build_design_matrix(df_merged, x, args["covariates"])
     
-    print(f"DEBUG: Design Matrix shape: {x_ols.shape}")
+    x_ols = build_design_matrix(df_merged, x, args["covariates"])
 
 
     # Fit OLS model
     model, y_pred, residuals = fit_ols_model(x_ols, y)
-    print("DEBUG: Model fitted.")
     
     # Perform shuffling regression
-    r2_real, r2_shuffled, p_value = shuffling_regression(x_ols, y)
+    n_perms = args.get('n_permutations', 1000) # Default 1000 if not in config
+    r2_real, r2_shuffled, p_value = shuffling_regression(x_ols, y, n_iter=n_perms)
     
     # Compute RMSE statistics
     df_sorted, rmse_stats = compute_rmse_stats(df_merged, y_pred, residuals)
@@ -169,7 +167,10 @@ def regression_pipeline(df_input, df_meta, args):
     group_labels = df_merged[args['group_name']]
     stats = (model.rsquared, model.f_pvalue)
     
-    print(f"DEBUG: Plotting to {args['output_dir']} with prefix {args['prefix']}")
+    # Plotting
+    group_labels = df_merged[args['group_name']]
+    stats = (model.rsquared, model.f_pvalue)
+    
     current_group = args.get('current_group', None)
     
     # When doing group-specific regression, disable color_by_group to use single-color plot
