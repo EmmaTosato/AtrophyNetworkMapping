@@ -1,0 +1,73 @@
+============================================================
+STARTING NESTED CV PIPELINE for AD vs PSP
+============================================================
+
+Dataset: 132 subjects (AD, PSP)
+Outer folds: 5
+
+============================================================
+OUTER FOLD 1/5
+============================================================
+Train: 105 subjects | Test: 27 subjects
+  > Processing RandomForest...
+    [Timing] RandomForest processing time: 3.11 seconds
+  > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.84 seconds
+  > Processing KNN...
+    [Timing] KNN processing time: 0.13 seconds
+
+============================================================
+OUTER FOLD 2/5
+============================================================
+Train: 105 subjects | Test: 27 subjects
+  > Processing RandomForest...
+    [Timing] RandomForest processing time: 2.04 seconds
+  > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.77 seconds
+  > Processing KNN...
+    [Timing] KNN processing time: 0.12 seconds
+
+============================================================
+OUTER FOLD 3/5
+============================================================
+Train: 106 subjects | Test: 26 subjects
+  > Processing RandomForest...
+    [Timing] RandomForest processing time: 2.10 seconds
+  > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.79 seconds
+  > Processing KNN...
+    [Timing] KNN processing time: 0.12 seconds
+
+============================================================
+OUTER FOLD 4/5
+============================================================
+Train: 106 subjects | Test: 26 subjects
+  > Processing RandomForest...
+    [Timing] RandomForest processing time: 2.09 seconds
+  > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.81 seconds
+  > Processing KNN...
+    [Timing] KNN processing time: 0.12 seconds
+
+============================================================
+OUTER FOLD 5/5
+============================================================
+Train: 106 subjects | Test: 26 subjects
+  > Processing RandomForest...
+    [Timing] RandomForest processing time: 2.10 seconds
+  > Processing GradientBoosting...
+    [Timing] GradientBoosting processing time: 1.81 seconds
+  > Processing KNN...
+    [Timing] KNN processing time: 0.26 seconds
+
+============================================================
+NESTED CV SUMMARY (Mean + Std across 5 Folds)
+============================================================
+                 accuracy         ... auc_roc       
+                     mean    std  ...    mean    std
+model                             ...               
+GradientBoosting    0.569  0.092  ...   0.616  0.136
+KNN                 0.675  0.073  ...   0.697  0.094
+RandomForest        0.676  0.103  ...   0.679  0.114
+
+[3 rows x 10 columns]

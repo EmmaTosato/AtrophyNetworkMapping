@@ -1,4 +1,3 @@
-DEBUG: df_input shape after removing missing: (171, 18)
 
 -------------------- Dataset Info --------------------
 Meta columns (Labels and Covariates):       10
@@ -6,10 +5,6 @@ Feature matrix shape (X):                (171, 8)
 Complete dataframe shape after merge:    (171, 18)
 -------------------------------------------------------
 
-DEBUG: df_merged shape: (171, 18), x_feature shape: (171, 8)
-DEBUG: Design Matrix shape: (171, 11)
-DEBUG: Model fitted.
-DEBUG: Plotting to results/ML/networks/regression/CDR_SB/covariates/all with prefix No Threshold - Covariates
 OLS REGRESSION SUMMARY
                             OLS Regression Results                            
 ==============================================================================
@@ -17,40 +12,38 @@ Dep. Variable:                 CDR_SB   R-squared:                       0.270
 Model:                            OLS   Adj. R-squared:                  0.220
 Method:                 Least Squares   F-statistic:                     5.350
 Date:                Wed, 28 Jan 2026   Prob (F-statistic):           3.44e-07
-Time:                        11:39:09   Log-Likelihood:                -426.42
+Time:                        15:57:20   Log-Likelihood:                -426.42
 No. Observations:                 171   AIC:                             876.8
 Df Residuals:                     159   BIC:                             914.5
 Df Model:                          11                                         
 Covariance Type:            nonrobust                                         
-====================================================================================
-                       coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------------
-const               -1.0808      2.543     -0.425      0.671      -6.103       3.941
-VIS_mean            -0.0650      8.337     -0.008      0.994     -16.530      16.400
-VAN_mean            33.5026     17.980      1.863      0.064      -2.008      69.014
-DAN_mean           -19.1773     17.295     -1.109      0.269     -53.335      14.981
-DMN_mean            -0.1560     19.689     -0.008      0.994     -39.041      38.729
-LMB_mean           108.7303     58.418      1.861      0.065      -6.645     224.106
-FPN_mean            12.6669     16.786      0.755      0.452     -20.485      45.819
-SMN_mean           -12.5175     11.102     -1.128      0.261     -34.443       9.408
-SUBCORTICAL_mean     2.4961     19.389      0.129      0.898     -35.797      40.789
-Age                  0.0358      0.030      1.201      0.232      -0.023       0.095
-Education           -0.1037      0.072     -1.449      0.149      -0.245       0.038
-Sex_M                0.1164      0.522      0.223      0.824      -0.914       1.146
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          4.0112      0.333     12.064      0.000       3.355       4.668
+0             -0.0050      0.642     -0.008      0.994      -1.272       1.262
+1              1.8805      1.009      1.863      0.064      -0.113       3.874
+2             -1.3052      1.177     -1.109      0.269      -3.630       1.020
+3             -0.0068      0.852     -0.008      0.994      -1.690       1.676
+4              1.4898      0.800      1.861      0.065      -0.091       3.071
+5              0.6553      0.868      0.755      0.452      -1.060       2.370
+6             -0.8619      0.764     -1.128      0.261      -2.372       0.648
+7              0.0691      0.537      0.129      0.898      -0.992       1.130
+Age            0.3005      0.250      1.201      0.232      -0.194       0.795
+Education     -0.3609      0.249     -1.449      0.149      -0.853       0.131
+Sex_M          0.1164      0.522      0.223      0.824      -0.914       1.146
 ==============================================================================
 Omnibus:                       23.157   Durbin-Watson:                   2.032
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):               29.172
 Skew:                           0.856   Prob(JB):                     4.63e-07
-Kurtosis:                       4.080   Cond. No.                     1.99e+04
+Kurtosis:                       4.080   Cond. No.                         16.7
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The condition number is large, 1.99e+04. This might indicate that there are
-strong multicollinearity or other numerical problems.
 
 SHUFFLING REGRESSION
-R^2 real: 0.2702 | shuffled mean: 0.0652 | p-value: 0.0000
+R^2 real: 0.2702 | shuffled mean: 0.0639 | p-value: 0.0000
 
 RMSE BY GROUP
        Mean_RMSE  Std_RMSE   N

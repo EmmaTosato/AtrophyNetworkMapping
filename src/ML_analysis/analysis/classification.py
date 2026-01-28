@@ -285,10 +285,12 @@ def nested_cv_classification(params, df_input, output_dir):
         
         print(f"Train: {len(X_train_fold)} subjects | Test: {len(X_test_fold)} subjects")
         
-        # 2. UMAP (Fit on Train, Transform Test to avoid leakage)
+        # 2. Scaling & UMAP
+        # Always apply scaling first (Fit on Train, Transform Test)
+        X_train_fold, X_test_fold = scale_data(X_train_fold, X_test_fold)
+
         if params.get("umap", False):
             # print("Applying StandardScaler + UMAP (Fit Train -> Transform Test)...")
-            X_train_fold, X_test_fold = scale_data(X_train_fold, X_test_fold)
             X_train_fold, X_test_fold = run_umap(X_train_fold, X_test_fold)
         
         # Update DataSplit object for this fold
