@@ -8,7 +8,7 @@ This document contains **project-specific configurations and constraints** for t
 
 ## Project Information
 
-- **Project Name:** Cebra
+- **Project Name:** ANM_Verona
 
 - **Location:**
 
@@ -23,27 +23,26 @@ This document contains **project-specific configurations and constraints** for t
 ### Conda Environment  
 
 - The environment must be activated before running any command or script. This is **MANTORY**.
-- The environment for this project: `cebra`
+- The conda environment name must not be inferred or changed.
+- The environment for this project: `anm`
 
 ```bash
 conda activate anm
 ```
 
-* The conda environment name must not be inferred or changed.
 
 ---
 
 ## Context gathering
 
-  
 
 In order to perform tasks, you must first gather context information about the project:
 
 1. Visualize all the directories and files in the project with the command `ls -R` or `tree`.
 
-2. Then explore the content of the files to understand the project structure and the purpose of each file.
+2. Then explore the content of the files to understand the project structure and the purpose of each file. Pay attention to any documentation files or folders that can help you understand the project.
 
-3. Pay attention to any documentation files or folders that can help you understand the project.
+3. If present, read the documentation files to understand the project structure and the purpose of each file. The name of the folder could be `doc`, `docs`, `documentation`. You shold read it very carefully. 
 
 --- 
 
@@ -53,61 +52,23 @@ Ensure the project follows standard software engineering practices to promote ma
 
 ### Organization Guidelines
 
+This a basic structuring of the project:
 - **Source Code & Scripts (`src/`):** This is the core of the project. It MUST be organized into:
-    - **Core Modules:** Shared utilities, base classes, and common logic (e.g., `src/utils`, `src/models`).
-    - **Task-Specific Folders:** dedicated sub-packages for each main task (e.g., `src/preprocessing`, `src/training`). Each folder should contain both the specific logic and the executable scripts for that task.
-- **Configuration (`config/`):** DO NOT hard-code parameters. Use YAML or JSON files.
-- **Logs (`logs/`):** Strictly separated by task name.
-- **SLURM Jobs (`jobs/`):** (Optional) If you prefer keeping `.sh` submission files separate from Python code, place them here, mirroring the `src` task structure.
+    - **Core Modules:** Shared utilities, base classes, and common logic (e.g., `src/utils`).
+    - **Task-Specific Folders:** dedicated sub-packages for each main task (e.g., `src/preprocessing`). Each folder 
+	should contain both the specific logic and the executable scripts for that task.
 
-### Standard Hierarchy Example
+	ATTENTION: The names indicated in the "e.g." are just examples. The name of the tasks depend on the task itself. Add gradually the subfolder depending on the task you are asked to perform.
 
-The project file system could be structured as follows. It doesn't have to be exactly like this, the point is to maintain a standard and clean organization.
+- **Configuration (`config/`):** DO NOT hard-code parameters. Use YAML or JSON files. Could be external or internal to the src.
+- **Logs (`logs/`):** Strictly separated by task name.
+- **Documentation (`doc/`):** Documentation files.
+- **Assets (`assets/`):** Assets files. Could be of many types.
+- **Data (`data/`):** Data files. Could be of many types.
+- **Tests (`tests/`):** Tests files. 
 
-```
-/data/etosato/cebra/ # Project Root
-│
-├── config/ # Configuration files
-│ ├── main_config.yaml
-│ └── model_params.json
-│
-├── data/ # Data storage
-│ ├── raw/
-│ └── processed/
-│
-├── doc/ # Documentation
-│ └── setup.md
-│
-├── logs/ # Centralized logs
-│ └── <task_name>/ # Task-specific subfolders
-│ └── <job_name>_<id>.out
-│
-├── src/ # Source Code & Scripts
-│ ├── __init__.py
-│ │
-│ ├── core/ # Reusable shared code
-│ │ ├── loaders.py
-│ │ └── utils.py
-│ │
-│ └── tasks/ # Organized by functional task
-│ ├── preprocessing/ # Task 1: Data Preparation
-│ │ ├── clean.py
-│ │ └── normalize.py
-│ │
-│ └── analysis/ # Task 2: Analysis/Training
-│ ├── train_cebra.py
-│ └── decoding.py
-│
-├── jobs/ # (Optional) SLURM .sh submission scripts
-│ └── analysis/
-│ └── submit_train.sh
-│
-...
-...
-├── .gitignore
-├── environment.yml
-└── README.md
-```
+For more comprehensive explanation, check the below paragraphs.
+
 
 ### Logs
 

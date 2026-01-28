@@ -1,0 +1,37 @@
+{
+    "n_permutations": 1000,
+    "n_jobs": -1,
+    "seed": 42,
+    "dataset": "networks",
+    "comparisons": [
+        {
+            "dataset": "networks",
+            "umap": false,
+            "groups": [
+                "AD",
+                "PSP"
+            ]
+        },
+        {
+            "dataset": "networks",
+            "umap": false,
+            "groups": [
+                "AD",
+                "CBS"
+            ]
+        },
+        {
+            "dataset": "networks",
+            "umap": false,
+            "groups": [
+                "PSP",
+                "CBS"
+            ]
+        }
+    ],
+    "models": [
+        "RandomForest",
+        "GradientBoosting",
+        "KNN"
+    ]
+}

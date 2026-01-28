@@ -1,9 +1,4 @@
 {
-  "SVM": {
-    "C": [0.01, 0.1, 1, 10, 100],
-    "gamma": ["scale", "auto"],
-    "kernel": ["rbf", "linear"]
-  },
   "RandomForest": {
     "n_estimators": [100, 200, 300],
     "max_depth": [null, 10, 20, 30],

@@ -8,6 +8,8 @@ import ast
 from sklearn.model_selection import StratifiedKFold, permutation_test_score
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import Pipeline
+import umap
 
 # Add src to path to import local modules
 sys.path.append("src")
@@ -35,29 +37,39 @@ def get_best_params(dataset, model_name, group1, group2, base_results_dir="resul
         ds_folder = "networks"
         method_folder = "classification"
         
-    pair_name = f"{group1.lower()}_{group2.lower()}"
-    possible_pairs = [pair_name, f"{group2.lower()}_{group1.lower()}"]
+    # pair_name = f"{group1.lower()}_{group2.lower()}"
+    # possible_pairs = [pair_name, f"{group2.lower()}_{group1.lower()}"]
+    
+    # Updated: Check Uppercase (AD_PSP) and Original Casing
+    # The folders detected are AD_CBS, AD_PSP etc.
+    possible_pairs = [
+        f"{group1}_{group2}",
+        f"{group2}_{group1}",
+        f"{group1.lower()}_{group2.lower()}",
+        f"{group2.lower()}_{group1.lower()}"
+    ]
     
     csv_path = None
     for p in possible_pairs:
-        # Try new 'csv_results' path
-        path = os.path.join(base_results_dir, ds_folder, method_folder, p, "csv_results", "nested_cv_all_results.csv")
-        if os.path.exists(path):
-            csv_path = path
-            break
-        # Try legacy path (root)
-        path = os.path.join(base_results_dir, ds_folder, method_folder, p, "nested_cv_all_results.csv")
+        # Correct path: group/model/nested_cv_results.csv
+        path = os.path.join(base_results_dir, ds_folder, method_folder, p, model_name, "nested_cv_results.csv")
         if os.path.exists(path):
             csv_path = path
             break
             
     if not csv_path:
-        print(f"[WARN] Could not find results CSV for {dataset} {group1}vs{group2}")
+        print(f"[WARN] Could not find results CSV for {dataset} {group1}vs{group2} model {model_name}")
         return None
 
     try:
         df = pd.read_csv(csv_path)
-        df_model = df[df["model"] == model_name]
+        # The file is specific to the model, so no need to filter by model name column if it doesn't exist.
+        # But let's check if 'model' column exists just in case, or just take the best row.
+        if "model" in df.columns:
+            df_model = df[df["model"] == model_name]
+        else:
+            df_model = df # Assume all rows are for this model
+            
         if df_model.empty:
             return None
         # Sort by accuracy descending
@@ -147,11 +159,11 @@ def run_permutation_analysis(config_path, suffix=None):
         X = data_container.x_all
         y = data_container.y_encoded
         
-        # UMAP (Global)
-        if use_umap:
-            print(f"Applying UMAP (Shape before: {X.shape})")
-            X = run_umap(X, n_neighbors=15, n_components=2, min_dist=0.1, metric='euclidean', random_state=42)
-            print(f"UMAP applied (Shape after: {X.shape})")
+        # UMAP (Global) - REMOVED to avoid leakage
+        # if use_umap:
+        #     print(f"Applying UMAP (Shape before: {X.shape})")
+        #     X = run_umap(X, n_neighbors=15, n_components=2, min_dist=0.1, metric='euclidean', random_state=42)
+        #     print(f"UMAP applied (Shape after: {X.shape})")
             
         # Iterate Models
         for model_name in config["models"]:
@@ -163,24 +175,43 @@ def run_permutation_analysis(config_path, suffix=None):
                 continue
                 
             # Output Directory
-            # Same structure as main analysis: results/ML/.../[Model]/permutation_stats.csv
-            # We put it in the model folder to keep it together.
-            results_dir = f"results/ML/{dataset_type}/{'umap_' if use_umap else ''}classification/{group1.lower()}_{group2.lower()}/{model_name}"
+            # Output Directory
+            # Configured to save in the Pair Folder (e.g., .../AD_PSP/permutation_stats.csv)
+            # This aggregates all models into one file
+            results_dir = f"results/ML/{dataset_type}/{'umap_' if use_umap else ''}classification/{group1}_{group2}"
             
             # Define filename early
             filename = "permutation_stats.csv"
             if suffix:
-                filename = f"permutation_stats_{suffix}.csv"
+                filename = f"permutation_stats{suffix}.csv"
 
-            # Check if already done
-            if os.path.exists(os.path.join(results_dir, filename)):
-                 print(f"  > {model_name}: Already done ({filename}).")
-                 continue
+            # Check if likely already done (naive check by reading file?)
+            # Since we append, we run the risk of duplicates if we don't check content.
+            # Let's read the file if it exists to check for existing model entry?
+            full_out_path = os.path.join(results_dir, filename)
+            if os.path.exists(full_out_path):
+                 try:
+                     existing_df = pd.read_csv(full_out_path)
+                     if not existing_df.empty and model_name in existing_df["model"].values:
+                          print(f"  > {model_name}: Already done in {filename}.")
+                          continue
+                 except:
+                     pass # If error reading, assume we need to run or overwrite eventually
             
             print(f"  > Running {model_name} (Params: {best_params})...")
             
             # Setup Model
-            model = get_model_instance(model_name, best_params, config["seed"])
+            base_model = get_model_instance(model_name, best_params, config["seed"])
+            
+            if use_umap:
+                # Use Pipeline to run UMAP *inside* CV folds
+                model = Pipeline([
+                    ('umap', umap.UMAP(n_neighbors=15, n_components=2, min_dist=0.1, metric='euclidean', random_state=42)),
+                    ('clf', base_model)
+                ])
+            else:
+                model = base_model
+
             cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=config["seed"])
             
             # Run Test
@@ -204,14 +235,16 @@ def run_permutation_analysis(config_path, suffix=None):
                 "n_perms": config["n_permutations"],
                 "true_score": score,
                 "p_value": pvalue,
-                "mean_perm_score": np.mean(perm_scores)
+                "perm_scores_mean": np.mean(perm_scores),
+                "perm_scores_std": np.std(perm_scores)
             }
             
-            filename = "permutation_stats.csv"
-            if suffix:
-                filename = f"permutation_stats_{suffix}.csv"
+            df_res = pd.DataFrame([res])
+            if os.path.exists(full_out_path):
+                df_res.to_csv(full_out_path, mode="a", header=False, index=False)
+            else:
+                df_res.to_csv(full_out_path, mode="w", header=True, index=False)
                 
-            pd.DataFrame([res]).to_csv(os.path.join(results_dir, filename), index=False)
             print(f"    Saved to {filename}. p-value: {pvalue:.5f}")
 
 if __name__ == "__main__":

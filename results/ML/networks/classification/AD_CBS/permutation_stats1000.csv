@@ -1,0 +1,4 @@
+dataset,groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
+networks,ADvsCBS,RandomForest,1000,0.571,0.374,0.56,0.05
+networks,ADvsCBS,GradientBoosting,1000,0.604,0.285,0.586,0.039
+networks,ADvsCBS,KNN,1000,0.682,0.005,0.564,0.046

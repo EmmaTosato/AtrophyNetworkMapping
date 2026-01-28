@@ -1,0 +1,4 @@
+dataset,groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
+voxel,ADvsCBS,KNN,100,0.605,0.168,0.57,0.044
+voxel,ADvsCBS,GradientBoosting,100,0.561,0.455,0.557,0.054
+voxel,ADvsCBS,RandomForest,100,0.578,0.327,0.563,0.05
