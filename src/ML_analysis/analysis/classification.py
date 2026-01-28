@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("src")
 from ML_analysis.loading.config import ConfigLoader
-from ML_analysis.ml_utils import run_umap, log_to_file, reset_stdout, resolve_split_csv_path, build_output_path
+from ML_analysis.ml_utils import run_umap, log_to_file, reset_stdout, resolve_split_csv_path, build_output_path, scale_data
 from ML_analysis.analysis.plotting import plot_confusion_matrix
 
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -287,7 +287,8 @@ def nested_cv_classification(params, df_input, output_dir):
         
         # 2. UMAP (Fit on Train, Transform Test to avoid leakage)
         if params.get("umap", False):
-            print("Applying UMAP (Fit Train -> Transform Test)...")
+            # print("Applying StandardScaler + UMAP (Fit Train -> Transform Test)...")
+            X_train_fold, X_test_fold = scale_data(X_train_fold, X_test_fold)
             X_train_fold, X_test_fold = run_umap(X_train_fold, X_test_fold)
         
         # Update DataSplit object for this fold

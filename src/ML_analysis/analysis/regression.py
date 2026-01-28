@@ -9,7 +9,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from ML_analysis.loading.config import ConfigLoader
 from preprocessing.processflat import x_features_return
 from ML_analysis.analysis.plotting import plot_ols_diagnostics, plot_actual_vs_predicted, plot_umap_embedding
-from ML_analysis.ml_utils import log_to_file, reset_stdout, run_umap, build_output_path
+from ML_analysis.ml_utils import run_umap, log_to_file, reset_stdout, build_output_path, resolve_split_csv_path, scale_data
 
 
 
@@ -56,8 +56,15 @@ def build_design_matrix(df_merged, x_input, covariates=None):
         cov_df = df_merged[covariates]
         cat_cols = cov_df.select_dtypes(include=['object', 'category']).columns
         num_cols = cov_df.select_dtypes(include=['int64', 'float64']).columns
+        
+        # Scale numerical covariates
+        covar_num = cov_df[num_cols]
+        if not covar_num.empty:
+            covar_num_scaled = scale_data(covar_num)
+            covar_num = pd.DataFrame(covar_num_scaled, columns=num_cols, index=cov_df.index)
+            
         covar_cat = pd.get_dummies(cov_df[cat_cols], drop_first=True)
-        covar = pd.concat([cov_df[num_cols], covar_cat], axis=1)
+        covar = pd.concat([covar_num, covar_cat], axis=1)
 
         if covar.shape[1] > 0:
             x = pd.concat([x, covar], axis=1)
@@ -127,10 +134,10 @@ def regression_pipeline(df_input, df_meta, args):
     y = np.log1p(df_merged[args['target_variable']]) if args['y_log_transform'] else df_merged[args['target_variable']]
     
     # Feature projection
-    # Note: UMAP is fit on all data (no train/test split) because OLS regression is used 
-    # for exploratory analysis, not predictive modeling. Significance is validated via shuffling test.
+    # Always normalize features (Voxel or Networks) before processing
+    x_feature = scale_data(x_feature)
+
     if args["umap"]:
-        print("DEBUG: Running UMAP...")
         x = run_umap(x_feature)
     else:
         x = x_feature

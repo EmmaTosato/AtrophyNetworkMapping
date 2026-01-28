@@ -3,6 +3,22 @@ import sys
 import umap
 import numpy as np
 import os
+from sklearn.preprocessing import StandardScaler
+
+def scale_data(x_train, x_test=None):
+    """
+    Applies StandardScaler to x_train (fit_transform).
+    If x_test is provided, applies the same scaler (transform).
+    """
+    scaler = StandardScaler()
+    x_train_scaled = scaler.fit_transform(x_train)
+    
+    if x_test is not None:
+        x_test_scaled = scaler.transform(x_test)
+        return x_train_scaled, x_test_scaled
+    
+    return x_train_scaled
+
 
 def run_umap(x_train, x_test=None, n_neighbors=15, n_components=2, min_dist=0.1, metric='euclidean', random_state=42):
     """
