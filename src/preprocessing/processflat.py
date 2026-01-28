@@ -95,31 +95,24 @@ def x_features_return(df_voxel, df_labels):
     - the matrix of features only (X), excluding metadata columns.
     """
     meta_columns = list(df_labels.columns)
+    
     # Ensure ID match
     df_voxel['ID'] = df_voxel['ID'].astype(str)
     df_labels['ID'] = df_labels['ID'].astype(str)
     
-    # Debug info
-    print(f"DEBUG: df_voxel IDs sample: {df_voxel['ID'].head().tolist()}")
-    print(f"DEBUG: df_labels IDs sample: {df_labels['ID'].head().tolist()}")
-    print(f"DEBUG: df_labels columns: {list(df_labels.columns)}")
+    # Identify which metadata columns are missing from df_voxel
+    missing_cols = [col for col in meta_columns if col not in df_voxel.columns]
     
-    dataframe_merge = pd.merge(df_voxel, df_labels, on='ID', how='left')
+    if missing_cols:
+        # Merge only the missing columns
+        cols_to_merge = ['ID'] + missing_cols
+        dataframe_merge = pd.merge(df_voxel, df_labels[cols_to_merge], on='ID', how='left')
+    else:
+        # All columns already exist, no merge needed
+        dataframe_merge = df_voxel.copy()
     
-    # Identify which expected columns are actually present
+    # Identify present metadata columns
     present_meta = [col for col in meta_columns if col in dataframe_merge.columns]
-    missing_meta = [col for col in meta_columns if col not in dataframe_merge.columns]
-    
-    if missing_meta:
-        print(f"Warning: The following metadata columns were not found after merge: {missing_meta}")
-        
-        # Generic fix for suffix collisions (e.g. Sex_y -> Sex)
-        for col in missing_meta:
-            suffixed = f"{col}_y"
-            if suffixed in dataframe_merge.columns:
-                 print(f"Detected suffixed column {suffixed}! Renaming to {col}...")
-                 dataframe_merge.rename(columns={suffixed: col}, inplace=True)
-                 present_meta.append(col)
 
 
     # Feature columns (everything else)
