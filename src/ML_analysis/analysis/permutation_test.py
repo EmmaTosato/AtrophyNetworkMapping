@@ -212,7 +212,7 @@ def run_permutation_analysis(config_path, suffix=None):
             else:
                 model = base_model
 
-            cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=config["seed"])
+            cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
             
             # Run Test
             score, perm_scores, pvalue = permutation_test_score(

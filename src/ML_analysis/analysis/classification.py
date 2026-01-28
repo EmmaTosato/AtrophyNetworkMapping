@@ -394,9 +394,9 @@ def single_split_classification(params, df_input, output_dir):
 
 def main_classification(params, df_input):
     """Main entry point."""
-    group_dir = f"{params['group1'].lower()}_{params['group2'].lower()}"
+    group_dir = f"{params['group1']}_{params['group2']}"
     output_dir = os.path.join(
-        build_output_path(params['output_dir'], params['task_type'], params['dataset_type'], params['umap'], False),
+        build_output_path(params['output_dir'], params['task_type'], params['dataset_type'], params['umap']),
         group_dir)
     os.makedirs(output_dir, exist_ok=True)
     

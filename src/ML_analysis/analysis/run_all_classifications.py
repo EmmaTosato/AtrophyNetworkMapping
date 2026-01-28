@@ -7,51 +7,17 @@ config_path = "src/ML_analysis/config/ml_config.json"
 script_path = "src/ML_analysis/analysis/classification.py"
 
 # Combinazioni da eseguire
+# ORDINE: Networks prima, poi Voxel+UMAP
 configs = [
-    # VOXEL
-    {
-        "dataset_type": "voxel", "umap": True, "umap_all": True,
-        "group1": "AD", "group2": "PSP",
-        "RandomForest": {"n_estimators": 100, "max_depth": None, "max_features": "sqrt", "min_samples_split": 10},
-        "GradientBoosting": {"n_estimators": 300, "learning_rate": 0.01, "max_depth": 3, "subsample": 0.8},
-        "KNN": {"n_neighbors": 7, "weights": "uniform", "metric": "euclidean"}
-    },
-    # {
-    #     "dataset_type": "voxel", "umap": True, "umap_all": True,
-    #     "group1": "AD", "group2": "CBS",
-    #     "RandomForest": {"n_estimators": 200, "max_depth": None, "max_features": "sqrt", "min_samples_split": 10},
-    #     "GradientBoosting": {"n_estimators": 100, "learning_rate": 0.01, "max_depth": 5, "subsample": 1.0},
-    #     "KNN": {"n_neighbors": 5, "weights": "uniform", "metric": "manhattan"}
-    # },
-    # {
-    #     "dataset_type": "voxel", "umap": True, "umap_all": True,
-    #     "group1": "CBS", "group2": "PSP",
-    #     "RandomForest": {"n_estimators": 200, "max_depth": None, "max_features": "sqrt", "min_samples_split": 2},
-    #     "GradientBoosting": {"n_estimators": 200, "learning_rate": 0.05, "max_depth": 3, "subsample": 0.8},
-    #     "KNN": {"n_neighbors": 5, "weights": "distance", "metric": "euclidean"}
-    # },
-    # NETWORK
-    {
-        "dataset_type": "networks", "umap": False, "umap_all": False,
-        "group1": "AD", "group2": "PSP",
-        "RandomForest": {"n_estimators": 100, "max_depth": None, "max_features": "sqrt", "min_samples_split": 5},
-        "GradientBoosting": {"n_estimators": 100, "learning_rate": 0.01, "max_depth": 3, "subsample": 0.8},
-        "KNN": {"n_neighbors": 5, "weights": "uniform", "metric": "euclidean"}
-    },
-    # {
-    #     "dataset_type": "networks", "umap": False, "umap_all": False,
-    #     "group1": "AD", "group2": "CBS",
-    #     "RandomForest": {"n_estimators": 200, "max_depth": None, "max_features": "log2", "min_samples_split": 10},
-    #     "GradientBoosting": {"n_estimators": 100, "learning_rate": 0.01, "max_depth": 3, "subsample": 1.0},
-    #     "KNN": {"n_neighbors": 9, "weights": "uniform", "metric": "manhattan"}
-    # },
-    # {
-    #     "dataset_type": "networks", "umap": False, "umap_all": False,
-    #     "group1": "PSP", "group2": "CBS",
-    #     "RandomForest": {"n_estimators": 300, "max_depth": None, "max_features": "sqrt", "min_samples_split": 5},
-    #     "GradientBoosting": {"n_estimators": 200, "learning_rate": 0.01, "max_depth": 3, "subsample": 0.8},
-    #     "KNN": {"n_neighbors": 3, "weights": "distance", "metric": "euclidean"}
-    # }
+    # === NETWORKS (no UMAP) ===
+    {"dataset_type": "networks", "umap": False, "group1": "AD", "group2": "PSP"},
+    {"dataset_type": "networks", "umap": False, "group1": "AD", "group2": "CBS"},
+    {"dataset_type": "networks", "umap": False, "group1": "PSP", "group2": "CBS"},
+    
+    # === VOXEL + UMAP ===
+    {"dataset_type": "voxel", "umap": True, "group1": "AD", "group2": "PSP"},
+    {"dataset_type": "voxel", "umap": True, "group1": "AD", "group2": "CBS"},
+    {"dataset_type": "voxel", "umap": True, "group1": "PSP", "group2": "CBS"},
 ]
 
 # Loop su ciascuna configurazione
@@ -69,17 +35,15 @@ for cfg in configs:
     # Modifica la sezione "classification"
     full_config["classification"] = {
         "tuning": True,
-        "umap_all": cfg["umap_all"],
         "permutation_test": True,
-        "n_permutations": 100,
+        "n_permutations": 1000,
         "perm_cv": 5,
         "group1": cfg["group1"],
         "group2": cfg["group2"],
-        "seeds": [42, 123, 2023, 31415, 98765],
         "n_folds": 5,
-        "RandomForest": cfg["RandomForest"],
-        "GradientBoosting": cfg["GradientBoosting"],
-        "KNN": cfg["KNN"]
+        "RandomForest": None,
+        "GradientBoosting": None,
+        "KNN": None
     }
 
     # Salva nuova configurazione

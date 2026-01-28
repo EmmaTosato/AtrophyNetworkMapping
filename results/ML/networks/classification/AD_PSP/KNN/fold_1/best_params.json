@@ -1,5 +1,5 @@
 {
-    "metric": "manhattan",
+    "metric": "euclidean",
     "n_neighbors": 7,
     "weights": "uniform"
 }
