@@ -42,14 +42,19 @@ def main():
                             aggregated_dfs.append(df)
                     except Exception as e:
                         print(f"Error reading {full_path}: {e}")
-
+        # Per-dataset aggregation and saving (Local Split)
+        # Filter aggregated_dfs for this dataset (since we just appended them, they are at the end)
+        # But easier to just filter the main list later? No, user wants them saved.
+        # Let's filter now. 
+        # Actually easier to re-filter aggregated_dfs at the end or collect separately.
+        
     if not aggregated_dfs:
         print("No permutation stats found.")
         return
 
     full_df = pd.concat(aggregated_dfs, ignore_index=True)
     
-    # Columns to keep and rename
+    # Columns to keep and rename (Shared Logic)
     # Original: dataset,groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
     # Desired: Dataset, Comparison, Model, Number of Permutations, True Score, P-Value, Permutation Score (Mean ± Std)
     
@@ -77,18 +82,52 @@ def main():
         'p_value': 'P-Value'
     }, inplace=True)
     
-    # Select final columns
-    final_cols = ['Dataset', 'Comparison', 'Model', 'Number of Permutations', 'True Score', 'P-Value', 'Permutation Score (Mean ± Std)']
-    
     # Ensure Comparison format is uniform
-    # Some might be 'AD_CBS' (Network) vs 'ADvsCBS' (Voxel file content).
-    # Let's normalize to 'AD vs CBS'
     def norm_comp(c):
         c = str(c).replace('_', ' vs ')
         if 'vs' in c and ' vs ' not in c:
             c = c.replace('vs', ' vs ')
         return c
     full_df['Comparison'] = full_df['Comparison'].apply(norm_comp)
+    
+    # --- SAVE LOCAL SPLITS ---
+    local_cols = ['Comparison', 'Model', 'Number of Permutations', 'True Score', 'P-Value', 'Permutation Score (Mean ± Std)']
+    
+    for dataset_name, root_path in roots:
+         subset = full_df[full_df['Dataset'] == dataset_name].copy()
+         if not subset.empty:
+             local_out = os.path.join(root_path, "aggregated_permutations_results.csv")
+             
+             # Sort local
+             subset.sort_values(by=['Comparison', 'Model'], inplace=True)
+             
+             # Write with grouping logic (Comparison, then Model)
+             with open(local_out, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(local_cols)
+                
+                last_comp = None
+                for _, row in subset.iterrows():
+                    current_comp = row['Comparison']
+                    display_comp = current_comp
+                    if current_comp == last_comp:
+                        display_comp = ""
+                    else:
+                        last_comp = current_comp
+                    
+                    # Explicit fix for phantom nans
+                    if str(display_comp) == 'nan': 
+                        display_comp = ""
+                    
+                    out_row = [display_comp]
+                    for col in local_cols[1:]:
+                        out_row.append(row[col])
+                    writer.writerow(out_row)
+             print(f"Saved local permutations: {local_out}")
+
+    # --- SAVE GLOBAL FILE ---
+    # Select final columns
+    final_cols = ['Dataset', 'Comparison', 'Model', 'Number of Permutations', 'True Score', 'P-Value', 'Permutation Score (Mean ± Std)']
     
     # Sort
     # Enforce Voxel before Network

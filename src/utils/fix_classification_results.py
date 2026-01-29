@@ -153,7 +153,7 @@ def aggregate_dataset_results(base_dir):
 
     full_df = pd.concat(aggregated_rows, ignore_index=True)
     
-    output_path = os.path.join(base_dir, "total_aggregated_results.csv")
+    output_path = os.path.join(base_dir, "aggregated_results.csv")
     
     with open(output_path, 'w', newline='') as f:
         writer = csv.writer(f)
@@ -247,8 +247,8 @@ def combine_global_classification_results():
     
     # Define sources (Voxel first)
     sources = [
-        ("Voxel", os.path.join(base_dir, "voxel/umap_classification/total_aggregated_results.csv")),
-        ("Network", os.path.join(base_dir, "networks/classification/total_aggregated_results.csv"))
+        ("Voxel", os.path.join(base_dir, "voxel/umap_classification/aggregated_results.csv")),
+        ("Network", os.path.join(base_dir, "networks/classification/aggregated_results.csv"))
     ]
     
     combined_dfs = []
