@@ -12,7 +12,7 @@ Dep. Variable:                   MMSE   R-squared:                       0.336
 Model:                            OLS   Adj. R-squared:                  0.251
 Method:                 Least Squares   F-statistic:                     3.976
 Date:                Wed, 28 Jan 2026   Prob (F-statistic):           0.000730
-Time:                        15:57:23   Log-Likelihood:                -192.77
+Time:                        19:01:10   Log-Likelihood:                -192.77
 No. Observations:                  72   AIC:                             403.5
 Df Residuals:                      63   BIC:                             424.0
 Df Model:                           8                                         

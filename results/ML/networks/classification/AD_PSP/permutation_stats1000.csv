@@ -1,4 +1,4 @@
 dataset,groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
 networks,ADvsPSP,RandomForest,1000,0.682,0.001,0.511,0.054
 networks,ADvsPSP,GradientBoosting,1000,0.705,0.001,0.509,0.052
-networks,ADvsPSP,KNN,1000,0.629,0.008,0.51,0.05
+networks,ADvsPSP,KNN,1000,0.683,0.001,0.510,0.051

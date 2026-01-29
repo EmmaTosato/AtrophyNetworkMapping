@@ -347,16 +347,13 @@ def nested_cv_classification(params, df_input, output_dir):
                 "TrueLabel": true_labels,
                 "PredLabel": pred_labels
             })
-            df_preds.to_csv(os.path.join(model_fold_dir, "predictions.csv"), index=False)
+            # Predictions collected per model (not per fold)
             all_predictions.append(df_preds)
 
     # === AGGREGATION & SAVING ===
     
     if all_results:
         df_all = pd.DataFrame(all_results)
-        
-        # Save raw results (flat file)
-        df_all.to_csv(os.path.join(output_dir, "nested_cv_all_results.csv"), index=False)
         
         # Calculate Aggregated Stats per Model
         print("\n" + "=" * 60)
@@ -367,18 +364,22 @@ def nested_cv_classification(params, df_input, output_dir):
         # Group by Model and calculate mean/std
         summary = df_all.groupby("model")[summary_cols].agg(["mean", "std"]).round(3)
         print(summary)
-        summary.to_csv(os.path.join(output_dir, "nested_cv_summary.csv"))
+        # Save summary_results.csv at pair level (e.g., AD_PSP/summary_results.csv)
+        summary.to_csv(os.path.join(output_dir, "summary_results.csv"))
         
-        # Save per-model summary JSON in each model folder
+        # Save nested_cv_results.csv per model folder (detailed per-fold results)
         for model_name in df_all["model"].unique():
-             model_stats = df_all[df_all["model"] == model_name][summary_cols].agg(["mean", "std"]).to_dict()
-             model_res_path = os.path.join(output_dir, model_name, "aggregated_results.json")
-             with open(model_res_path, "w") as f:
-                 json.dump(model_stats, f, indent=4)
+            model_dir = os.path.join(output_dir, model_name)
+            model_results = df_all[df_all["model"] == model_name]
+            model_results.to_csv(os.path.join(model_dir, "nested_cv_results.csv"), index=False)
 
     if all_predictions:
-         df_all_preds = pd.concat(all_predictions, ignore_index=True)
-         df_all_preds.to_csv(os.path.join(output_dir, "nested_cv_all_predictions.csv"), index=False)
+        df_all_preds = pd.concat(all_predictions, ignore_index=True)
+        # Save nested_cv_predictions.csv per model folder
+        for model_name in df_all_preds["Model"].unique():
+            model_dir = os.path.join(output_dir, model_name)
+            model_preds = df_all_preds[df_all_preds["Model"] == model_name]
+            model_preds.to_csv(os.path.join(model_dir, "nested_cv_predictions.csv"), index=False)
 
 
 def single_split_classification(params, df_input, output_dir):

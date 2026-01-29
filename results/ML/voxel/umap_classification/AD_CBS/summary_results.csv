@@ -1,4 +1,4 @@
-comparison,model,accuracy_mean,accuracy_std,precision_mean,precision_std,recall_mean,recall_std,f1_mean,f1_std,auc_roc_mean,auc_roc_std
-AD_CBS,GradientBoosting,0.576,0.164,0.603,0.183,0.556,0.128,0.531,0.143,0.543,0.142
-AD_CBS,KNN,0.577,0.062,0.562,0.085,0.548,0.066,0.534,0.056,0.553,0.08
-AD_CBS,RandomForest,0.516,0.09,0.52,0.095,0.514,0.068,0.478,0.072,0.553,0.088
+Unnamed: 0,accuracy,accuracy.1,precision,precision.1,recall,recall.1,f1,f1.1,auc_roc,auc_roc.1
+GradientBoosting,0.647,0.033,0.616,0.046,0.605,0.058,0.600,0.062,0.626,0.109
+KNN,0.638,0.057,0.623,0.076,0.606,0.066,0.600,0.058,0.701,0.076
+RandomForest,0.655,0.100,0.633,0.102,0.631,0.111,0.624,0.113,0.613,0.084

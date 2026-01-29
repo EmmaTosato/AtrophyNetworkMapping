@@ -1,4 +1,0 @@
-dataset,groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
-voxel,CBSvsPSP,KNN,100,0.615,0.079,0.519,0.058
-voxel,CBSvsPSP,GradientBoosting,100,0.615,0.03,0.513,0.057
-voxel,CBSvsPSP,RandomForest,100,0.558,0.356,0.538,0.052

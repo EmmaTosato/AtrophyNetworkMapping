@@ -12,7 +12,7 @@ Dep. Variable:                 CDR_SB   R-squared:                       0.211
 Model:                            OLS   Adj. R-squared:                  0.079
 Method:                 Least Squares   F-statistic:                     1.603
 Date:                Wed, 28 Jan 2026   Prob (F-statistic):              0.149
-Time:                        15:57:19   Log-Likelihood:                -145.81
+Time:                        19:00:17   Log-Likelihood:                -145.81
 No. Observations:                  57   AIC:                             309.6
 Df Residuals:                      48   BIC:                             328.0
 Df Model:                           8                                         

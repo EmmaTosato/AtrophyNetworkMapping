@@ -10,9 +10,9 @@ OUTER FOLD 1/5
 ============================================================
 Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
-    [Timing] RandomForest processing time: 3.08 seconds
+    [Timing] RandomForest processing time: 3.11 seconds
   > Processing GradientBoosting...
-    [Timing] GradientBoosting processing time: 1.80 seconds
+    [Timing] GradientBoosting processing time: 1.81 seconds
   > Processing KNN...
     [Timing] KNN processing time: 0.12 seconds
 
@@ -23,7 +23,7 @@ Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
     [Timing] RandomForest processing time: 2.05 seconds
   > Processing GradientBoosting...
-    [Timing] GradientBoosting processing time: 1.80 seconds
+    [Timing] GradientBoosting processing time: 1.81 seconds
   > Processing KNN...
     [Timing] KNN processing time: 0.12 seconds
 
@@ -32,9 +32,9 @@ OUTER FOLD 3/5
 ============================================================
 Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
-    [Timing] RandomForest processing time: 2.06 seconds
+    [Timing] RandomForest processing time: 2.05 seconds
   > Processing GradientBoosting...
-    [Timing] GradientBoosting processing time: 1.74 seconds
+    [Timing] GradientBoosting processing time: 1.75 seconds
   > Processing KNN...
     [Timing] KNN processing time: 0.12 seconds
 
@@ -45,7 +45,7 @@ Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
     [Timing] RandomForest processing time: 2.05 seconds
   > Processing GradientBoosting...
-    [Timing] GradientBoosting processing time: 1.77 seconds
+    [Timing] GradientBoosting processing time: 1.78 seconds
   > Processing KNN...
     [Timing] KNN processing time: 0.13 seconds
 
@@ -54,9 +54,9 @@ OUTER FOLD 5/5
 ============================================================
 Train: 84 subjects | Test: 20 subjects
   > Processing RandomForest...
-    [Timing] RandomForest processing time: 2.08 seconds
+    [Timing] RandomForest processing time: 2.07 seconds
   > Processing GradientBoosting...
-    [Timing] GradientBoosting processing time: 1.76 seconds
+    [Timing] GradientBoosting processing time: 1.73 seconds
   > Processing KNN...
     [Timing] KNN processing time: 0.12 seconds
 

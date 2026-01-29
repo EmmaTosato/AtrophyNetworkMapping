@@ -10,9 +10,9 @@ OUTER FOLD 1/5
 ============================================================
 Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
-    [Timing] RandomForest processing time: 3.04 seconds
+    [Timing] RandomForest processing time: 3.06 seconds
   > Processing GradientBoosting...
-    [Timing] GradientBoosting processing time: 1.83 seconds
+    [Timing] GradientBoosting processing time: 1.85 seconds
   > Processing KNN...
     [Timing] KNN processing time: 0.13 seconds
 
@@ -21,9 +21,9 @@ OUTER FOLD 2/5
 ============================================================
 Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
-    [Timing] RandomForest processing time: 2.19 seconds
+    [Timing] RandomForest processing time: 2.18 seconds
   > Processing GradientBoosting...
-    [Timing] GradientBoosting processing time: 1.85 seconds
+    [Timing] GradientBoosting processing time: 1.82 seconds
   > Processing KNN...
     [Timing] KNN processing time: 0.13 seconds
 
@@ -32,9 +32,9 @@ OUTER FOLD 3/5
 ============================================================
 Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
-    [Timing] RandomForest processing time: 2.20 seconds
+    [Timing] RandomForest processing time: 2.17 seconds
   > Processing GradientBoosting...
-    [Timing] GradientBoosting processing time: 1.96 seconds
+    [Timing] GradientBoosting processing time: 1.97 seconds
   > Processing KNN...
     [Timing] KNN processing time: 0.13 seconds
 
@@ -45,7 +45,7 @@ Train: 83 subjects | Test: 21 subjects
   > Processing RandomForest...
     [Timing] RandomForest processing time: 2.10 seconds
   > Processing GradientBoosting...
-    [Timing] GradientBoosting processing time: 1.99 seconds
+    [Timing] GradientBoosting processing time: 2.02 seconds
   > Processing KNN...
     [Timing] KNN processing time: 0.13 seconds
 
@@ -54,7 +54,7 @@ OUTER FOLD 5/5
 ============================================================
 Train: 84 subjects | Test: 20 subjects
   > Processing RandomForest...
-    [Timing] RandomForest processing time: 2.09 seconds
+    [Timing] RandomForest processing time: 2.10 seconds
   > Processing GradientBoosting...
     [Timing] GradientBoosting processing time: 1.86 seconds
   > Processing KNN...

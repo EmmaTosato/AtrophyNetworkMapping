@@ -1,6 +1,6 @@
 outer_fold,model,dataset,accuracy,precision,recall,f1,auc_roc,best_params
-1,RandomForest,voxel,0.429,0.417,0.417,0.417,0.468,"{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_split': 2, 'n_estimators': 100}"
-2,RandomForest,voxel,0.429,0.393,0.403,0.394,0.491,"{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}"
-3,RandomForest,voxel,0.571,0.583,0.583,0.571,0.583,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}"
-4,RandomForest,voxel,0.714,0.708,0.708,0.708,0.671,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 10, 'n_estimators': 200}"
-5,RandomForest,voxel,0.7,0.688,0.688,0.688,0.812,"{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_split': 2, 'n_estimators': 100}"
+1,RandomForest,voxel,0.524,0.527,0.528,0.523,0.509,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}"
+2,RandomForest,voxel,0.619,0.644,0.639,0.618,0.694,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}"
+3,RandomForest,voxel,0.524,0.514,0.514,0.514,0.523,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 10, 'n_estimators': 100}"
+4,RandomForest,voxel,0.524,0.527,0.528,0.523,0.528,"{'max_depth': 10, 'max_features': 'sqrt', 'min_samples_split': 2, 'n_estimators': 100}"
+5,RandomForest,voxel,0.700,0.688,0.688,0.688,0.698,"{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 2, 'n_estimators': 100}"

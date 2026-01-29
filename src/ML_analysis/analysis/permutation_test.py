@@ -16,6 +16,10 @@ sys.path.append("src")
 from ML_analysis.loading.config import ConfigLoader
 from ML_analysis.analysis.classification import DataSplit
 from ML_analysis.ml_utils import run_umap, log_to_file, reset_stdout
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
 
 def get_best_params(dataset, model_name, group1, group2, base_results_dir="results/ML"):
     """
@@ -203,14 +207,21 @@ def run_permutation_analysis(config_path, suffix=None):
             # Setup Model
             base_model = get_model_instance(model_name, best_params, config["seed"])
             
+            # Costruzione Pipeline: Scaler -> (UMAP) -> Classifier
+            pipeline_steps = [('scaler', StandardScaler())]
+            
             if use_umap:
-                # Use Pipeline to run UMAP *inside* CV folds
-                model = Pipeline([
-                    ('umap', umap.UMAP(n_neighbors=15, n_components=2, min_dist=0.1, metric='euclidean', random_state=42)),
-                    ('clf', base_model)
-                ])
-            else:
-                model = base_model
+                # UMAP all'interno della CV per evitare data leakage
+                pipeline_steps.append(('umap', umap.UMAP(
+                    n_neighbors=15, 
+                    n_components=2, 
+                    min_dist=0.1, 
+                    metric='euclidean', 
+                    random_state=42
+                )))
+            
+            pipeline_steps.append(('clf', base_model))
+            model = Pipeline(pipeline_steps)
 
             cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
             
@@ -221,8 +232,8 @@ def run_permutation_analysis(config_path, suffix=None):
                 y=y,
                 scoring="accuracy",
                 cv=cv,
-                n_permutations=config["n_permutations"],
-                n_jobs=config["n_jobs"],
+                n_permutations=config.get("n_permutations", 1000),  # Default to 1000 if missing
+                n_jobs=config.get("n_jobs", -1),
                 verbose=0
             )
             

@@ -1,0 +1,134 @@
+Caso NETWORK (results/ML/networks)
+- CDR
+	- Covariates
+		- AD:
+			R-squared:                       0.438
+			Adj. R-squared:                  0.335
+			Prob (F-statistic):              0.000115
+			R^2 real: 0.4381 | shuffled mean: 0.1539 | p-value: 0.0000
+		- CBS:
+			R-squared:                       0.461
+			Adj. R-squared:                  0.264
+			Prob (F-statistic):              0.0321
+			R^2 real: 0.4615 | shuffled mean: 0.2679 | p-value: 0.0370
+		- PSP:
+			R-squared:                       0.226
+			Adj. R-squared:                  0.036
+			Prob (F-statistic):              0.319
+			R^2 real: 0.2258 | shuffled mean: 0.2005 | p-value: 0.3300
+	- No Covariates
+		- AD:
+			R-squared:                       0.406
+			Adj. R-squared:                  0.331
+			Prob (F-statistic):              3.57e-05
+			R^2 real: 0.4062 | shuffled mean: 0.1107 | p-value: 0.0000
+		- CBS:
+			R-squared:                       0.336
+			Adj. R-squared:                  0.175
+			Prob (F-statistic):              0.0662
+			R^2 real: 0.3357 | shuffled mean: 0.1921 | p-value: 0.0590
+		- PSP:
+			R-squared:                       0.211
+			Adj. R-squared:                  0.079
+			Prob (F-statistic):              0.149
+			R^2 real: 0.2108 | shuffled mean: 0.1425 | p-value: 0.1380
+- MMSE
+	- Covariates
+		- AD:
+			R-squared:                       0.355
+			Adj. R-squared:                  0.237
+			Prob (F-statistic):              0.00303
+			R^2 real: 0.3551 | shuffled mean: 0.1540 | p-value: 0.0060
+		- CBS:
+			R-squared:                       0.549
+			Adj. R-squared:                  0.378
+			Prob (F-statistic):              0.00582
+			R^2 real: 0.5489 | shuffled mean: 0.2703 | p-value: 0.0050
+		- PSP:
+			R-squared:                       0.227
+			Adj. R-squared:                  0.029
+			Prob (F-statistic):              0.351
+			R^2 real: 0.2269 | shuffled mean: 0.2018 | p-value: 0.3250
+	- No Covariates
+		- AD:
+			R-squared:                       0.336
+			Adj. R-squared:                  0.251
+			Prob (F-statistic):              0.000730
+			R^2 real: 0.3355 | shuffled mean: 0.1133 | p-value: 0.0020
+		- CBS:
+			R-squared:                       0.480
+			Adj. R-squared:                  0.350
+			Prob (F-statistic):              0.00375
+			R^2 real: 0.4797 | shuffled mean: 0.1981 | p-value: 0.0030
+		- PSP:
+			R-squared:                       0.151
+			Adj. R-squared:                  0.004
+			Prob (F-statistic):              0.432
+			R^2 real: 0.1512 | shuffled mean: 0.1472 | p-value: 0.4140
+Caso VOXEL (results/ML/voxel/umap_regression)
+- CDR
+	- Covariates
+		- AD:
+			R-squared:                       0.348
+			Adj. R-squared:                  0.299
+			Prob (F-statistic):              2.47e-05
+			R^2 real: 0.3481 | shuffled mean: 0.0719 | p-value: 0.0000
+		- CBS:
+			R-squared:                       0.272
+			Adj. R-squared:                  0.171
+			Prob (F-statistic):              0.0361
+			R^2 real: 0.2724 | shuffled mean: 0.1195 | p-value: 0.0260
+		- PSP:
+			R-squared:                       0.104
+			Adj. R-squared:                  0.017
+			Prob (F-statistic):              0.327
+			R^2 real: 0.1044 | shuffled mean: 0.0909 | p-value: 0.3430
+	- No Covariates
+		- AD:
+			R-squared:                       0.288
+			Adj. R-squared:                  0.268
+			Prob (F-statistic):              7.98e-06
+			R^2 real: 0.2884 | shuffled mean: 0.0279 | p-value: 0.0000
+		- CBS:
+			R-squared:                       0.157
+			Adj. R-squared:                  0.113
+			Prob (F-statistic):              0.0360
+			R^2 real: 0.1567 | shuffled mean: 0.0486 | p-value: 0.0360
+		- PSP:
+			R-squared:                       0.096
+			Adj. R-squared:                  0.063
+			Prob (F-statistic):              0.0649
+			R^2 real: 0.0963 | shuffled mean: 0.0359 | p-value: 0.0620
+- MMSE
+	- Covariates
+		- AD:
+			R-squared:                       0.244
+			Adj. R-squared:                  0.186
+			Prob (F-statistic):              0.00207
+			R^2 real: 0.2435 | shuffled mean: 0.0703 | p-value: 0.0040
+		- CBS:
+			R-squared:                       0.147
+			Adj. R-squared:                  0.026
+			Prob (F-statistic):              0.325
+			R^2 real: 0.1474 | shuffled mean: 0.1267 | p-value: 0.3300
+		- PSP:
+			R-squared:                       0.156
+			Adj. R-squared:                  0.070
+			Prob (F-statistic):              0.128
+			R^2 real: 0.1559 | shuffled mean: 0.0935 | p-value: 0.1240
+	- No Covariates
+		- AD:
+			R-squared:                       0.206
+			Adj. R-squared:                  0.183
+			Prob (F-statistic):              0.000354
+			R^2 real: 0.2057 | shuffled mean: 0.0269 | p-value: 0.0000
+		- CBS:
+			R-squared:                       0.100
+			Adj. R-squared:                  0.053
+			Prob (F-statistic):              0.135
+			R^2 real: 0.1000 | shuffled mean: 0.0514 | p-value: 0.1420
+		- PSP:
+			R-squared:                       0.007
+			Adj. R-squared:                  -0.031
+			Prob (F-statistic):              0.831
+			R^2 real: 0.0071 | shuffled mean: 0.0356 | p-value: 0.7990

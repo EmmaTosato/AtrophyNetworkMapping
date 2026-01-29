@@ -1,6 +1,6 @@
 outer_fold,model,dataset,accuracy,precision,recall,f1,auc_roc,best_params
-1,KNN,networks,0.619,0.612,0.583,0.571,0.602,"{'metric': 'manhattan', 'n_neighbors': 3, 'weights': 'uniform'}"
-2,KNN,networks,0.619,0.612,0.583,0.571,0.583,"{'metric': 'manhattan', 'n_neighbors': 7, 'weights': 'uniform'}"
-3,KNN,networks,0.429,0.393,0.403,0.394,0.426,"{'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'distance'}"
-4,KNN,networks,0.524,0.514,0.514,0.514,0.593,"{'metric': 'manhattan', 'n_neighbors': 3, 'weights': 'distance'}"
-5,KNN,networks,0.7,0.719,0.646,0.643,0.719,"{'metric': 'euclidean', 'n_neighbors': 5, 'weights': 'distance'}"
+1,KNN,networks,0.619,0.639,0.569,0.533,0.514,"{'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'uniform'}"
+2,KNN,networks,0.667,0.816,0.611,0.569,0.574,"{'metric': 'manhattan', 'n_neighbors': 9, 'weights': 'uniform'}"
+3,KNN,networks,0.381,0.356,0.361,0.358,0.556,"{'metric': 'euclidean', 'n_neighbors': 3, 'weights': 'distance'}"
+4,KNN,networks,0.619,0.607,0.597,0.596,0.630,"{'metric': 'manhattan', 'n_neighbors': 3, 'weights': 'distance'}"
+5,KNN,networks,0.800,0.875,0.750,0.762,0.802,"{'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'distance'}"

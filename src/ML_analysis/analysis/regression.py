@@ -175,7 +175,8 @@ def regression_pipeline(df_input, df_meta, args):
     
     # When doing group-specific regression, disable color_by_group to use single-color plot
     # with the group-specific color from GROUP_COLORS
-    use_color_by_group = args['color_by_group'] if current_group is None else False
+    # UPDATE: User requested IDENTICAL pipeline (lmplot) even for single groups.
+    use_color_by_group = args['color_by_group']
     
     plot_ols_diagnostics(y_plot, y_pred_plot, residuals, args['prefix'], args['output_dir'], 
                          args['plot_regression'], args['save_flag'], 

@@ -36,9 +36,10 @@ def plot_ols_diagnostics(target, predictions, residuals,
     Plots OLS diagnostics (True vs Predicted) with optional group coloring.
     Uses sns.lmplot for grouped data to match original paper style.
     """
-    def _format_axes(ax, xlabel="True Score", ylabel="Predicted Score", fontsize=18):
-        ax.set_xlabel(xlabel, fontsize=fontsize, fontweight='bold', labelpad=10)
-        ax.set_ylabel(ylabel, fontsize=fontsize, fontweight='bold', labelpad=10)
+    def _format_axes(ax, xlabel="", ylabel="", fontsize=18):
+        # User requested removals of axis labels
+        if xlabel: ax.set_xlabel(xlabel, fontsize=fontsize, fontweight='bold', labelpad=10)
+        if ylabel: ax.set_ylabel(ylabel, fontsize=fontsize, fontweight='bold', labelpad=10)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.spines['bottom'].set_linewidth(1.0)
@@ -58,7 +59,9 @@ def plot_ols_diagnostics(target, predictions, residuals,
             'target': target,
             'predictions': predictions,
             'residuals': residuals,
-            'group': group_labels
+            # Force using group_name if available to ensure palette match (e.g. 'AD')
+            # Otherwise use group_labels (Series)
+            'group': group_name if group_name else (group_labels if group_labels is not None else "Unknown")
         })
         
         # Determine axis limits for square aspect
@@ -73,7 +76,7 @@ def plot_ols_diagnostics(target, predictions, residuals,
             x='target',
             y='predictions',
             hue='group',
-            palette="Set2",
+            palette=GROUP_COLORS,
             height=6,
             aspect=1,
             scatter_kws=dict(s=110, alpha=0.9, edgecolor="black", linewidths=0.6),
@@ -93,7 +96,7 @@ def plot_ols_diagnostics(target, predictions, residuals,
                 if isinstance(coll, mcoll.PolyCollection):
                     coll.set_alpha(0.2)
             
-            # Add Stats if provided (DISABLED per user request)
+            # Add Stats if provided (DISABLED)
             # if stats:
             #     r2, p = stats
             #     p_text = "< .001" if p < 0.001 else f"= {p:.3f}"
@@ -104,18 +107,30 @@ def plot_ols_diagnostics(target, predictions, residuals,
 
         # Legend Styling
         # sns.lmplot places legend outside by default. We can customize it from g._legend
+        # Legend Styling
+        # sns.lmplot places legend outside by default. We can customize it from g._legend
         if g._legend:
-             g._legend.set_title("Group")
-             g._legend.get_title().set_fontsize(16)
-             g._legend.get_title().set_fontweight('bold')
-             for t in g._legend.texts:
-                 t.set_fontsize(16)
-             g._legend.get_frame().set_facecolor("white")
-             g._legend.get_frame().set_linewidth(0)
+             # Remove title or customize? User wants simple style.
+             # If it's single group, maybe remove legend entirely?
+             # For 'labelled' plot (all groups), legend is useful.
+             # For single group, redundant if we know the group.
+             if group_name: 
+                 g._legend.remove() # Remove legend for single group plots
+             else:
+                 g._legend.set_title("Group")
+                 g._legend.get_title().set_fontsize(16)
+                 g._legend.get_title().set_fontweight('bold')
+                 for t in g._legend.texts:
+                     t.set_fontsize(16)
+                 g._legend.get_frame().set_facecolor("white")
+                 g._legend.get_frame().set_linewidth(0)
         
         if save_path and save_flag:
             clean_t = clean_title_string(title)
-            fname = clean_t + "_diagnostics_labelled.png"
+            # User request: for single groups (group_name present), use _diagnostics.png
+            # For all groups combined, use _diagnostics_labelled.png
+            suffix = "_diagnostics.png" if group_name else "_diagnostics_labelled.png"
+            fname = clean_t + suffix
             g.savefig(os.path.join(save_path, fname), dpi=300, bbox_inches='tight', pad_inches=0.1)
 
         if plot_flag:
@@ -156,8 +171,9 @@ def plot_ols_diagnostics(target, predictions, residuals,
                     fontsize=16, fontweight='bold', va='top', ha='left')
 
         _format_axes(ax)
-        if not color_by_group: # Title only if not grouped/subplot
-             ax.set_title("OLS True vs Predicted", fontsize=16, fontweight='bold', pad=10)
+        _format_axes(ax)
+        # if not color_by_group: # Title REMOVED per user request
+        #      ax.set_title("OLS True vs Predicted", fontsize=16, fontweight='bold', pad=10)
         
         if ax is not None and not created_fig:
             # If we are part of a subplot, we don't save or show individually here usually,

@@ -1,10 +1,12 @@
 import json
 import subprocess
 import os
+import pandas as pd
 
 # Percorsi
 config_path = "src/ML_analysis/config/ml_config.json"
 script_path = "src/ML_analysis/analysis/classification.py"
+results_base = "results/ML"
 
 # Combinazioni da eseguire
 # ORDINE: Networks prima, poi Voxel+UMAP
@@ -54,3 +56,35 @@ for cfg in configs:
     print(f"\n>>> Running classification.py for {cfg['group1']} vs {cfg['group2']} | {cfg['dataset_type'].upper()}")
     p = subprocess.run(["python", script_path], env={**os.environ, "PYTHONPATH": "src"})
 
+
+# === AGGREGATE RESULTS PER DATASET TYPE ===
+print("\n" + "=" * 60)
+print("AGGREGATING RESULTS...")
+print("=" * 60)
+
+for dataset_type in ["networks", "voxel"]:
+    if dataset_type == "networks":
+        method_folder = "classification"
+    else:
+        method_folder = "umap_classification"
+    
+    base_path = os.path.join(results_base, dataset_type, method_folder)
+    all_summaries = []
+    
+    # Find all summary_results.csv
+    for pair_folder in os.listdir(base_path):
+        pair_path = os.path.join(base_path, pair_folder)
+        summary_path = os.path.join(pair_path, "summary_results.csv")
+        
+        if os.path.isdir(pair_path) and os.path.exists(summary_path):
+            df = pd.read_csv(summary_path)
+            df["comparison"] = pair_folder
+            all_summaries.append(df)
+    
+    if all_summaries:
+        df_total = pd.concat(all_summaries, ignore_index=True)
+        output_path = os.path.join(base_path, "total_aggregated_results.csv")
+        df_total.to_csv(output_path, index=False)
+        print(f"Saved: {output_path}")
+
+print("\n>>> BATCH COMPLETED!")
