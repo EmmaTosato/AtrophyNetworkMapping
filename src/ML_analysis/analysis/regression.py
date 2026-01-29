@@ -141,9 +141,6 @@ def regression_pipeline(df_input, df_meta, args):
         x = x_feature
 
     x_ols = build_design_matrix(df_merged, x, args["covariates"])
-    
-    x_ols = build_design_matrix(df_merged, x, args["covariates"])
-
 
     # Fit OLS model
     model, y_pred, residuals = fit_ols_model(x_ols, y)

@@ -1,4 +1,4 @@
 dataset,groups,model,n_perms,true_score,p_value,perm_scores_mean,perm_scores_std
-voxel,ADvsPSP,RandomForest,1000,0.691,0.001,0.516,0.050
-voxel,ADvsPSP,GradientBoosting,1000,0.698,0.001,0.515,0.051
-voxel,ADvsPSP,KNN,1000,0.698,0.001,0.515,0.051
+voxel,AD–PSP,RandomForest,1000,0.691,0.001,0.516,0.050
+voxel,AD–PSP,GradientBoosting,1000,0.698,0.001,0.515,0.051
+voxel,AD–PSP,KNN,1000,0.698,0.001,0.515,0.051
