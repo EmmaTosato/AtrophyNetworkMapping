@@ -127,7 +127,8 @@ def aggregate_dataset_results(base_dir):
         summary_file = os.path.join(comp_dir, "summary_results.csv")
         
         if os.path.exists(summary_file):
-            df = pd.read_csv(summary_file)
+            # Read as string to preserve formatting (e.g. 0.110)
+            df = pd.read_csv(summary_file, dtype=str)
             
             # Identify model column (first column)
             model_col = df.columns[0]
@@ -158,30 +159,16 @@ def aggregate_dataset_results(base_dir):
         writer = csv.writer(f)
         
         h1 = ['comparison', 'model']
-        h2 = ['', '']
-        data_col_order = []
+        # h2 not needed anymore for single header row
         
-        for m in metric_order:
-            m_mean_col = None
-            m_std_col = None
-            for c_name, (metric_name, metric_type) in col_map.items():
-                if metric_name == m and metric_type == 'mean' and c_name in full_df.columns: m_mean_col = c_name
-                if metric_name == m and metric_type == 'std' and c_name in full_df.columns: m_std_col = c_name
-            
-            if m_mean_col:
-                h1.append(m)
-                h2.append('mean')
-                data_col_order.append(m_mean_col)
-                if m_std_col:
-                    h1.append(m)
-                    h2.append('std')
-                    data_col_order.append(m_std_col)
+        # Define the metrics we want to output
+        final_metrics = metric_order # ['accuracy', 'precision', 'recall', 'f1', 'auc_roc']
+        h1.extend(final_metrics)
         
         writer.writerow(h1)
-        writer.writerow(h2)
+        # writer.writerow(h2) # Removing second header row
         
         # Sort and Write
-        # User Image shows Comparison first, then Model
         full_df.sort_values(by=['comparison', 'model'], inplace=True)
         
         last_comp = None
@@ -193,24 +180,32 @@ def aggregate_dataset_results(base_dir):
                 display_comp = ""
             else:
                 last_comp = current_comp
-                # Optional: Add empty row before new comparison group (except first)
-                # Not explicitly requested but clean. The previous logic didn't output one.
-                # Let's clean it up if needed.
-                
+            
             model_name = row['model']
-            
-            # Use short names? Image shows 'GB', 'KNN', 'RF'. 
-            # Current names are 'GradientBoosting', 'RandomForest'.
-            # User request: "le colonne devono essere come vedi in foto".
-            # The photo has 'GB', 'KNN', 'RF'.
-            # I should probably map them.
-            
             if model_name == "GradientBoosting": model_name = "GB"
             if model_name == "RandomForest": model_name = "RF"
             
             out_row = [display_comp, model_name]
-            for col in data_col_order:
-                out_row.append(row[col])
+            
+            # Construct merged metric strings
+            for m in final_metrics:
+                m_mean_col = None
+                m_std_col = None
+                
+                # Find the column names in df for this metric's mean/std
+                for c_name, (metric_name, metric_type) in col_map.items():
+                    if metric_name == m and metric_type == 'mean' and c_name in full_df.columns: m_mean_col = c_name
+                    if metric_name == m and metric_type == 'std' and c_name in full_df.columns: m_std_col = c_name
+                
+                val_str = "N/A"
+                if m_mean_col and m_std_col:
+                    mean_val = row[m_mean_col]
+                    std_val = row[m_std_col]
+                    val_str = f"{mean_val} ± {std_val}"
+                elif m_mean_col:
+                    val_str = f"{row[m_mean_col]}"
+                
+                out_row.append(val_str)
             
             writer.writerow(out_row)
             
