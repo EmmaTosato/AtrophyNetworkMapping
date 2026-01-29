@@ -157,7 +157,7 @@ def aggregate_dataset_results(base_dir):
     with open(output_path, 'w', newline='') as f:
         writer = csv.writer(f)
         
-        h1 = ['model', 'comparison']
+        h1 = ['comparison', 'model']
         h2 = ['', '']
         data_col_order = []
         
@@ -181,22 +181,35 @@ def aggregate_dataset_results(base_dir):
         writer.writerow(h2)
         
         # Sort and Write
-        full_df.sort_values(by=['model', 'comparison'], inplace=True)
+        # User Image shows Comparison first, then Model
+        full_df.sort_values(by=['comparison', 'model'], inplace=True)
         
-        last_model = None
+        last_comp = None
         for _, row in full_df.iterrows():
-            current_model = row['model']
-            display_model = current_model
-            if current_model == last_model:
-                display_model = ""
-            else:
-                last_model = current_model
-                
-            comp_str = row['comparison'].replace('_', ' vs ')
+            current_comp = row['comparison'].replace('_', ' vs ')
+            display_comp = current_comp
             
-            out_row = [display_model, comp_str]
+            if current_comp == last_comp:
+                display_comp = ""
+            else:
+                last_comp = current_comp
+                # Optional: Add empty row before new comparison group (except first)
+                # Not explicitly requested but clean. The previous logic didn't output one.
+                # Let's clean it up if needed.
+                
+            model_name = row['model']
+            
+            # Use short names? Image shows 'GB', 'KNN', 'RF'. 
+            # Current names are 'GradientBoosting', 'RandomForest'.
+            # User request: "le colonne devono essere come vedi in foto".
+            # The photo has 'GB', 'KNN', 'RF'.
+            # I should probably map them.
+            
+            if model_name == "GradientBoosting": model_name = "GB"
+            if model_name == "RandomForest": model_name = "RF"
+            
+            out_row = [display_comp, model_name]
             for col in data_col_order:
-                # Value is already formatted string in df due to format_csv_file pass
                 out_row.append(row[col])
             
             writer.writerow(out_row)
