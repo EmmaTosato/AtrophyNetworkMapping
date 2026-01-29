@@ -241,6 +241,75 @@ def process_tree(root_dir):
     # 2. Aggregate
     aggregate_dataset_results(root_dir)
 
+def combine_global_classification_results():
+    base_dir = "/data/users/etosato/ANM_Verona/results/ML"
+    output_file = os.path.join(base_dir, "total_classification_results.csv")
+    
+    # Define sources (Voxel first)
+    sources = [
+        ("Voxel", os.path.join(base_dir, "voxel/umap_classification/total_aggregated_results.csv")),
+        ("Network", os.path.join(base_dir, "networks/classification/total_aggregated_results.csv"))
+    ]
+    
+    combined_dfs = []
+    
+    for ds_name, path in sources:
+        if os.path.exists(path):
+            try:
+                # Read as string to preserve formatting, empty strings as empty strings
+                df = pd.read_csv(path, dtype=str, keep_default_na=False)
+                # Add Dataset column at the beginning
+                df.insert(0, 'dataset', ds_name)
+                combined_dfs.append(df)
+            except Exception as e:
+                print(f"Error reading {path}: {e}")
+                
+    if not combined_dfs:
+        return
+
+    full_df = pd.concat(combined_dfs, ignore_index=True)
+    
+    # Write to CSV
+    # We want grouping logic similar to other tables
+    # Group by Dataset, then Comparison
+    
+    # Columns: dataset, comparison, model, ...
+    cols = list(full_df.columns)
+    
+    with open(output_file, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(cols)
+        
+        last_dataset = None
+        last_comp = None
+        
+        for _, row in full_df.iterrows():
+            current_dataset = row['dataset']
+            current_comp = row['comparison']
+            
+            display_dataset = current_dataset
+            display_comp = current_comp
+            
+            if current_dataset == last_dataset:
+                display_dataset = ""
+                # Check comparison
+                if current_comp == last_comp:
+                    display_comp = ""
+                else:
+                    last_comp = current_comp
+            else:
+                last_dataset = current_dataset
+                last_comp = current_comp # Reset comparison tracker for new dataset
+            
+            out_row = [display_dataset, display_comp]
+            # Add rest
+            for col in cols[2:]:
+                out_row.append(row[col])
+                
+            writer.writerow(out_row)
+            
+    print(f"Global Combined Classification table written to {output_file}")
+
 def main():
     root = "/data/users/etosato/ANM_Verona/results/ML"
     path_net = os.path.join(root, "networks/classification")
@@ -248,6 +317,9 @@ def main():
     
     if os.path.exists(path_net): process_tree(path_net)
     if os.path.exists(path_vox): process_tree(path_vox)
+    
+    # Combine everything globally
+    combine_global_classification_results()
 
 if __name__ == "__main__":
     main()
