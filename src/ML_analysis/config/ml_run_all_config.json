@@ -1,0 +1,62 @@
+{
+    "classification": {
+        "runs": [
+            {
+                "dataset_type": "networks",
+                "umap": false,
+                "group1": "AD",
+                "group2": "PSP"
+            },
+            {
+                "dataset_type": "networks",
+                "umap": false,
+                "group1": "AD",
+                "group2": "CBS"
+            },
+            {
+                "dataset_type": "networks",
+                "umap": false,
+                "group1": "PSP",
+                "group2": "CBS"
+            },
+            {
+                "dataset_type": "voxel",
+                "umap": true,
+                "group1": "AD",
+                "group2": "PSP"
+            },
+            {
+                "dataset_type": "voxel",
+                "umap": true,
+                "group1": "AD",
+                "group2": "CBS"
+            },
+            {
+                "dataset_type": "voxel",
+                "umap": true,
+                "group1": "PSP",
+                "group2": "CBS"
+            }
+        ]
+    },
+    "regression": {
+        "grid": {
+            "datasets": [
+                "voxel",
+                "networks"
+            ],
+            "targets": [
+                "CDR_SB",
+                "MMSE"
+            ],
+            "flag_covariates": [
+                false,
+                true
+            ],
+            "group_regression": [
+                false,
+                true
+            ]
+        }
+    }
+}

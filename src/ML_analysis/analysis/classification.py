@@ -143,7 +143,7 @@ def run_permutation_test(model_class, param_dict, X, y, model_name, seed, save_d
     plt.ylabel("Density")
     plt.legend()
     plt.tight_layout()
-    plt.savefig(os.path.join(save_dir, f"perm_hist_{model_name}.png"))
+    plt.savefig(os.path.join(save_dir, f"perm_hist_{model_name}.png"), dpi=300)
     plt.close()
 
 def evaluate_metrics(y_true, y_pred, y_proba=None):

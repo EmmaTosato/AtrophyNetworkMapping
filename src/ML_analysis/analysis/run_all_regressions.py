@@ -15,29 +15,73 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 import pandas as pd
 from ML_analysis.analysis.regression import main_regression
+from ML_analysis.loading.config import ConfigLoader
 
-# Configuration combinations
+import argparse
+
+# Load default config paths
+base_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(base_dir, "../../.."))
+default_run_config = os.path.join(project_root, "src/ML_analysis/config/ml_run_all_config.json")
+default_ml_config = os.path.join(project_root, "src/ML_analysis/config/ml_config.json")
+
+# Argparse
+parser = argparse.ArgumentParser(description="Run all regressions batch script")
+parser.add_argument("--run_config", default=default_run_config, help="Path to ml_run_all_config.json")
+parser.add_argument("--config", default=default_ml_config, help="Path to ml_config.json")
+args_cli = parser.parse_args() # Rename to avoid conflict with 'args' dict in loop
+
+run_config_path = args_cli.run_config
+
 DATASETS = ['voxel', 'networks']
 TARGETS = ['CDR_SB', 'MMSE']
 FLAG_COVARIATES = [False, True]
 GROUP_REGRESSION = [False, True]
 
-# Data paths
-DATA_PATHS = {
-    'voxel': 'data/dataframes/fdc/df_gm.pkl',
-    'networks': 'data/dataframes/networks/networks_noTHR.csv'
-}
-META_PATH = 'assets/metadata/df_meta.csv'
+if os.path.exists(run_config_path):
+    try:
+        import json
+        with open(run_config_path, "r") as f:
+            run_cfg = json.load(f)
+        grid = run_cfg.get("regression", {}).get("grid", {})
+        DATASETS = grid.get("datasets", DATASETS)
+        TARGETS = grid.get("targets", TARGETS)
+        FLAG_COVARIATES = grid.get("flag_covariates", FLAG_COVARIATES)
+        GROUP_REGRESSION = grid.get("group_regression", GROUP_REGRESSION)
+        print(f"Loaded regression grid from: {run_config_path}")
+    except Exception as e:
+        print(f"Error loading run config: {e}. Using defaults.")
+else:
+    print("Run config not found. Using defaults.")
 
+# Data paths now loaded via ConfigLoader
+# DATA_PATHS and META_PATH constants removed to avoid hardcoding
 
 def load_data(dataset_type):
-    """Load data based on dataset type."""
-    if dataset_type == 'voxel':
-        df_input = pd.read_pickle(DATA_PATHS['voxel'])
-    else:
-        df_input = pd.read_csv(DATA_PATHS['networks'])
+    """Load data based on dataset type using ConfigLoader to resolve paths."""
+    loader = ConfigLoader()
     
-    df_meta = pd.read_csv(META_PATH)
+    # We need to manually resolve the path for the requested dataset_type
+    # because ConfigLoader init loads whatever is in ml_config.json, which might be different.
+    # Fortunately, ConfigLoader exposes _resolve_data_path method (helper).
+    
+    # Get all paths from loaded config
+    paths = loader.args
+    
+    # Manually resolve for the specific requested type (defaulting threshold to False/None for regression base)
+    if dataset_type == 'voxel':
+        # Default regression uses 'df_masked' (gm_mask) typically
+        df_path = paths.get('df_masked')
+        df_input = pd.read_pickle(df_path)
+    elif dataset_type == 'networks':
+        # Default regression uses 'yeo_noThr'
+        df_path = paths.get('yeo_noThr')
+        df_input = pd.read_csv(df_path)
+    else:
+        raise ValueError(f"Unknown dataset type: {dataset_type}")
+        
+    meta_path = paths.get('df_meta')
+    df_meta = pd.read_csv(meta_path)
     
     # Merge metadata
     if 'Group' not in df_input.columns:
@@ -65,8 +109,26 @@ def run_combination(dataset_type, target, flag_cov, group_reg):
         'group_name': 'Group',
         'plot_regression': True,
         'save_flag': True,
-        'output_dir': 'results/ML/',
+        'save_flag': True,
+        # Load default output_dir from ml_config.json or fallback
+        'output_dir': 'results/ML/', 
     }
+    
+    # Try to load output_dir from actual config file if possible, 
+    # but since this script builds args manually, we keep it simple or read the file.
+    # Ideally:
+    # with open("src/ML_analysis/config/ml_config.json") as f:
+    #    cfg = json.load(f)
+    #    args['output_dir'] = cfg.get('fixed_parameters', {}).get('output_dir', args['output_dir'])
+    
+    # For now, let's keep it robust as requested:
+    try:
+        import json
+        with open(args_cli.config) as f:
+             cfg = json.load(f)
+             args['output_dir'] = cfg.get('fixed_parameters', {}).get('output_dir', 'results/ML/')
+    except:
+        pass
     
     # Status
     cov_str = 'cov' if flag_cov else 'no_cov'

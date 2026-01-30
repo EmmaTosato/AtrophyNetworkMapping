@@ -21,10 +21,18 @@ def run_command(cmd, log_file=None):
         sys.exit(return_code)
 
 def main():
+    # Dynamically resolve project root (3 levels up from this script: src/DL_analysis/training -> src/DL/ -> src/ -> root)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(script_dir, "../../../"))
+    
+    # Default paths handled dynamically
+    default_config = os.path.join(project_root, "src/DL_analysis/config/cnn.json")
+    default_grid = os.path.join(project_root, "src/DL_analysis/config/cnn_grid.json")
+    
     parser = argparse.ArgumentParser(description="Automated Benchmark Runner (Config Driven)")
-    parser.add_argument("--config", type=str, default="src/DL_analysis/config/cnn.json",
+    parser.add_argument("--config", type=str, default=default_config,
                         help="Path to runner configuration JSON (Experiments + Environment)")
-    parser.add_argument("--grid_config", type=str, default="src/DL_analysis/config/cnn_grid.json",
+    parser.add_argument("--grid_config", type=str, default=default_grid,
                         help="Path to hyperparameter grid JSON")
     parser.add_argument("--dry_run", action='store_true', help="Print commands only")
     
@@ -38,18 +46,27 @@ def main():
         job_config = json.load(f)
         
     base_output_dir = job_config.get('global', {}).get('base_output_dir', 'results/DL')
+    
+    # If base_output_dir is relative, make it relative to project root for consistency
+    if not os.path.isabs(base_output_dir):
+        base_output_dir = os.path.join(project_root, base_output_dir)
+        
     global_test_mode = job_config.get('global', {}).get('test_mode', False)
     
     experiments = job_config.get('experiments', [])
     
     print("="*60)
     print(f"BENCHMARK RUNNER (JSON Config)")
+    print(f"Project Root       : {project_root}")
     print(f"Experiments Config : {args.config}")
     print(f"Hyperparams Config : {args.grid_config}")
     print(f"Base Output        : {base_output_dir}")
     print(f"Test Mode          : {global_test_mode}")
     print(f"Jobs found         : {len(experiments)}")
     print("="*60)
+    
+    # Path to the child script (run_nested_cv.py is in the same dir as this script)
+    nested_cv_script = os.path.join(script_dir, "run_nested_cv.py")
     
     for i, exp in enumerate(experiments):
         g1 = exp['group1']
@@ -63,7 +80,7 @@ def main():
             output_dir = os.path.join(base_output_dir, pair_name, model)
             
             cmd = [
-                "python3", "src/DL_analysis/training/run_nested_cv.py",
+                "python3", nested_cv_script,
                 "--group1", g1,
                 "--group2", g2,
                 "--model", model,

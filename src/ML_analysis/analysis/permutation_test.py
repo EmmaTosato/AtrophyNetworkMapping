@@ -179,10 +179,10 @@ def run_permutation_analysis(config_path, suffix=None):
                 continue
                 
             # Output Directory
-            # Output Directory
             # Configured to save in the Pair Folder (e.g., .../AD_PSP/permutation_stats.csv)
             # This aggregates all models into one file
-            results_dir = f"results/ML/{dataset_type}/{'umap_' if use_umap else ''}classification/{group1}_{group2}"
+            base_out = loader.args.get("output_dir", "results/ML/")
+            results_dir = f"{base_out}/{dataset_type}/{'umap_' if use_umap else ''}classification/{group1}_{group2}"
             
             # Define filename early
             filename = "permutation_stats.csv"

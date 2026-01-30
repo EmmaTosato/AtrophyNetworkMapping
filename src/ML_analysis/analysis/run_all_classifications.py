@@ -3,24 +3,41 @@ import subprocess
 import os
 import pandas as pd
 
-# Percorsi
-config_path = "src/ML_analysis/config/ml_config.json"
-script_path = "src/ML_analysis/analysis/classification.py"
-results_base = "results/ML"
+import argparse
 
-# Combinazioni da eseguire
-# ORDINE: Networks prima, poi Voxel+UMAP
-configs = [
-    # === NETWORKS (no UMAP) ===
-    {"dataset_type": "networks", "umap": False, "group1": "AD", "group2": "PSP"},
-    {"dataset_type": "networks", "umap": False, "group1": "AD", "group2": "CBS"},
-    {"dataset_type": "networks", "umap": False, "group1": "PSP", "group2": "CBS"},
-    
-    # === VOXEL + UMAP ===
-    {"dataset_type": "voxel", "umap": True, "group1": "AD", "group2": "PSP"},
-    {"dataset_type": "voxel", "umap": True, "group1": "AD", "group2": "CBS"},
-    {"dataset_type": "voxel", "umap": True, "group1": "PSP", "group2": "CBS"},
-]
+# Percorsi
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(script_dir, "../../.."))
+
+# Default configs
+default_config = os.path.join(project_root, "src/ML_analysis/config/ml_config.json")
+default_run_config = os.path.join(project_root, "src/ML_analysis/config/ml_run_all_config.json")
+script_path = os.path.join(script_dir, "classification.py")
+
+# Argparse
+parser = argparse.ArgumentParser(description="Run all classifications batch script")
+parser.add_argument("--config", default=default_config, help="Main ML Config Path")
+parser.add_argument("--run_config", default=default_run_config, help="Running combinations config (ml_run_all_config.json)")
+args = parser.parse_args()
+
+config_path = args.config
+run_config_path = args.run_config
+
+# Load base output dir from config
+with open(config_path, "r") as f:
+    _temp_cfg = json.load(f)
+results_base = _temp_cfg.get("fixed_parameters", {}).get("output_dir", "results/ML/")
+
+# Load "Job" configuration
+run_config_path = os.path.join(project_root, "src/ML_analysis/config/ml_run_all_config.json")
+if os.path.exists(run_config_path):
+    with open(run_config_path, "r") as f:
+        run_cfg = json.load(f)
+    print(f"Loaded run config from: {run_config_path}")
+    configs = run_cfg.get("classification", {}).get("runs", [])
+else:
+    print(f"Warning: Run config not found at {run_config_path}. Using empty list.")
+    configs = []
 
 # Loop su ciascuna configurazione
 for cfg in configs:
@@ -53,8 +70,10 @@ for cfg in configs:
         json.dump(full_config, f, indent=2)
 
     # Esegui lo script classification.py
-    print(f"\n>>> Running classification.py for {cfg['group1']} vs {cfg['group2']} | {cfg['dataset_type'].upper()}")
-    p = subprocess.run(["python", script_path], env={**os.environ, "PYTHONPATH": "src"})
+    p = subprocess.run(
+        ["python", script_path], 
+        env={**os.environ, "PYTHONPATH": os.path.join(project_root, "src")}
+    )
 
 
 # === AGGREGATE RESULTS PER DATASET TYPE ===

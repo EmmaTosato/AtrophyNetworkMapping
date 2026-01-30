@@ -2,6 +2,8 @@ from dataclasses import dataclass
 import json
 import pandas as pd
 
+import os
+
 @dataclass
 class ConfigLoader:
     """
@@ -9,7 +11,16 @@ class ConfigLoader:
     Produces a unified dictionary `args` that includes all values from config.json and paths.json,
     plus derived paths such as df_path based on dataset type and threshold.
     """
-    def __init__(self, config_path="src/ML_analysis/config/ml_config.json", paths_path="src/ML_analysis/config/ml_paths.json"):
+    def __init__(self, config_path=None, paths_path=None):
+        # Determine default paths relative to this script (src/ML_analysis/loading/)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        config_dir = os.path.join(base_dir, "../config")
+        
+        if config_path is None:
+            config_path = os.path.join(config_dir, "ml_config.json")
+        if paths_path is None:
+            paths_path = os.path.join(config_dir, "ml_paths.json")
+
         # Load configuration and paths from JSON
         with open(config_path) as f:
             self.config = json.load(f)

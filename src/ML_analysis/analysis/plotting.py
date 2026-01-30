@@ -97,6 +97,7 @@ def plot_ols_diagnostics(target, predictions, residuals,
                     coll.set_alpha(0.2)
             
             # Add Stats if provided (DISABLED)
+            # Add Stats if provided (DISABLED)
             # if stats:
             #     r2, p = stats
             #     p_text = "< .001" if p < 0.001 else f"= {p:.3f}"

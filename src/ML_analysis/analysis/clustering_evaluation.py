@@ -29,7 +29,7 @@ def evaluate_kmeans(X, K_range=range(2, 11), save_path=None, prefix='', plot_fla
         plt.ylabel('Inertia')
         plt.title(f'{prefix} K-Means Elbow')
         if save_path:
-            plt.savefig(os.path.join(save_path, f"{prefix}_kmeans_elbow.png"))
+            plt.savefig(os.path.join(save_path, f"{prefix}_kmeans_elbow.png"), dpi=300)
         if plot_flag:
             plt.show()
         plt.close()
@@ -40,7 +40,7 @@ def evaluate_kmeans(X, K_range=range(2, 11), save_path=None, prefix='', plot_fla
         plt.ylabel('Silhouette Score')
         plt.title(f'{prefix} K-Means Silhouette')
         if save_path:
-            plt.savefig(os.path.join(save_path, f"{prefix}_kmeans_silhouette.png"))
+            plt.savefig(os.path.join(save_path, f"{prefix}_kmeans_silhouette.png"), dpi=300)
         if plot_flag:
             plt.show()
         plt.close()
@@ -68,7 +68,7 @@ def evaluate_gmm(X, K_range=range(2, 11), save_path=None, prefix='', plot_flag=T
         plt.title(f'{prefix} GMM AIC/BIC')
         plt.legend()
         if save_path:
-            plt.savefig(os.path.join(save_path, f"{prefix}_gmm_aic_bic.png"))
+            plt.savefig(os.path.join(save_path, f"{prefix}_gmm_aic_bic.png"), dpi=300)
         if plot_flag:
             plt.show()
         plt.close()
@@ -105,7 +105,7 @@ def evaluate_consensus(X, K_range=range(2, 11), n_runs=100, save_path=None, pref
         plt.ylabel('Silhouette Score')
         plt.title(f'{prefix} Consensus Clustering Stability')
         if save_path:
-            plt.savefig(os.path.join(save_path, f"{prefix}_consensus_stability.png"))
+            plt.savefig(os.path.join(save_path, f"{prefix}_consensus_stability.png"), dpi=300)
         if plot_flag:
             plt.show()
         plt.close()
