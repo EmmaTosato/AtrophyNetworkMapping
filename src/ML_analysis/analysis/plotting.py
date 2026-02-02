@@ -38,8 +38,9 @@ def plot_ols_diagnostics(target, predictions, residuals,
     """
     def _format_axes(ax, xlabel="", ylabel="", fontsize=18):
         # User requested removals of axis labels
-        if xlabel: ax.set_xlabel(xlabel, fontsize=fontsize, fontweight='bold', labelpad=10)
-        if ylabel: ax.set_ylabel(ylabel, fontsize=fontsize, fontweight='bold', labelpad=10)
+        # To re-enable, uncomment the following lines:
+        # if xlabel: ax.set_xlabel(xlabel, fontsize=fontsize, fontweight='bold', labelpad=10)
+        # if ylabel: ax.set_ylabel(ylabel, fontsize=fontsize, fontweight='bold', labelpad=10)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.spines['bottom'].set_linewidth(1.0)
@@ -87,6 +88,8 @@ def plot_ols_diagnostics(target, predictions, residuals,
         
         # Set uniform limits
         g.set(xlim=(axis_min, axis_max), ylim=(axis_min, axis_max))
+        # Remove axis labels forced by seaborn
+        g.set_axis_labels("", "")
         
         for ax_curr in g.axes.flat:
             ax_curr.set_aspect('equal', adjustable='box')

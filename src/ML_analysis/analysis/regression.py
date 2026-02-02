@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.preprocessing import StandardScaler
 from ML_analysis.loading.config import ConfigLoader
 from preprocessing.processflat import x_features_return
 from ML_analysis.analysis.plotting import plot_ols_diagnostics, plot_actual_vs_predicted, plot_umap_embedding
@@ -128,8 +129,19 @@ def regression_pipeline(df_input, df_meta, args):
     if hasattr(x_feature, 'apply'):
         x_feature = x_feature.apply(pd.to_numeric, errors='coerce').fillna(0)
 
-    # Target variable handling
-    y = np.log1p(df_merged[args['target_variable']]) if args['y_log_transform'] else df_merged[args['target_variable']]
+    # Target variable handling (Standardization)
+    y_raw = df_merged[args['target_variable']]
+    
+    if args.get('y_scaled', False): 
+        # Apply Scaling
+        scaler_y = StandardScaler()
+        # Reshape for scaler requirement (N, 1)
+        y_values = y_raw.values.reshape(-1, 1)
+        y_scaled = scaler_y.fit_transform(y_values).flatten() # Flatten back to (N,)
+        y = pd.Series(y_scaled, index=y_raw.index, name=args['target_variable'])
+    else:
+        y = y_raw
+        scaler_y = None
     
     # Feature projection
     # Always normalize features (Voxel or Networks) before processing
@@ -149,16 +161,32 @@ def regression_pipeline(df_input, df_meta, args):
     n_perms = args.get('n_permutations', 1000) # Default 1000 if not in config
     r2_real, r2_shuffled, p_value = shuffling_regression(x_ols, y, n_iter=n_perms)
     
-    # Compute RMSE statistics
-    df_sorted, rmse_stats = compute_rmse_stats(df_merged, y_pred, residuals)
-
-    # Back-transform if log was applied (for interpretable plots)
-    if args['y_log_transform']:
-        y_plot = np.expm1(y)
-        y_pred_plot = np.expm1(y_pred)
+    # --- Post-Processing for Interpretation ---
+    # Check if we should inverse transform back to original scale
+    # If True: RMSE/MAE/Plots are in original units (e.g. MMSE points)
+    # If False: RMSE/MAE/Plots are in Standardized units (Z-scores)
+    
+    do_inverse = args.get('inverse_transform_y', True)
+    
+    if scaler_y is not None and do_inverse:
+        # Inverse transform predictions
+        y_pred_post = scaler_y.inverse_transform(y_pred.values.reshape(-1, 1)).flatten()
+        # Use original raw values for y
+        y_post = y_raw 
+        
+        # Recalculate residuals in original scale
+        residuals_post = y_post - y_pred_post
     else:
-        y_plot = y
-        y_pred_plot = y_pred
+        # Keep scaled values
+        y_pred_post = y_pred
+        y_post = y
+        residuals_post = residuals
+
+    # Compute RMSE statistics (on chosen scale)
+    df_sorted, rmse_stats = compute_rmse_stats(df_merged, y_pred_post, residuals_post)
+
+    y_plot = y_post
+    y_pred_plot = y_pred_post
 
     # Plotting
     group_labels = df_merged[args['group_name']]
@@ -186,8 +214,8 @@ def regression_pipeline(df_input, df_meta, args):
     print(f"R^2 real: {r2_real:.4f} | shuffled mean: {np.mean(r2_shuffled):.4f} | p-value: {p_value:.4f}")
     print("\nRMSE BY GROUP")
     print(rmse_stats)
-    print("\nMAE:", round(mean_absolute_error(y, y_pred), 4))
-    print("RMSE:", round(np.sqrt(mean_squared_error(y, y_pred)), 4))
+    print("\nMAE:", round(mean_absolute_error(y_post, y_pred_post), 4))
+    print("RMSE:", round(np.sqrt(mean_squared_error(y_post, y_pred_post)), 4))
     print("\nSUBJECTS SORTED BY RMSE")
     print(df_sorted.to_string(index=False))
 
@@ -202,7 +230,6 @@ def main_regression(params, df_input, df_meta):
     os.makedirs(base_out, exist_ok=True)
     
     print(f"DEBUG: Output Base Directory -> {base_out}")
-
 
     params['log'] = f"log_{params['threshold']}_threshold" if params['threshold'] in [0.1, 0.2] else "log_no_threshold"
     params['prefix'] = f"{params['threshold']} Threshold" if params['threshold'] in [0.1, 0.2] else "No Threshold"

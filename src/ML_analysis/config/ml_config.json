@@ -35,7 +35,8 @@
   "fixed_parameters": {
     "output_dir": "results/ML/",
     "covariates": [],
-    "y_log_transform": false,
+    "y_scaled": true,
+    "inverse_transform_y": false,
     "color_by_group": true,
     "group_name": "Group"
   },

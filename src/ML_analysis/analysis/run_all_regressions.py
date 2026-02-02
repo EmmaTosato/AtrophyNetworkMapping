@@ -11,7 +11,7 @@ from datetime import datetime
 # Add src to path
 # Script is in src/ML_analysis/analysis/
 # We need to add 'src' folder to path, which is 2 levels up from here
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 import pandas as pd
 from ML_analysis.analysis.regression import main_regression
@@ -104,7 +104,8 @@ def run_combination(dataset_type, target, flag_cov, group_reg):
         'group_regression': group_reg,
         'group_col': 'Group',
         'covariates': ['Age', 'Sex', 'Education'] if flag_cov else None,
-        'y_log_transform': False,
+        'y_scaled': True, 
+        'inverse_transform_y': True, # Default to True (can be overridden by config loading)
         'color_by_group': True,
         'group_name': 'Group',
         'plot_regression': True,
@@ -126,8 +127,13 @@ def run_combination(dataset_type, target, flag_cov, group_reg):
         import json
         with open(args_cli.config) as f:
              cfg = json.load(f)
-             args['output_dir'] = cfg.get('fixed_parameters', {}).get('output_dir', 'results/ML/')
-    except:
+             fixed = cfg.get('fixed_parameters', {})
+             args['output_dir'] = fixed.get('output_dir', 'results/ML/')
+             # CRITICAL FIX: Load standardization flags from config
+             args['y_scaled'] = fixed.get('y_scaled', True)
+             args['inverse_transform_y'] = fixed.get('inverse_transform_y', True)
+    except Exception as e:
+        print(f"WARNING: Failed to load config in run_combination. Using defaults. Error: {e}")
         pass
     
     # Status
