@@ -68,6 +68,8 @@ data/
 results/old/
 results/DL/**/models
 results/nested_cv/**/models
+results/DL_tuning/**/models
+batch_run.log
 
 
 
