@@ -195,7 +195,15 @@ This document contains the *strict* style rules for the journal *Brain*. **All o
 *   **Prohibitions**: No colour/shaded cells. No tab-separated tables. No vertical lines usually (implied by example).
 *   **Footnotes**: Superscript letters ($^a$, $^b$) listed alphabetically (left-to-right, top-to-bottom).
 *   **Statistics**: Symbols for *P*-values (e.g. $*P < 0.05$). Bold for significant values.
-*   **References in Table**: AMA style numbers ($^{23}$). No separate ref list.
+*   **References in Table**:
+    *   AMA style numbers ($^{23}$).
+    *   For cells containing only a citation: Use `Author`$^{23}$ or `Author et al.`$^{23}$.
+    *   No separate reference list.
+    *   Citations should match the main text numbering.
+*   **Layout**:
+    *   **Heading and Footnotes**: Must be on the **same page** as the table.
+    *   **Row Subheadings**: Can be merged across columns (bold).
+    *   **Super-headings**: Centered.
 
 ### Figures
 
