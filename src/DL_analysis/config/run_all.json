@@ -1,0 +1,33 @@
+{
+    "script_path": "src/DL_analysis/training/run_nested_cv.py",
+    "config_path": "src/DL_analysis/config/run.json",
+    "experiments": [
+        {
+            "group1": "AD",
+            "group2": "CBS",
+            "models": [
+                "resnet",
+                "alexnet",
+                "vgg16"
+            ]
+        },
+        {
+            "group1": "AD",
+            "group2": "PSP",
+            "models": [
+                "resnet",
+                "alexnet",
+                "vgg16"
+            ]
+        },
+        {
+            "group1": "CBS",
+            "group2": "PSP",
+            "models": [
+                "resnet",
+                "alexnet",
+                "vgg16"
+            ]
+        }
+    ]
+}

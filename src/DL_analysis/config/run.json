@@ -1,0 +1,20 @@
+{
+    "comment": "Template State File used by run_nested_cv.py",
+    "experiment": {
+        "group1": "AD",
+        "group2": "CBS",
+        "model": "resnet",
+        "tuning": true
+    },
+    "paths": {
+        "grid_config": "src/DL_analysis/config/grid_parameters.json",
+        "fixed_config": "src/DL_analysis/config/fixed_parameters.json",
+        "base_output_dir": "results/DL_tuning",
+        "metadata_path": "/data/users/etosato/ANM_Verona/assets/metadata/labels.csv",
+        "data_dir": "/data/users/etosato/ANM_Verona/data/FCmaps_processed",
+        "data_dir_augmented": "/data/users/etosato/ANM_Verona/data/FCmaps_augmented_processed"
+    },
+    "global": {
+        "test_mode": false
+    }
+}

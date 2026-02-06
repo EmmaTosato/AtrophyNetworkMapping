@@ -1,0 +1,103 @@
+{
+    "grids": {
+        "alexnet": {
+            "lr": [
+                0.01,
+                0.001,
+                0.0001
+            ],
+            "batch_size": [
+                8
+            ],
+            "weight_decay": [
+                0.0001,
+                0.0005
+            ],
+            "epochs": [
+                40
+            ],
+            "optimizer": [
+                "sgd",
+                "adam"
+            ],
+            "momentum": [
+                0.9
+            ],
+            "scheduler_gamma": [
+                0.1
+            ],
+            "scheduler_patience": [
+                5
+            ],
+            "patience": [
+                null
+            ]
+        },
+        "resnet": {
+            "lr": [
+                0.01,
+                0.001,
+                0.0001
+            ],
+            "batch_size": [
+                8
+            ],
+            "weight_decay": [
+                0.0001,
+                0.0005
+            ],
+            "epochs": [
+                40
+            ],
+            "optimizer": [
+                "sgd",
+                "adam"
+            ],
+            "momentum": [
+                0.9
+            ],
+            "scheduler_gamma": [
+                0.1
+            ],
+            "scheduler_patience": [
+                5
+            ],
+            "patience": [
+                null
+            ]
+        },
+        "vgg16": {
+            "lr": [
+                0.01,
+                0.001,
+                0.0001
+            ],
+            "batch_size": [
+                8
+            ],
+            "weight_decay": [
+                0.0001,
+                0.0005
+            ],
+            "epochs": [
+                40
+            ],
+            "optimizer": [
+                "sgd",
+                "adam"
+            ],
+            "momentum": [
+                0.9
+            ],
+            "scheduler_gamma": [
+                0.1
+            ],
+            "scheduler_patience": [
+                5
+            ],
+            "patience": [
+                null
+            ]
+        }
+    }
+}

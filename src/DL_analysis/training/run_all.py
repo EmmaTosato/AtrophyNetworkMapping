@@ -21,83 +21,92 @@ def run_command(cmd, log_file=None):
         sys.exit(return_code)
 
 def main():
-    # Dynamically resolve project root (3 levels up from this script: src/DL_analysis/training -> src/DL/ -> src/ -> root)
+    # Dynamically resolve project root
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(script_dir, "../../../"))
     
-    # Default paths handled dynamically
-    default_config = os.path.join(project_root, "src/DL_analysis/config/cnn.json")
-    default_grid = os.path.join(project_root, "src/DL_analysis/config/cnn_grid.json")
+    # Default Paths
+    default_batch_config = os.path.join(project_root, "src/DL_analysis/config/run_all.json")
     
-    parser = argparse.ArgumentParser(description="Automated Benchmark Runner (Config Driven)")
-    parser.add_argument("--config", type=str, default=default_config,
-                        help="Path to runner configuration JSON (Experiments + Environment)")
-    parser.add_argument("--grid_config", type=str, default=default_grid,
-                        help="Path to hyperparameter grid JSON")
+    parser = argparse.ArgumentParser(description="Generic Batch Runner (Config Driven)")
+    parser.add_argument("--config", type=str, default=default_batch_config,
+                        help="Path to the batch execution JSON")
     parser.add_argument("--dry_run", action='store_true', help="Print commands only")
     
     args = parser.parse_args()
     
     if not os.path.exists(args.config):
-        print(f"Config file not found: {args.config}")
+        print(f"Batch config file not found: {args.config}")
         sys.exit(1)
         
     with open(args.config, 'r') as f:
-        job_config = json.load(f)
+        batch_config = json.load(f)
         
-    base_output_dir = job_config.get('global', {}).get('base_output_dir', 'results/DL')
+    script_rel_path = batch_config.get('script_path')
+    config_rel_path = batch_config.get('config_path')
+    experiments = batch_config.get('experiments', [])
     
-    # If base_output_dir is relative, make it relative to project root for consistency
-    if not os.path.isabs(base_output_dir):
-        base_output_dir = os.path.join(project_root, base_output_dir)
+    # Resolve Paths (Assume relative to Project Root)
+    # Note: run_all.json defines paths relative to root usually.
+    if not os.path.isabs(script_rel_path):
+        script_full_path = os.path.join(project_root, script_rel_path)
+    else:
+        script_full_path = script_rel_path
         
-    global_test_mode = job_config.get('global', {}).get('test_mode', False)
-    
-    experiments = job_config.get('experiments', [])
-    
+    if not os.path.isabs(config_rel_path):
+        config_full_path = os.path.join(project_root, config_rel_path)
+    else:
+        config_full_path = config_rel_path
+        
+    if not os.path.exists(script_full_path):
+        print(f"Target script not found: {script_full_path}")
+        sys.exit(1)
+
     print("="*60)
-    print(f"BENCHMARK RUNNER (JSON Config)")
-    print(f"Project Root       : {project_root}")
-    print(f"Experiments Config : {args.config}")
-    print(f"Hyperparams Config : {args.grid_config}")
-    print(f"Base Output        : {base_output_dir}")
-    print(f"Test Mode          : {global_test_mode}")
-    print(f"Jobs found         : {len(experiments)}")
+    print(f"BATCH RUNNER (Generic)")
+    print(f"Batch Config   : {args.config}")
+    print(f"Target Script  : {script_full_path}")
+    print(f"Base State     : {config_full_path}")
+    print(f"Job Count      : {len(experiments)}")
     print("="*60)
-    
-    # Path to the child script (run_nested_cv.py is in the same dir as this script)
-    nested_cv_script = os.path.join(script_dir, "run_nested_cv.py")
     
     for i, exp in enumerate(experiments):
-        g1 = exp['group1']
-        g2 = exp['group2']
-        models = exp['models']
+        # Extract params from the experiment block
+        g1 = exp.get('group1')
+        g2 = exp.get('group2')
+        tuning = exp.get('tuning') # True/False/None
         
-        print(f"\n[Experiment {i+1}] {g1} vs {g2} -> Models: {models}")
+        # Support 'models' (list) or 'model' (string)
+        models = exp.get('models')
+        if models is None:
+            models = [exp.get('model')]
+            
+        print(f"\n[Job {i+1}] {g1} vs {g2} -> Models: {models}")
         
         for model in models:
-            pair_name = f"{g1}_{g2}"
-            output_dir = os.path.join(base_output_dir, pair_name, model)
-            
+            # Construct Command
             cmd = [
-                "python3", nested_cv_script,
+                "python3", script_full_path,
+                "--config_path", config_full_path,
                 "--group1", g1,
                 "--group2", g2,
-                "--model", model,
-                "--output_dir", output_dir,
-                "--env_config_path", args.config,
-                "--config_path", args.grid_config
+                "--model", model
             ]
             
-            if global_test_mode:
-                cmd.append("--test_mode")
-                
+            # Pass tuning flag only if True
+            # (If False, we omit it, relying on script default/absence logic)
+            # Actually, per our new logic in nested_cv:
+            # "if args.tuning: experiment['tuning'] = True"
+            # So passing --tuning activates it. NOT passing it leaves it as per config default (False).
+            if tuning is True:
+                cmd.append("--tuning")
+            
             if args.dry_run:
                 print(f"  [DRY RUN] {' '.join(cmd)}")
             else:
                 run_command(cmd)
 
-    print("\nAll experiments completed.")
+    print("\nAll batch jobs completed.")
 
 if __name__ == "__main__":
     main()

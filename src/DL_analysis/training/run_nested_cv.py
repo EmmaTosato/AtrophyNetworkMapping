@@ -103,9 +103,9 @@ def train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
     momentum = config.get('momentum', 0.9) # Default to 0.9 if missing (backward compat)
     
     if config['optimizer'] == 'adam':
-        optimizer = torch.optim.Adam(model.parameters(), lr=config['lr'], weight_decay=config['weight_decay'])
+        optimizer = torch.optim.Adam(model.parameters(), lr=config['lr'], weight_decay=config.get('weight_decay', 0.0))
     elif config['optimizer'] == 'sgd':
-        optimizer = torch.optim.SGD(model.parameters(), lr=config['lr'], weight_decay=config['weight_decay'], momentum=momentum)
+        optimizer = torch.optim.SGD(model.parameters(), lr=config['lr'], weight_decay=config.get('weight_decay', 0.0), momentum=momentum)
     else:
         raise ValueError(f"Unsupported optimizer: {config['optimizer']}")
         
@@ -182,10 +182,11 @@ def train_single_fold(train_dataset, val_dataset, config, device, verbose=False)
 
     return model, best_acc, best_train_acc, history, last_model_state
 
-def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, device, args):
+def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, device, args, output_dir=None):
     """
     Perform Inner CV (5-fold) to find best hyperparameters.
     train_df: DataFrame with training subjects for this outer fold.
+    output_dir: If provided, saves cv_grid.csv here.
     """
     # Test Mode overrides
     if args.test_mode:
@@ -200,6 +201,9 @@ def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, dev
     
     best_score = -1
     best_config = None
+    
+    # Store all results for cv_grid.csv
+    grid_results = []
     
     print(f"\n  [Inner Grid Search] Starting Grid Search ({len(combinations)} configurations)...")
     
@@ -227,8 +231,6 @@ def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, dev
 
         fold_scores = []
         
-        fold_scores = []
-        
         for inner_fold, (train_idx, val_idx) in enumerate(inner_cv.split(train_df['ID'], train_df['Group'])):
             # Inner Split
             inner_train_df = train_df.iloc[train_idx]
@@ -243,11 +245,28 @@ def inner_cv_grid_search(train_df, model_name, grid_params, data_dirs, seed, dev
             fold_scores.append(val_acc)
             
         mean_score = np.mean(fold_scores)
+        std_score = np.std(fold_scores)
         print(f"    [Config {i+1}/{len(combinations)}] Mean Acc: {mean_score:.4f} | Params: {config}")
+        
+        # Add to results
+        # Flatten params for CSV
+        res_entry = config.copy()
+        res_entry['mean_test_accuracy'] = mean_score # Naming convention to match ML
+        res_entry['std_test_accuracy'] = std_score
+        grid_results.append(res_entry)
         
         if mean_score > best_score:
             best_score = mean_score
             best_config = config
+            
+    # Save cv_grid.csv if output_dir provided
+    if output_dir:
+        df_grid = pd.DataFrame(grid_results)
+        # Reorder columns: mean_test_accuracy, std_test_accuracy, then params
+        cols = ['mean_test_accuracy', 'std_test_accuracy'] + [c for c in df_grid.columns if c not in ['mean_test_accuracy', 'std_test_accuracy']]
+        df_grid = df_grid[cols]
+        df_grid.to_csv(os.path.join(output_dir, "cv_grid.csv"), index=False)
+        print(f"  [Inner Grid Search] Saved full grid results to {os.path.join(output_dir, 'cv_grid.csv')}")
             
     print(f"  [Inner Grid Search] Best Config found (Acc: {best_score:.4f}):\n    {best_config}")
     return best_config
@@ -316,19 +335,20 @@ def nested_cv_classification(args):
     print(f"Using device: {device}")
     
     # Outer CV
-    outer_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    outer_cv = StratifiedKFold(n_splits=5 if not args.test_mode else 2, shuffle=True, random_state=42)
     results = []
-    
-    # Load Grid Params
-    with open(args.config_path, 'r') as f:
-        full_config = json.load(f)
-        grid_params = full_config['grids'][args.model]
-        # Add common fixed params if needed
     
     for outer_fold, (train_idx, test_idx) in enumerate(outer_cv.split(X, y)):
         if args.test_mode and outer_fold > 0: break # Only 1 fold in test mode
         
         print(f"\n=== OUTER FOLD {outer_fold+1}/5 ===")
+        
+        # --- PREPARE FOLD DIRS ---
+        fold_dir = os.path.join(args.output_dir, f"fold_{outer_fold+1}")
+        plots_dir = os.path.join(fold_dir, "plots")
+        models_dir = os.path.join(fold_dir, "models")
+        os.makedirs(plots_dir, exist_ok=True)
+        os.makedirs(models_dir, exist_ok=True)
         
         # Split
         train_df = df_meta.iloc[train_idx].reset_index(drop=True)
@@ -342,9 +362,70 @@ def nested_cv_classification(args):
         print(f"  [Outer Fold] Train Size: {len(train_df)} subjects")
         print(f"  [Outer Fold] Test Size : {len(test_df)} subjects")
         
-        # 1. Inner CV Grid Search
-        print(f"\n--- Step 1: Inner CV Grid Search (Fold {outer_fold+1}) ---")
-        best_params = inner_cv_grid_search(train_df, args.model, grid_params, data_dirs, seed=42, device=device, args=args)
+        # 1. Hyperparameter Selection (Inner CV)
+        # Load Grid Params
+        config_path = args.config_path
+        if not os.path.exists(config_path):
+             raise FileNotFoundError(f"Config path {config_path} not found")
+             
+        with open(config_path, 'r') as f:
+             params_config = json.load(f)
+             
+        # Extract params for THIS model
+        # Structure of grid json: { "grids": { "model_name": { ... } } }
+        # Structure of fixed json: { "model_name": { ... } }
+        # We need to detect which structure it is.
+        # Heuristic: Check if 'grids' key exists
+        if 'grids' in params_config:
+             grid_params = params_config['grids'].get(args.model)
+             is_grid = True
+        else:
+             grid_params = params_config.get(args.model)
+             is_grid = False
+             
+        if not grid_params:
+             raise ValueError(f"No parameters found for model {args.model} in {config_path}")
+        
+        best_params = {}
+        
+        # Determine if we run grid search or use fixed
+        if args.tuning and is_grid:
+            print(f"\n--- Step 1: Hyperparameter Selection (Fold {outer_fold+1}) ---")
+            # Pass fold_dir to save cv_grid.csv
+            best_params = inner_cv_grid_search(train_df, args.model, grid_params, data_dirs, 42, device, args, output_dir=fold_dir)
+            
+        else:
+            print(f"\n--- Step 1: Hyperparameter Selection (Fold {outer_fold+1}) ---")
+            
+            # Check for explicit fixed parameters
+            fixed_params_model = getattr(args, 'fixed_parameters', {}).get(args.model)
+            
+            # If we loaded from fixed_parameters.json (via config_path), use that
+            if not is_grid:
+                 fixed_params_model = grid_params
+            
+            if fixed_params_model:
+                print(f"  [Tuning] Skipped. Using FIXED parameters from config for {args.model}.")
+                best_params = deepcopy(fixed_params_model)
+            else:
+                print("  [Tuning] Skipped. Using first configuration from grid (Flag --tuning not set, no fixed params).")
+                # Construct params from first item of each list in grid_params (Fallthrough)
+                best_params = {}
+                for k, v in grid_params.items():
+                    if isinstance(v, list) and len(v) > 0:
+                         best_params[k] = v[0]
+                    else:
+                         best_params[k] = v
+            
+            best_params['model_type'] = args.model
+            # Apply defaults logic similar to inner_cv_grid_search
+            if 'epochs' not in best_params: best_params['epochs'] = 60
+            if 'patience' not in best_params: best_params['patience'] = None
+            if 'optimizer' not in best_params: best_params['optimizer'] = 'sgd'
+            
+            if args.test_mode: best_params['epochs'] = 1
+            
+            print(f"  [Params] {best_params}")
         
         # 2. Full Retrain
         print(f"\n--- Step 2: Full Retrain with Best Params (Fold {outer_fold+1}) ---")
@@ -376,20 +457,20 @@ def nested_cv_classification(args):
         metrics = compute_metrics_safe(y_true, y_pred, y_probs)
         
         # Save results
+        # Store Flattened Best Params in fold_result for CSV export
         fold_result = {
             'fold': outer_fold + 1,
-            'best_params': best_params,
             'metrics': metrics
         }
+        # Inject best params keys directly into fold_result
+        for k, v in best_params.items():
+            # Avoid overwriting reserved keys if any (none really)
+            fold_result[k] = v
+            
         results.append(fold_result)
         
-        # --- SAVING ARTIFACTS ---
-        fold_dir = os.path.join(args.output_dir, f"fold_{outer_fold+1}")
-        plots_dir = os.path.join(fold_dir, "plots")
-        models_dir = os.path.join(fold_dir, "models")
-        os.makedirs(plots_dir, exist_ok=True)
-        os.makedirs(models_dir, exist_ok=True)
-
+        # --- SAVING ARTIFACTS --- (Already created fold_dir above)
+        
         # 1. Plots
         plot_training_curves(history, plots_dir)
         
@@ -397,7 +478,6 @@ def nested_cv_classification(args):
         torch.save(final_model.state_dict(), os.path.join(models_dir, "best_model.pt"))
         torch.save(last_model_state, os.path.join(models_dir, "last_model.pt"))
         
-        # 3. Validated Metrics
         # 3. Validated Metrics (Saved as Params only, as requested)
         # We save only best_params and fold info to metrics.json
         fold_info_only = {
@@ -436,56 +516,178 @@ def nested_cv_classification(args):
     
     # --- Save to CSV (Requested format) ---
     
-    # 1. aggregated_results.csv (Mean/Std of metrics)
+    # 1. summary_results.csv (Incremental at Comparison Level)
     # Round to 3 decimals
     agg_metrics_rounded = {k: round(v, 3) for k, v in agg_metrics.items()}
-    df_agg = pd.DataFrame([agg_metrics_rounded])
-    df_agg.to_csv(os.path.join(args.output_dir, "aggregated_results.csv"), index=False)
     
-    # 2. nested_cv_results.csv (Per-fold metrics)
+    # Add Comparison and Model info (Lowercase headers as per user screenshot)
+    agg_metrics_rounded['comparison'] = f"{args.group1}_{args.group2}"
+    agg_metrics_rounded['model'] = args.model
+    
+    # Reorder to put 'comparison' and 'model' first
+    cols = ['comparison', 'model'] + [k for k in agg_metrics_rounded.keys() if k not in ['comparison', 'model']]
+    df_agg = pd.DataFrame([agg_metrics_rounded], columns=cols)
+    
+    # Path: Parent of output_dir (which is results/DL/G1_G2/Model -> Parent is results/DL/G1_G2)
+    comparison_dir = os.path.dirname(args.output_dir)
+    summary_path = os.path.join(comparison_dir, "summary_results.csv")
+    
+    # Append if exists, else write with header
+    if os.path.exists(summary_path):
+        df_agg.to_csv(summary_path, mode='a', header=False, index=False)
+    else:
+        df_agg.to_csv(summary_path, mode='w', header=True, index=False)
+        
+    print(f"  [Save] Aggregated metrics appended to {summary_path}")
+    
+    # 2. nested_cv_results.csv (Per-fold metrics + Params)
     nested_rows = []
     for r in results:
+        # Reconstruct row: fold, metrics flattened, params flattened
         row = {'fold': r['fold']}
-        # Flatten metrics
+        
+        # Add Metrics
         for k, v in r['metrics'].items():
-            row[k] = round(v, 3) if isinstance(v, (int, float)) else v
+            row[k] = v
+            
+        # Add Best Params (They are already at top level of 'r' because we injected them)
+        # But wait, we mixed them in 'r' dict above.
+        # r keys: 'fold', 'metrics', 'lr', 'batch_size', ...
+        for k, v in r.items():
+            if k not in ['fold', 'metrics']:
+                row[k] = v
+                
         nested_rows.append(row)
         
     df_nested = pd.DataFrame(nested_rows)
+    # Column ordering: fold, [metrics], [params]
+    metric_cols = list(results[0]['metrics'].keys())
+    # param_cols are all other keys that are not fold or metrics
+    param_cols = [k for k in df_nested.columns if k not in ['fold'] + metric_cols]
+    
+    final_cols = ['fold'] + metric_cols + param_cols
+    # Ensure they exist (sometimes params might vary? No, usually fixed set of keys from grid)
+    # Intersect with df columns to be safe
+    final_cols = [c for c in final_cols if c in df_nested.columns]
+    
+    df_nested = df_nested[final_cols]
     df_nested.to_csv(os.path.join(args.output_dir, "nested_cv_results.csv"), index=False)
     
     print(f"Results saved to {args.output_dir}/aggregated_results.csv and nested_cv_results.csv")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--group1", type=str, required=True)
-    parser.add_argument("--group2", type=str, required=True)
-    parser.add_argument("--model", type=str, required=True)
-    parser.add_argument("--config_path", type=str, default="src/DL_analysis/config/cnn_grid.json")
-    parser.add_argument("--env_config_path", type=str, default="src/DL_analysis/config/cnn.json")
-    parser.add_argument("--output_dir", type=str, default="results/nested_cv_output")
-    parser.add_argument("--test_mode", action='store_true')
+    parser = argparse.ArgumentParser(description="DL Training with Hybrid JSON/CLI Config")
+    parser.add_argument("--config_path", type=str, required=True,
+                        help="Path to the main experiment state JSON")
     
-    # Path arguments (can be overriden by config, but needed for args attribute existence)
-    parser.add_argument("--metadata_path", type=str, default=None)
-    parser.add_argument("--data_dir", type=str, default=None)
-    parser.add_argument("--data_dir_augmented", type=str, default=None)
-    
+    # Optional Overrides
+    parser.add_argument("--group1", type=str, default=None)
+    parser.add_argument("--group2", type=str, default=None)
+    parser.add_argument("--model", type=str, default=None)
+    parser.add_argument("--tuning", action='store_true', default=None, help="Force tuning mode if set")
+    parser.add_argument("--test_mode", action='store_true', help="Force test mode (reduced data/epochs)")
+    parser.add_argument("--output_dir", type=str, default=None, help="Override output directory")
+
     args = parser.parse_args()
     
-    # Load Environment Config
-    if os.path.exists(args.env_config_path):
-        with open(args.env_config_path, 'r') as f:
-            full_cfg = json.load(f)
-            # Support both flat config and nested 'global' config
-            env_config = full_cfg.get('global', full_cfg)
-            
-            # Inject into args
-            args.metadata_path = env_config.get('metadata_path', args.metadata_path)
-            args.data_dir = env_config.get('data_dir', args.data_dir)
-            args.data_dir_augmented = env_config.get('data_dir_augmented', args.data_dir_augmented)
-    else:
-        # Fallback or strict error
-        raise FileNotFoundError(f"Environment config not found at {args.env_config_path}")
+    # 1. Load State JSON
+    if not os.path.exists(args.config_path):
+        raise FileNotFoundError(f"Config file not found: {args.config_path}")
         
+    with open(args.config_path, 'r') as f:
+        run_config = json.load(f)
+        
+    # 2. Extract Sections
+    experiment = run_config.get('experiment', {})
+    global_cfg = run_config.get('global', {})
+    paths = run_config.get('paths', {})
+    
+    # 3. Apply Overrides (Priority: CLI > JSON)
+    # If CLI arg is None, use JSON value. If JSON is missing, it might be None or Error depending on strictness.
+    # We assume JSON has defaults if CLI is missing.
+    args.group1 = args.group1 if args.group1 else experiment.get('group1')
+    args.group2 = args.group2 if args.group2 else experiment.get('group2')
+    args.model = args.model if args.model else experiment.get('model')
+    
+    if not args.group1 or not args.group2 or not args.model:
+        raise ValueError("Group1, Group2, and Model must be specified either in config or via CLI.")
+
+    # Tuning Logic
+    # If args.tuning is True (flag set), use it.
+    # If args.tuning is False (default None -> but action store_true makes it False? No, default=None makes it None)
+    # Check parser default. default=None.
+    if args.tuning is not None:
+         # CLI Override
+         pass
+    else:
+         # Use Config
+         args.tuning = experiment.get('tuning', False)
+        
+    # Test Mode Logic (CLI Overrides global cfg)
+    if args.test_mode:
+        global_cfg['test_mode'] = True
+    else:
+        # Inherit from config
+        args.test_mode = global_cfg.get('test_mode', False)
+        
+    # 4. Resolve Params (Fixed vs Grid)
+    params_file = None
+    if args.tuning:
+        print("  [Config] Mode: TUNING (Loading Grid Parameters)")
+        params_file = paths.get('grid_config')
+    else:
+        print("  [Config] Mode: FIXED (Loading Fixed Parameters)")
+        params_file = paths.get('fixed_config')
+    
+    # Fix relative paths
+    def resolve_path(p):
+        if not p: return None
+        if not os.path.isabs(p):
+            # Try connecting to project root detected
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            # From src/DL_analysis/training to Project Root:
+            # ../../ -> src/DL_analysis/training -> src -> root?
+            # src/DL_analysis/training (level 0)
+            # src/DL_analysis (level 1)
+            # src (level 2)
+            # root (level 3)
+            project_root = os.path.abspath(os.path.join(current_dir, '../../../'))
+            return os.path.join(project_root, p)
+        return p
+        
+    if params_file:
+         params_file = resolve_path(params_file)
+    
+    if not params_file or not os.path.exists(params_file):
+        raise FileNotFoundError(f"Parameter file not found: {params_file}")
+
+    # 5. Inject into args for nested_cv_classification
+    # Path args - READ FROM PATHS SECTION
+    args.metadata_path = resolve_path(paths.get('metadata_path'))
+    args.data_dir = resolve_path(paths.get('data_dir'))
+    args.data_dir_augmented = resolve_path(paths.get('data_dir_augmented'))
+    
+    # Output Directory Logic
+    # Base output dir from config
+    base_output_dir = resolve_path(paths.get('base_output_dir', 'results/DL'))
+    
+    # Override base if CLI provided (rare, but supported)
+    if args.output_dir:
+        base_output_dir = args.output_dir
+        
+    # Construct final specific output dir: base / G1_G2 / Model
+    # This ensures structure is maintained
+    args.base_output_dir = base_output_dir # Keep reference to base
+    args.output_dir = os.path.join(base_output_dir, f"{args.group1}_{args.group2}", args.model)
+    
+    # Config Path to pass to inner functions
+    args.config_path = params_file 
+    
+    # Validate critical paths
+    if not os.path.exists(args.metadata_path):
+        raise FileNotFoundError(f"Metadata path not found: {args.metadata_path}")
+    if not os.path.exists(args.data_dir):
+        raise FileNotFoundError(f"Data directory not found: {args.data_dir}")
+        
+    # 6. Execute
     nested_cv_classification(args)
