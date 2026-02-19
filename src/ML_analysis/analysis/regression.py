@@ -98,14 +98,16 @@ def shuffling_regression(input_data, target, n_iter=100):
     p_value = np.mean([r >= r2_real for r in r2_shuffled])
     return r2_real, r2_shuffled, p_value
 
-def compute_rmse_stats(df_merged, y_pred, residuals):
+def compute_rmse_stats(df_merged, y_pred, residuals, y_true, target_col='CDR_SB'):
     """
     Computes RMSE statistics for each group in the dataset:
     - Returns per-subject RMSE values and grouped summary stats
     """
     rmse_vals = np.sqrt(residuals ** 2)
-    df_err = df_merged[['ID', 'Group', 'CDR_SB']].copy()
-    df_err['Predicted CDR_SB'] = y_pred
+    # Use target_col for selecting the correct column
+    df_err = df_merged[['ID', 'Group']].copy()
+    df_err[target_col] = y_true # Use the processed y values (scaled/unscaled consistent with preds)
+    df_err[f'Predicted {target_col}'] = y_pred
     df_err['RMSE'] = rmse_vals
     stats = df_err.groupby('Group')['RMSE'].agg(Mean_RMSE='mean', Std_RMSE='std', N='count').round(2)
     return df_err.sort_values('RMSE'), stats
@@ -183,7 +185,8 @@ def regression_pipeline(df_input, df_meta, args):
         residuals_post = residuals
 
     # Compute RMSE statistics (on chosen scale)
-    df_sorted, rmse_stats = compute_rmse_stats(df_merged, y_pred_post, residuals_post)
+    # Compute RMSE statistics (on chosen scale)
+    df_sorted, rmse_stats = compute_rmse_stats(df_merged, y_pred_post, residuals_post, y_true=y_post, target_col=args['target_variable'])
 
     y_plot = y_post
     y_pred_plot = y_pred_post

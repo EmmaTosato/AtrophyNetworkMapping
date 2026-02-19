@@ -1,0 +1,231 @@
+Loaded regression grid from: /data/users/etosato/ANM_Verona/src/ML_analysis/config/ml_run_all_config.json
+======================================================================
+BATCH REGRESSION PIPELINE
+Started: 2026-02-13 09:55:45
+======================================================================
+Total combinations to run: 16
+----------------------------------------------------------------------
+
+[1/16]
+======================================================================
+RUNNING: voxel_CDR_SB_no_cov_global
+======================================================================
+  Dataset: voxel | UMAP: True
+  Target: CDR_SB
+  Covariates: None
+  Group Regression: False
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/voxel/umap_regression/CDR_SB
+✅ COMPLETED: voxel_CDR_SB_no_cov_global
+
+[2/16]
+======================================================================
+RUNNING: voxel_CDR_SB_no_cov_group
+======================================================================
+  Dataset: voxel | UMAP: True
+  Target: CDR_SB
+  Covariates: None
+  Group Regression: True
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/voxel/umap_regression/CDR_SB
+  📁 Copied: ols_cdrsb_ad.png -> results/ML/images/regression/voxel/no_covariates
+  📁 Copied: ols_cdrsb_cbs.png -> results/ML/images/regression/voxel/no_covariates
+  📁 Copied: ols_cdrsb_psp.png -> results/ML/images/regression/voxel/no_covariates
+✅ COMPLETED: voxel_CDR_SB_no_cov_group
+
+[3/16]
+======================================================================
+RUNNING: voxel_CDR_SB_cov_global
+======================================================================
+  Dataset: voxel | UMAP: True
+  Target: CDR_SB
+  Covariates: ['Age', 'Sex', 'Education']
+  Group Regression: False
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/voxel/umap_regression/CDR_SB
+✅ COMPLETED: voxel_CDR_SB_cov_global
+
+[4/16]
+======================================================================
+RUNNING: voxel_CDR_SB_cov_group
+======================================================================
+  Dataset: voxel | UMAP: True
+  Target: CDR_SB
+  Covariates: ['Age', 'Sex', 'Education']
+  Group Regression: True
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/voxel/umap_regression/CDR_SB
+  📁 Copied: ols_cdrsb_ad.png -> results/ML/images/regression/voxel/covariates
+  📁 Copied: ols_cdrsb_cbs.png -> results/ML/images/regression/voxel/covariates
+  📁 Copied: ols_cdrsb_psp.png -> results/ML/images/regression/voxel/covariates
+✅ COMPLETED: voxel_CDR_SB_cov_group
+
+[5/16]
+======================================================================
+RUNNING: voxel_MMSE_no_cov_global
+======================================================================
+  Dataset: voxel | UMAP: True
+  Target: MMSE
+  Covariates: None
+  Group Regression: False
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/voxel/umap_regression/MMSE
+✅ COMPLETED: voxel_MMSE_no_cov_global
+
+[6/16]
+======================================================================
+RUNNING: voxel_MMSE_no_cov_group
+======================================================================
+  Dataset: voxel | UMAP: True
+  Target: MMSE
+  Covariates: None
+  Group Regression: True
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/voxel/umap_regression/MMSE
+  📁 Copied: ols_mmse_ad.png -> results/ML/images/regression/voxel/no_covariates
+  📁 Copied: ols_mmse_cbs.png -> results/ML/images/regression/voxel/no_covariates
+  📁 Copied: ols_mmse_psp.png -> results/ML/images/regression/voxel/no_covariates
+✅ COMPLETED: voxel_MMSE_no_cov_group
+
+[7/16]
+======================================================================
+RUNNING: voxel_MMSE_cov_global
+======================================================================
+  Dataset: voxel | UMAP: True
+  Target: MMSE
+  Covariates: ['Age', 'Sex', 'Education']
+  Group Regression: False
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/voxel/umap_regression/MMSE
+✅ COMPLETED: voxel_MMSE_cov_global
+
+[8/16]
+======================================================================
+RUNNING: voxel_MMSE_cov_group
+======================================================================
+  Dataset: voxel | UMAP: True
+  Target: MMSE
+  Covariates: ['Age', 'Sex', 'Education']
+  Group Regression: True
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/voxel/umap_regression/MMSE
+  📁 Copied: ols_mmse_ad.png -> results/ML/images/regression/voxel/covariates
+  📁 Copied: ols_mmse_cbs.png -> results/ML/images/regression/voxel/covariates
+  📁 Copied: ols_mmse_psp.png -> results/ML/images/regression/voxel/covariates
+✅ COMPLETED: voxel_MMSE_cov_group
+
+[9/16]
+======================================================================
+RUNNING: networks_CDR_SB_no_cov_global
+======================================================================
+  Dataset: networks | UMAP: False
+  Target: CDR_SB
+  Covariates: None
+  Group Regression: False
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/networks/regression/CDR_SB
+✅ COMPLETED: networks_CDR_SB_no_cov_global
+
+[10/16]
+======================================================================
+RUNNING: networks_CDR_SB_no_cov_group
+======================================================================
+  Dataset: networks | UMAP: False
+  Target: CDR_SB
+  Covariates: None
+  Group Regression: True
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/networks/regression/CDR_SB
+  📁 Copied: ols_cdrsb_ad.png -> results/ML/images/regression/networks/no_covariates
+  📁 Copied: ols_cdrsb_cbs.png -> results/ML/images/regression/networks/no_covariates
+  📁 Copied: ols_cdrsb_psp.png -> results/ML/images/regression/networks/no_covariates
+✅ COMPLETED: networks_CDR_SB_no_cov_group
+
+[11/16]
+======================================================================
+RUNNING: networks_CDR_SB_cov_global
+======================================================================
+  Dataset: networks | UMAP: False
+  Target: CDR_SB
+  Covariates: ['Age', 'Sex', 'Education']
+  Group Regression: False
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/networks/regression/CDR_SB
+✅ COMPLETED: networks_CDR_SB_cov_global
+
+[12/16]
+======================================================================
+RUNNING: networks_CDR_SB_cov_group
+======================================================================
+  Dataset: networks | UMAP: False
+  Target: CDR_SB
+  Covariates: ['Age', 'Sex', 'Education']
+  Group Regression: True
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/networks/regression/CDR_SB
+  📁 Copied: ols_cdrsb_ad.png -> results/ML/images/regression/networks/covariates
+  📁 Copied: ols_cdrsb_cbs.png -> results/ML/images/regression/networks/covariates
+  📁 Copied: ols_cdrsb_psp.png -> results/ML/images/regression/networks/covariates
+✅ COMPLETED: networks_CDR_SB_cov_group
+
+[13/16]
+======================================================================
+RUNNING: networks_MMSE_no_cov_global
+======================================================================
+  Dataset: networks | UMAP: False
+  Target: MMSE
+  Covariates: None
+  Group Regression: False
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/networks/regression/MMSE
+✅ COMPLETED: networks_MMSE_no_cov_global
+
+[14/16]
+======================================================================
+RUNNING: networks_MMSE_no_cov_group
+======================================================================
+  Dataset: networks | UMAP: False
+  Target: MMSE
+  Covariates: None
+  Group Regression: True
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/networks/regression/MMSE
+  📁 Copied: ols_mmse_ad.png -> results/ML/images/regression/networks/no_covariates
+  📁 Copied: ols_mmse_cbs.png -> results/ML/images/regression/networks/no_covariates
+  📁 Copied: ols_mmse_psp.png -> results/ML/images/regression/networks/no_covariates
+✅ COMPLETED: networks_MMSE_no_cov_group
+
+[15/16]
+======================================================================
+RUNNING: networks_MMSE_cov_global
+======================================================================
+  Dataset: networks | UMAP: False
+  Target: MMSE
+  Covariates: ['Age', 'Sex', 'Education']
+  Group Regression: False
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/networks/regression/MMSE
+✅ COMPLETED: networks_MMSE_cov_global
+
+[16/16]
+======================================================================
+RUNNING: networks_MMSE_cov_group
+======================================================================
+  Dataset: networks | UMAP: False
+  Target: MMSE
+  Covariates: ['Age', 'Sex', 'Education']
+  Group Regression: True
+----------------------------------------------------------------------
+DEBUG: Output Base Directory -> results/ML/networks/regression/MMSE
+  📁 Copied: ols_mmse_ad.png -> results/ML/images/regression/networks/covariates
+  📁 Copied: ols_mmse_cbs.png -> results/ML/images/regression/networks/covariates
+  📁 Copied: ols_mmse_psp.png -> results/ML/images/regression/networks/covariates
+✅ COMPLETED: networks_MMSE_cov_group
+
+======================================================================
+BATCH COMPLETED
+======================================================================
+Duration: 0:03:03.280932
+Successful: 16/16
+======================================================================
+

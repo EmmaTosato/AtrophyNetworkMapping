@@ -2,7 +2,7 @@
   "job": {
     "dataset_type": "voxel",
     "threshold": false,
-    "task_type": "classification",
+    "task_type": "regression",
     "umap": true
   },
   "classification": {
@@ -30,7 +30,8 @@
     "plot_regression": true,
     "save_flag": true,
     "title_flag": false,
-    "separated_plots": true
+    "separated_plots": true,
+    "save_separately": true
   },
   "fixed_parameters": {
     "output_dir": "results/ML/",

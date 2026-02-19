@@ -10,6 +10,7 @@ import seaborn as sns
 from matplotlib.font_manager import FontProperties
 import matplotlib.collections as mcoll
 from sklearn.metrics import confusion_matrix
+from matplotlib.ticker import MaxNLocator
 
 # === Utility Functions ===
 def clean_title_string(title):
@@ -65,11 +66,22 @@ def plot_ols_diagnostics(target, predictions, residuals,
             'group': group_name if group_name else (group_labels if group_labels is not None else "Unknown")
         })
         
-        # Determine axis limits for square aspect
+        # Determine axis limits for square aspect with INTEGER bounds
         x_min, x_max = df_plot['target'].min(), df_plot['target'].max()
         y_min, y_max = df_plot['predictions'].min(), df_plot['predictions'].max()
-        axis_min = min(x_min, y_min) - 1
-        axis_max = max(x_max, y_max) + 1
+        
+        # Use common range
+        data_min = min(x_min, y_min)
+        data_max = max(x_max, y_max)
+        
+        # Round to integers: Floor min, Ceil max
+        axis_min = np.floor(data_min)
+        axis_max = np.ceil(data_max)
+        
+        # Guard for identical min/max (single point or zero variance)
+        if axis_min == axis_max:
+            axis_min -= 1
+            axis_max += 1
 
         # Use lmplot matching the EXACT separate file style
         g = sns.lmplot(
@@ -94,6 +106,11 @@ def plot_ols_diagnostics(target, predictions, residuals,
         for ax_curr in g.axes.flat:
             ax_curr.set_aspect('equal', adjustable='box')
             _format_axes(ax_curr)
+            
+            # Enforce integer ticks
+            ax_curr.xaxis.set_major_locator(MaxNLocator(integer=True))
+            ax_curr.yaxis.set_major_locator(MaxNLocator(integer=True))
+
             # Fix transparency of confidence intervals
             for coll in ax_curr.collections:
                 if isinstance(coll, mcoll.PolyCollection):
@@ -153,6 +170,17 @@ def plot_ols_diagnostics(target, predictions, residuals,
 
         df_plot = pd.DataFrame({'target': target, 'predictions': predictions})
 
+        # Determine axis limits for square aspect with INTEGER bounds
+        x_min, x_max = df_plot['target'].min(), df_plot['target'].max()
+        y_min, y_max = df_plot['predictions'].min(), df_plot['predictions'].max()
+        data_min = min(x_min, y_min)
+        data_max = max(x_max, y_max)
+        axis_min = np.floor(data_min)
+        axis_max = np.ceil(data_max)
+        if axis_min == axis_max:
+             axis_min -= 1
+             axis_max += 1
+
         # Use group-specific color if provided
         plot_color = GROUP_COLORS.get(group_name, DEFAULT_COLOR) if group_name else DEFAULT_COLOR
 
@@ -165,6 +193,13 @@ def plot_ols_diagnostics(target, predictions, residuals,
              color=plot_color, scatter=False, ci=95, ax=ax, truncate=False,
              line_kws={'linewidth': 2.5}
         )
+        
+        # Enforce integer limits and ticks
+        ax.set_xlim(axis_min, axis_max)
+        ax.set_ylim(axis_min, axis_max)
+        ax.set_aspect('equal')
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
         # Stats
         if stats:

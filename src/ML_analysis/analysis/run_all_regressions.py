@@ -152,7 +152,69 @@ def run_combination(dataset_type, target, flag_cov, group_reg):
     
     try:
         df_input, df_meta = load_data(dataset_type)
+        
+        # Save original base_output before main_regression modifies it
+        original_base_output = args['output_dir']
+        
         main_regression(args, df_input, df_meta)
+        
+        # Copy diagnostic plots to centralized directory if save_separately is enabled
+        try:
+            import json
+            import shutil
+            with open(args_cli.config) as f:
+                cfg = json.load(f)
+                save_separately = cfg.get('plotting', {}).get('save_separately', False)
+                
+            if save_separately:  # Check only for flag, handle group/global inside
+                # Determine source and destination paths
+                dataset_subdir = 'umap_regression' if dataset_type == 'voxel' else 'regression'
+                cov_folder = 'covariates' if flag_cov else 'no_covariates'
+                
+                # Centralized image directory with NEW structure
+                centralized_base = os.path.join(original_base_output, 'images_regression', dataset_type)
+                
+                if group_reg:
+                    # Group-specific plots
+                    dest_subdir = os.path.join(centralized_base, 'groups', cov_folder)
+                    os.makedirs(dest_subdir, exist_ok=True)
+                    
+                    groups = ['AD', 'CBS', 'PSP']
+                    for group in groups:
+                        source_file = os.path.join(
+                            original_base_output, dataset_type, dataset_subdir, target, cov_folder,
+                            'group', group, 'no_threshold_diagnostics.png'
+                        )
+                        
+                        if os.path.exists(source_file):
+                            target_clean = target.lower().replace('_', '')
+                            dest_filename = f"ols_{target_clean}_{group.lower()}.png"
+                            dest_file = os.path.join(dest_subdir, dest_filename)
+                            shutil.copy2(source_file, dest_file)
+                            print(f"  📁 Copied Group Plot: {dest_filename} -> {dest_subdir}")
+
+                else:
+                    # Global (All) plots
+                    dest_subdir = os.path.join(centralized_base, 'all')
+                    os.makedirs(dest_subdir, exist_ok=True)
+                    
+                    # Source path: .../all/no_threshold_diagnostics_labelled.png
+                    source_file = os.path.join(
+                        original_base_output, dataset_type, dataset_subdir, target, cov_folder,
+                        'all', 'no_threshold_diagnostics_labelled.png'
+                    )
+                    
+                    if os.path.exists(source_file):
+                        target_clean = target.lower().replace('_', '')
+                        # e.g., ols_mmse_covariates.png
+                        dest_filename = f"ols_{target_clean}_{cov_folder}.png"
+                        dest_file = os.path.join(dest_subdir, dest_filename)
+                        shutil.copy2(source_file, dest_file)
+                        print(f"  📁 Copied Global Plot: {dest_filename} -> {dest_subdir}")
+                        
+        except Exception as copy_error:
+            print(f"  ⚠️  Failed to copy images to centralized directory: {copy_error}")
+        
         print(f"✅ COMPLETED: {combo_name}")
         return True
     except Exception as e:
